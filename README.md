@@ -9,7 +9,7 @@ ECAD at [http://www.ecad.eu/download/ensembles/download.php#datafiles](http://ww
 You will need the package `devtools` and then use the function install_github()
 ```
 install.packages("devtools")
-devtools::install_github("RetoSchmucki/Rpackages/climateExtract")
+devtools::install_github("RetoSchmucki/climateExtract")
 ```
 
 This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `ncdf4` can be installed directly from CRAN. *Windows* users should refer to the instructions available at http://cirrus.ucsd.edu/~pierce/ncdf/ and install the `ncdf4` package manually from the appropriate `.zip` file.
