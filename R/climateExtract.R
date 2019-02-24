@@ -1,19 +1,22 @@
 #' extract_nc_value
 #'
 #' This function extract climate data from NETCDF file produced by the European Climate Assesment & Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles
-#'  @param firs.year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
-#'  @param last.year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
-#'  @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
-#'  @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
-#'  @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.50 (ca. xx meters), default=0.50
-#'  @author Reto Schmucki
-#'  @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. If first.year and last.year are not provided, the function extract the full data set
-#  @example
-#  temp.2000_2005 <- extract_nc_value(2000,2005,local_file=F)
+#' @param firs.year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
+#' @param last.year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
+#' @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
+#' @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
+#' @param statistic string defining the metric to retreave, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields. The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
+#' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.1 (ca. xx meters), default=0.25
+#' @author Reto Schmucki
+#' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. If first.year and last.year are not provided, the function extract the full data set
+#' @import ncdf4
+#' @import chron
+#' @export extract_nc_value
+#'
 
 #  FUNCTIONS commit test
 
-extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, clim_variable="mean temp", grid_size=0.50) {
+extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, clim_variable="temp", statistic="mean", grid_size=0.25) {
 
   if (local_file == TRUE) {
 
@@ -24,36 +27,38 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, c
 
   cat(paste0("Let's try to get the ",clim_variable," from ",first.year," at ",grid_size," degree resolution \n"))
 
-    if (clim_variable == "mean temp") {clim_var <- "tg"}
-    if (clim_variable == "min temp") {clim_var <- "tn"}
-    if (clim_variable == "max temp") {clim_var <- "tx"}
-    if (clim_variable == "precipitation") {clim_var <- "rr"}
+    if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
+    if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
+    if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
+    if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
 
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
-    if (grid_size == 0.50) {grid_size <- "0.50deg"}
+    if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
-    if (first.year >= 2011) {
-        year_toget <- "2011-2017_"
-        urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg/",clim_var,"_",grid_size,"_reg_",year_toget,"v17.0.nc.gz")
-    } else {
-        urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg/",clim_var,"_",grid_size,"_reg_v17.0.nc.gz")
-    }
+    # if (first.year >= 2011) {
+    #     year_toget <- "2011-2017_"
+    #     urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg/",clim_var,"_",grid_size,"_reg_",year_toget,"v17.0.nc.gz")
+    # } else {
+      # https://www.ecad.eu/download/ensembles/data/Grid_0.1deg_reg_ensemble/tg_ens_mean_0.1deg_reg_v18.0e.nc
+        urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg_ensemble/",clim_var,"_",grid_size,"_reg_v18.0e.nc")
+    # }
 
-   dest_file <- paste0(clim_var,"_",grid_size,"_reg_v17.0.nc.gz")
+   dest_file <- paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")
 
     x <- "N"
 
-    if(file.exists(paste0(clim_var,"_",grid_size,"_reg_v17.0.nc"))){
+    if(file.exists(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc"))){
         x <- readline("The requested climate data already exist, do you want to download them again? (Y/N) \n")
     	}
 
-    if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v17.0.nc")) | x %in% c('Y','y','yes')){
+    if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")) | x %in% c('Y','y','yes')){
        download.file(urltoget,dest_file)
-       system(paste0("gzip -d ",dest_file))}
+      # system(paste0("gzip -d ",dest_file))
+    }
 
-    cat(paste0("your data (.nc file) is located in ",getwd(),"/",clim_var,"_",grid_size,"_reg_v17.0.nc \n"))
+    cat(paste0("your data (.nc file) is located in ",getwd(),"/",clim_var,"_",grid_size,"_reg_v18.0e.nc \n"))
 
-    nc.ncdf <- ncdf4::nc_open(paste0(clim_var,"_",grid_size,"_reg_v17.0.nc"))
+    nc.ncdf <- ncdf4::nc_open(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc"))
     }
 
   lon <- ncdf4::ncvar_get(nc.ncdf,"longitude")
@@ -105,16 +110,14 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, c
 #' temporal_mean
 #'
 #' This function compute mean climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from an object obtained from the extrat_nc_value() function
-#'  @param data_nc object obtained from the extrat_nc_value() function corresponding to the time-period of interest
-#'  @param time_avg character string defining the level of averaging, "annual", "monthly", "window"
-#'  @param win_length the number of days defining the span of the sliding window, default set to 30 days
-#'  @author Reto Schmucki
-#'  @details This function can be relatively slow if you compute sliding window average over a long period
-#  @example
-#  a <- extract_nc_value(2000,2005)
-#  ann_mean <- temporal_mean(a,"annual")
-
-#  FUNCTIONS
+#' @param data_nc object obtained from the extrat_nc_value() function corresponding to the time-period of interest
+#' @param time_avg character string defining the level of averaging, "annual", "monthly", "window"
+#' @param win_length the number of days defining the span of the sliding window, default set to 30 days
+#' @author Reto Schmucki
+#' @details This function can be relatively slow if you compute sliding window average over a long period
+#' @import zoo
+#' @export temporal_mean
+#'
 
 temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_length=30) {
 
@@ -164,16 +167,14 @@ temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_
 #' temporal_sum
 #'
 #' This function compute sum of climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from and object obtained from the extrat_nc_value() function
-#'  @param data_nc object obtained from the extrat_nc_value() function corresponding to the time-period of interest
-#'  @param time_sum character string defining the level of summation, "annual", "monthly", "window"
-#'  @param win_length the number of days defining the span of the sliding window, default set to 30 days
-#'  @author Reto Schmucki
-#'  @details This function can be relatively slow if you compute sliding window total over a long period
-#  @example
-#  a <- extract_nc_value(2000,2005)
-#  ann_mean <- temporal_mean(a,"annual")
-
-#  FUNCTIONS
+#' @param data_nc object obtained from the extrat_nc_value() function corresponding to the time-period of interest
+#' @param time_sum character string defining the level of summation, "annual", "monthly", "window"
+#' @param win_length the number of days defining the span of the sliding window, default set to 30 days
+#' @author Reto Schmucki
+#' @details This function can be relatively slow if you compute sliding window total over a long period
+#' @import zoo
+#' @export temporal_sum
+#'
 
 temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_length=30) {
 
@@ -223,12 +224,13 @@ temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_l
 #' get_thepoint Function
 #'
 #' Function to retrieve values corresponding to geographic points get_thepoint(data_nc$value_array,nc_index[p,])
-#'  @param x object obtained from the temporal_mean() function containing the array of averaged values
-#'  @param nc_index spatial indices corresponding to the coordinates of the geographic points
-#'  @author Reto Schmucki
-#'  @details This function is internal and used to extract value from the grid with the function point_grid_extract()
+#' @param x object obtained from the temporal_mean() function containing the array of averaged values
+#' @param nc_index spatial indices corresponding to the coordinates of the geographic points
+#' @author Reto Schmucki
+#' @details This function is internal and used to extract value from the grid with the function point_grid_extract()
+#' @export get_thepoint
+#'
 
-#  FUNCTIONS
 get_thepoint <- function(x,nc_index){
   value_vect <- x[nc_index$x_index,nc_index$y_index,]
 }
@@ -237,18 +239,13 @@ get_thepoint <- function(x,nc_index){
 #' point_grid_extract
 #'
 #' This function extract the mean climatic value (annual mean, monthly mean, sliding window mean) for each geographic points
-#'  @param data_nc object obtained from the temporal_mean() function corresponding to the time-period of interest and the level of averaging
-#'  @param point_coord a data.frame with three column named "site_id", "longitude", and "latitude" where coordinate of the points are in degree decimal (epsg projection 4326 - wgs 84)
-#'  @author Reto Schmucki
-#  @example a <- extract_nc_value(2000,2005)
-#        ann_mean <- temporal_mean(a,"annual")
-
-#        point_coord <- data.frame(site_id=c("site1","site2","site3","site4","site5"),
-#               longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392),
-#               latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
-#        point.ann_mean <- point_grid_extract(ann_mean,point_coord)
-
-#  FUNCTIONS
+#' @param data_nc object obtained from the temporal_mean() function corresponding to the time-period of interest and the level of averaging
+#' @param point_coord a data.frame with three column named "site_id", "longitude", and "latitude" where coordinate of the points are in degree decimal (epsg projection 4326 - wgs 84)
+#' @author Reto Schmucki
+#' @import tcltk
+#' @import FNN
+#' @export point_grid_extract
+#'
 
 point_grid_extract <- function(data_nc,point_coord) {
 
