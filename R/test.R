@@ -3,15 +3,18 @@ R --vanilla
 install.packages("devtools")
 ## install the updated version to get the latest climate data ECAD v.18.
 
-devtools::install_github("RetoSchmucki/climateExtract")
+devtools::install_github("RetoSchmucki/climateExtract", force = TRUE)
 
 library(climateExtract)
 ## load new set of functions
 source('R\\climateExtract_dt.R')
 
+nc_data <- RNetCDF::open.nc('tg_ens_mean_0.25deg_reg_v18.0e.nc')
+
+nc_data <- ncdf4::nc_open('tg_ens_mean_0.25deg_reg_v18.0e.nc')
+
 ## retrived the climate data for the period of interest, use chunks if it' to big
-climate_data <- extract_nc_value_dt(1985, 1986, local_file=TRUE, clim_variable="mean temp",
-                                    statistic="mean", grid_size=0.25)
+climate_data <- extract_nc_value_dt(1985, 1986, local_file=FALSE, clim_variable="mean temp", statistic="mean", grid_size=0.1)
 
 ## extract seasonal mean by using "season" and setting the duration in number of days with season_n
 clim_sum <- temporal_mean_dt(climate_data, time_val=c("season"),
