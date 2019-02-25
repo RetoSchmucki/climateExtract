@@ -52,7 +52,7 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, c
     	}
 
     if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")) | x %in% c('Y','y','yes')){
-       download.file(urltoget,dest_file)
+       download.file(urltoget, dest_file, mode = "wb")
       # system(paste0("gzip -d ",dest_file))
     }
 
