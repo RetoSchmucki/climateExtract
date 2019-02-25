@@ -10,7 +10,8 @@ library(climateExtract)
 source('R\\climateExtract_dt.R')
 
 ## retrived the climate data for the period of interest, use chunks if it' to big
-climate_data <- extract_nc_value_dt(1985, 1986, local_file=FALSE, clim_variable="mean temp", statistic="mean", grid_size=0.1)
+climate_data <- extract_nc_value_dt(1985, 1986, local_file=FALSE, clim_variable="mean temp",
+                                    statistic="mean", grid_size=0.25)
 
 ## extract seasonal mean by using "season" and setting the duration in number of days with season_n
 clim_sum <- temporal_mean_dt(climate_data, time_val=c("season"),
