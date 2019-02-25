@@ -1,6 +1,6 @@
 # climateExtract
 
-R functions to extract climate data from local NETCDF file that you can download from the
+The package contains a set of R functions to extract climate data from local NETCDF file that you can download from the
 ECAD at [http://www.ecad.eu/download/ensembles/download.php#datafiles](http://www.ecad.eu/download/ensembles/download.php#datafiles)
 
 **NEWS:** Updated for - ECAD Version 18.0 -
