@@ -20,6 +20,9 @@ This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `
 **Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).**
 **Note** that shorter time-series are also available [http://www.ecad.eu/download/ensembles/downloadchunks.php](http://www.ecad.eu/download/ensembles/downloadchunks.php)
 
+**Data available at 0.1 deg regular grid are ca. 5GB and can be difficult to handle with this framework. However, 0.25deg seem to be working.**
+
+**You could download the high-resolution grid and subset the area of interest to build a manageable dataset, I am working on some alternatives but this will depend on my inspiration and time.**
 
 #### Example
 
