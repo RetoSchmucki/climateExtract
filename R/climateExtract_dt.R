@@ -48,7 +48,7 @@ extract_nc_value_dt <- function(first.year=NULL, last.year=NULL, local_file=TRUE
     	}
 
     if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")) | x %in% c('Y','y','yes')){
-       download.file(urltoget,dest_file)
+       download.file(urltoget, dest_file, mode="wb")
     }
 
     cat(paste0("your data (.nc file) is located in ",getwd(),"/",clim_var,"_",grid_size,"_reg_v18.0e.nc \n"))
