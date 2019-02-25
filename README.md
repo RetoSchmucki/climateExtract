@@ -14,7 +14,7 @@ devtools::install_github("RetoSchmucki/climateExtract")
 
 This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `ncdf4` can be installed directly from CRAN. *Windows* users should refer to the instructions available at http://cirrus.ucsd.edu/~pierce/ncdf/ and install the `ncdf4` package manually from the appropriate `.zip` file.
 
-**Windows users** also need to install a tool to unzip the file from your command prompt. So to make it easy and cross-platform, I rely on Rtools that is available for download from [here] (https://cran.r-project.org/bin/windows/Rtools/index.html). The Rtools installer should install it in "C:\Rtools\bin". This need to be added to your PATH environment variable (if you forgot how to do this, follow the [instruction here](http://www.computerhope.com/issues/ch000549.htm)). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system("gzip -h"). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to  go and extract some climate data! Well, almost... you might encounter some issues related to R's memory limit under Windows. This is partly my fault as I did not payed much attention to this while coding under UNIX systems (Linux or Mac). But slowly, I am working on this issue (among others) by revisiting and restructuring the source code. Anyways, there is a workaround the memory issue under Windows and this is by extracting smaller chunk of data at the time (see point no.5 below).
+**Windows users** also need to install a tool to unzip the file from your command prompt. So to make it easy and cross-platform, I rely on Rtools that is available for download from [here] (https://cran.r-project.org/bin/windows/Rtools/index.html). The Rtools installer should install it in "C:\Rtools\bin". This need to be added to your PATH environment variable (if you forgot how to do this, follow the [instruction here](http://www.computerhope.com/issues/ch000549.htm)). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system("gzip -h"). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to  go and extract some climate data! Well, almost... you might encounter some issues related to R's memory limit under Windows. This is partly my fault as I did not pay much attention to this while coding under UNIX systems (Linux or Mac). But slowly, I am working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround the memory issue under Windows and this is by extracting smaller chunk of data at the time (see point no.5 below).
 
 
 **Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).**
@@ -46,7 +46,7 @@ climate_data <- extract_nc_value(2012, 2015, local_file = FALSE, clim_variable =
 
 *where grid_size set to:*
 * 0.25 extract a grid with a 0.25-degree resolution
-* 0.50 extract a grid with a 0.50-degree resolution
+* 0.10 extract a grid with a 0.10-degree resolution
 
 **3.** To compute summary value of the daily values, use the function `temporal_mean()` for temperature or `temporal_sum()` for precipitation . This function computes the mean for a specified time period, monthly or annual or for specified window computing a rolling average over a specific number of days. **NOTE** This function use the data extracted with the function `extract_nc_value`.
 
@@ -65,42 +65,42 @@ point.month_sum <- point_grid_extract(monthly_sum,point_coord)
 
 **5.** To extract long series one small chunk at the time (A quick and dirty workaround memory limit under Windows).
 ```
-# This is a workaround when facing memory issues under Windows while extracting a long serie on a computer
+# This is a workaround when facing memory issues under Windows while extracting a long series on a computer
 # with limited RAM.
 
 library(climateExtract)
 
-climate_data <- extract_nc_value(1950,1960,local_file=FALSE,clim_variable='mean temp',grid_size=0.50)
-point_coord <- data.frame(site_id=c("site1"),longitude=c(-1.3177988),latitude=c(51.7503954))
+climate_data <- extract_nc_value(1950, 1960, local_file=FALSE, clim_variable='mean temp', grid_size=0.25)
+point_coord <- data.frame(site_id = c("site1"), longitude = c(-1.3177988), latitude = c(51.7503954))
 
-annual_mean <- temporal_mean(climate_data,"annual")
-point.ann_mean <- point_grid_extract(annual_mean,point_coord)
+annual_mean <- temporal_mean(climate_data, "annual")
+point.ann_mean <- point_grid_extract(annual_mean, point_coord)
 
-climate_data <- extract_nc_value(1961,1970)
-annual_mean <- temporal_mean(climate_data,"annual")
-point.ann_mean <- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
+climate_data <- extract_nc_value(1961, 1970)
+annual_mean <- temporal_mean(climate_data, "annual")
+point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
 
 climate_data <- extract_nc_value(1971,1980)
 annual_mean <- temporal_mean(climate_data,"annual")
 point.ann_mean <- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
 
-climate_data <- extract_nc_value(1981,1990)
-annual_mean <- temporal_mean(climate_data,"annual")
-point.ann_mean <- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
+climate_data <- extract_nc_value(1981, 1990)
+annual_mean <- temporal_mean(climate_data, "annual")
+point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
 
-climate_data <- extract_nc_value(1991,2000)
-annual_mean <- temporal_mean(climate_data,"annual")
-point.ann_mean <- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
+climate_data <- extract_nc_value(1991, 2000)
+annual_mean <- temporal_mean(climate_data, "annual")
+point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
 
-climate_data <- extract_nc_value(2001,2012)
-annual_mean <- temporal_mean(climate_data,"annual")
-point.ann_mean <- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
+climate_data <- extract_nc_value(2001, 2012)
+annual_mean <- temporal_mean(climate_data, "annual")
+point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
 
 
-names(point.ann_mean) <- c("year","mean_temp") # I really need to fix this
+names(point.ann_mean) <- c("year", "mean_temp") # I really need to fix this
 
-plot(point.ann_mean$year,point.ann_mean$mean_temp, type='l')
-abline(h=mean(point.ann_mean$mean_temp),col='red')
+plot(point.ann_mean$year, point.ann_mean$mean_temp, type = 'l')
+abline(h = mean(point.ann_mean$mean_temp), col = 'red')
 ```
 
 **6.** If you want a raster of the mean temperature across Europe for a specific year (e.g. 1988).
@@ -109,22 +109,22 @@ abline(h=mean(point.ann_mean$mean_temp),col='red')
 
 library(climateExtract)
 library(raster)
-climate_data <- extract_nc_value(1988,1988,local_file=FALSE,clim_variable='mean temp',grid_size=0.25)
+climate_data <- extract_nc_value(1988, 1988, local_file = FALSE, clim_variable = 'mean temp', grid_size = 0.25)
 
 # compute the annual mean temperature
-annual_mean <- temporal_mean(climate_data,"annual")
+annual_mean <- temporal_mean(climate_data, "annual")
 
 # get a XY data.frame for the 0.25deg grid
-grid.e <- expand.grid(annual_mean$longitude,annual_mean$latitude)
+grid.e <- expand.grid(annual_mean$longitude, annual_mean$latitude)
 
 # extract the value for 1988 in one vector
-y1988 <- as.vector(annual_mean$value_array[,,1])
+y1988 <- as.vector(annual_mean$value_array[ , , 1])
 
 # build a XYZ object
-xyz_value <- cbind(grid.e,y1988)
+xyz_value <- cbind(grid.e, y1988)
 
 # build a raster from the XYZ object with the library raster
-r <- rasterFromXYZ(xyz_value, crs=CRS("+init=epsg:4326"))
+r <- rasterFromXYZ(xyz_value, crs = CRS("+init=epsg:4326"))
 names(r) <- annual_mean$date_extract[1]
 
 # voila!
