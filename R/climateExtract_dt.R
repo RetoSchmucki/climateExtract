@@ -37,7 +37,13 @@ extract_nc_value_dt <- function(first.year=NULL, last.year=NULL, local_file=TRUE
 
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
+
+    if (first.year >= 2011) {
+         year_toget <- "2011-2018_"
+         urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg_ensemble/",clim_var,"_",grid_size,"_reg_2011-2018_v19.0e.nc")
+     } else {
         urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg_ensemble/",clim_var,"_",grid_size,"_reg_v19.0e.nc")
+     }
 
    dest_file <- paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")
 
