@@ -4,6 +4,7 @@
 #' @param firs.year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
 #' @param last.year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
 #' @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
+#' @param file_path string defining the path of the local file (works only if local_file = TRUE), default=NULL
 #' @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
 #' @param statistic string defining the metric to retreave, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields. The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
 #' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.1 (ca. xx meters), default=0.25
@@ -16,13 +17,15 @@
 
 #  FUNCTIONS commit test
 
-extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, clim_variable="temp", statistic="mean", grid_size=0.25) {
+extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, file_path=NULL, clim_variable="temp", statistic="mean", grid_size=0.25) {
 
   if (local_file == TRUE) {
-
-  print("select your climate file [.nc]")
-  nc.ncdf <- ncdf4::nc_open(file.choose())
-
+      if(is.null(file_path)) {
+          print("select your climate file [.nc]")
+          nc.ncdf <- ncdf4::nc_open(file.choose())
+      } else {
+          nc.ncdf <- ncdf4::nc_open(file_path)
+          }
   } else {
 
   cat(paste0("Let's try to get the ",clim_variable," from ",first.year," at ",grid_size," degree resolution \n"))
@@ -50,8 +53,9 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, c
         x <- readline("The requested climate data already exist, do you want to download them again? (Y/N) \n")
     	}
 
-    if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v19.0e.nc")) | x %in% c('Y','y','yes')){
-       download.file(urltoget, dest_file, mode="wb")
+
+    if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")) | x %in% c('Y','y','yes')){
+       download.file(urltoget, dest_file, mode = "wb")
       # system(paste0("gzip -d ",dest_file))
     }
 
