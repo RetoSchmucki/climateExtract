@@ -4,12 +4,14 @@ Version: 1.21.0
 Date: 11-10-2020
 Authors@R:
 	c(person(given = "Reto",
-					family ="Schmucki",
-					email = "reto.schmucki@mail.mcgill.ca",
-					role = c("aut", "cre"),
-					comment = c(ORCID = "0000-0003-3064-7553")))
-Description: This is a bundle of functions that should facilitate the extraction of climate data from a NETCDF object
-available from the European Climate Assessement & Datasets (ECAD; http: //www.ecad.eu/download/ensembles/download.php#datafiles) for specific time period, compute summarized values and link them to your set of spatial points.
+			family ="Schmucki",
+			email = "reto.schmucki@mail.mcgill.ca",
+			role = c("aut", "cre"),
+			comment = c(ORCID = "0000-0003-3064-7553")),
+      person(given = "Romain",
+             family = "Lorrilliere",
+             role = c("ctb")))
+Description: A toolbox to ease the extraction and manipulaiton of daily gridded climate data from a NETCDF object available from the European Climate Assessement & Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.
 Depends: R (>= 3.4.0)
 License: MIT + file LICENSE
 LazyData: true
