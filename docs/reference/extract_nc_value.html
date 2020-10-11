@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Page not found (404) • climateExtract</title>
+<title>extract_nc_value — extract_nc_value • climateExtract</title>
 
 
 <!-- jquery -->
@@ -18,8 +18,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
-<link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script>
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -33,13 +33,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="Page not found (404)" />
+<meta property="og:title" content="extract_nc_value — extract_nc_value" />
+<meta property="og:description" content="This function extract climate data from NETCDF file produced by the European Climate Assesment &amp;amp; Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-title-body">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -70,7 +71,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">climateExtract</a>
+        <a class="navbar-link" href="../index.html">climateExtract</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.21.0</span>
       </span>
     </div>
@@ -78,13 +79,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">
+  <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -100,23 +101,74 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Page not found (404)</h1>
+    <h1>extract_nc_value</h1>
+    
+    <div class="hidden name"><code>extract_nc_value.Rd</code></div>
     </div>
 
-Content not found. Please use links in the navbar.
+    <div class="ref-description">
+    <p>This function extract climate data from NETCDF file produced by the European Climate Assesment &amp; Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles</p>
+    </div>
+
+    <pre class="usage"><span class='fu'>extract_nc_value</span><span class='op'>(</span>
+  first.year <span class='op'>=</span> <span class='cn'>NULL</span>,
+  last.year <span class='op'>=</span> <span class='cn'>NULL</span>,
+  local_file <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  file_path <span class='op'>=</span> <span class='cn'>NULL</span>,
+  clim_variable <span class='op'>=</span> <span class='st'>"mean temp"</span>,
+  statistic <span class='op'>=</span> <span class='st'>"mean"</span>,
+  grid_size <span class='op'>=</span> <span class='fl'>0.25</span>
+<span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>first.year</th>
+      <td><p>a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL</p></td>
+    </tr>
+    <tr>
+      <th>last.year</th>
+      <td><p>a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL</p></td>
+    </tr>
+    <tr>
+      <th>local_file</th>
+      <td><p>logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE</p></td>
+    </tr>
+    <tr>
+      <th>file_path</th>
+      <td><p>string defining the path of the local file (works only if local_file = TRUE), default=NULL</p></td>
+    </tr>
+    <tr>
+      <th>clim_variable</th>
+      <td><p>string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"</p></td>
+    </tr>
+    <tr>
+      <th>statistic</th>
+      <td><p>string defining the metric to retreave, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields. The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90% uncertainty range. For more details see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</p></td>
+    </tr>
+    <tr>
+      <th>grid_size</th>
+      <td><p>numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.1 (ca. xx meters), default=0.25</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. If first.year and last.year are not provided, the function extract the full data set</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Reto Schmucki</p>
 
   </div>
-
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
-
 
 
       <footer>
