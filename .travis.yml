@@ -3,4 +3,5 @@ cache: packages
 warnings_are_errors: false
 
 before_install:
-  - sudo apt-get install libnetcdf-c++*
+  - sudo apt-get install libnetcdf-dev
+  - sudo apt-get install netcdf-bin
