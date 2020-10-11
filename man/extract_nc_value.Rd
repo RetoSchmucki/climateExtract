@@ -9,7 +9,7 @@ extract_nc_value(
   last.year = NULL,
   local_file = TRUE,
   file_path = NULL,
-  clim_variable = "temp",
+  clim_variable = "mean temp",
   statistic = "mean",
   grid_size = 0.25
 )

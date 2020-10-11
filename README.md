@@ -1,12 +1,15 @@
 # climateExtract
+[![Build Status](https://travis-ci.org/RetoSchmucki/climateExtract.png?branch=master)](https://travis-ci.org/RetoSchmucki/climateExtract)
 
 R functions to extract climate data from local NETCDF file that you can download from the
-ECAD at [http://www.ecad.eu/download/ensembles/download.php#datafiles](http://www.ecad.eu/download/ensembles/download.php#datafiles)
+ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
-**NEWS:** Updated for - ECAD Version 18.0 -
+**NEWS (11/10/2020):** 
+- Updated to allow manual entry of nc path as an argument in `extract_nc_value()`, using the argument `file_path= "YOUR/PATH"`: contribution [Romain Lorrilliere](https://github.com/romainlorrilliere) 
+- ECAD URL has moved, this is now functional again -sorry- :cat:
 
 #### Installation
-You will need the package `devtools` and then use the function install_github()
+You will need the package `devtools` (or `remotes`) and then use the function install_github()
 ```
 install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")
@@ -18,7 +21,7 @@ This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `
 
 
 **Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).**
-**Note** that shorter time-series are also available [http://www.ecad.eu/download/ensembles/downloadchunks.php](http://www.ecad.eu/download/ensembles/downloadchunks.php)
+**Note** that shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 **Data available at 0.1 deg regular grid are ca. 5GB and can be difficult to handle with this framework. However, 0.25deg seem to be working.**
 
@@ -26,7 +29,7 @@ This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `
 
 #### Example
 
-You can get your climate data from the web repository http://www.ecad.eu/download/ensembles/download.php#datafiles and decompress the data to extract the `.nc` file.
+You can get your climate data from the web repository https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles and decompress the data to extract the `.nc` file.
 
 Or you can use the function `extract_nc_value()` to download the data directly by setting the parameter local_file to FALSE and adding the details of the data you want to be extracted.
 
@@ -140,6 +143,6 @@ plot(r, main("Mean temperature in 1988")
 *This is a work in progress that is good for some tasks, but this comes with no guarantee. Suggestions and contributions for improvement are welcome.*
 
 #### TO DO
-* optimize the script to avoid (limit) memory issues under Windows
-* implement data.table approach to compute summary statistics to speed up computation
-* update and improve documentation
+- [x] implement data.table approach to compute summary statistics to speed up computation 
+- [ ] optimize the script to avoid (limit) memory issues under Windows
+- [ ] update and improve documentation

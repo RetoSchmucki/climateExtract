@@ -1,6 +1,6 @@
 Package: climateExtract
 Title: Extract Climate Data From a Local NETCDF File
-Version: 1.19.0
+Version: 1.21.0
 Authors@R: person("Reto", "Schmucki", email = "reto.schmucki@mail.mcgill.ca", role = c("aut","cre"))
 Description: This is a bundle of functions that should facilitate the extraction of climate data from a NETCDF object
 available from the European Climate Assessement & Datasets (ECAD; http: //www.ecad.eu/download/ensembles/download.php#datafiles) for specific time period, compute summarized values and link them to your set of spatial points.

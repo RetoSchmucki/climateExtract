@@ -18,7 +18,7 @@
 
 #  FUNCTIONS commit test
 
-extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, file_path=NULL, clim_variable="temp", statistic="mean", grid_size=0.25) {
+extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, file_path=NULL, clim_variable="mean temp", statistic="mean", grid_size=0.25) {
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
@@ -40,29 +40,28 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, f
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
     if (first.year >= 2011) {
-         year_toget <- "2011-2018_"
-         urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg_ensemble/",clim_var,"_",grid_size,"_reg_2011-2018_v19.0e.nc")
+         year_toget <- "2011-2019_"
+         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v21.0e.nc")
+         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v21.0e.nc")
      } else {
-        urltoget <-paste0("http://www.ecad.eu/download/ensembles/data/Grid_",grid_size,"_reg_ensemble/",clim_var,"_",grid_size,"_reg_v19.0e.nc")
+        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_v21.0e.nc")
+        dest_file <- paste0(clim_var,"_",grid_size,"_reg_v21.0e.nc")
      }
-
-   dest_file <- paste0(clim_var,"_",grid_size,"_reg_v19.0e.nc")
 
     x <- "N"
 
-    if(file.exists(paste0(clim_var,"_",grid_size,"_reg_v19.0e.nc"))){
+    if(file.exists(dest_file)){
         x <- readline("The requested climate data already exist, do you want to download them again? (Y/N) \n")
     	}
 
-
-    if(!file.exists(paste0(clim_var,"_",grid_size,"_reg_v18.0e.nc")) | x %in% c('Y','y','yes')){
+    if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
        download.file(urltoget, dest_file, mode = "wb")
       # system(paste0("gzip -d ",dest_file))
     }
 
-    cat(paste0("your data (.nc file) is located in ",getwd(),"/",clim_var,"_",grid_size,"_reg_v19.0e.nc \n"))
+    cat(paste0("your data (.nc file) is located in ",getwd(),"/", dest_file, "\n"))
 
-    nc.ncdf <- ncdf4::nc_open(paste0(clim_var,"_",grid_size,"_reg_v19.0e.nc"))
+    nc.ncdf <- ncdf4::nc_open(dest_file)
     }
 
   lon <- ncdf4::ncvar_get(nc.ncdf,"longitude")
