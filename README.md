@@ -8,7 +8,7 @@ ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/ac
 - Updated to allow manual entry of nc path as an argument in `extract_nc_value()`, using the argument `file_path= "YOUR/PATH"`: contribution [Romain Lorrilliere](https://github.com/romainlorrilliere) 
 - ECAD URL has moved, this is now functional again -sorry- :cat:
 
-#### Suggested citation for the rbms package
+#### Suggested citation for the climateExtract package
 
 Schmucki R. (2020) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D . R package version 1.21.0. https://github.com/RetoSchmucki/climateExtract
 
