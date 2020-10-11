@@ -4,7 +4,7 @@
 R functions to extract climate data from local NETCDF file that you can download from the
 ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
-Package URL: [https://retoschmucki.github.io/climateExtract/](ttps://retoschmucki.github.io/climateExtract)
+Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
 **NEWS (11/10/2020):** 
 - Updated to allow manual entry of nc path as an argument in `extract_nc_value()`, using the argument `file_path= "YOUR/PATH"`: contribution [Romain Lorrilliere](https://github.com/romainlorrilliere) 
