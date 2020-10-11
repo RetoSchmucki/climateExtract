@@ -4,8 +4,11 @@
 \alias{temporal_sum}
 \title{temporal_sum}
 \usage{
-temporal_sum(data_nc, time_sum = c("annual", "monthly", "window"),
-  win_length = 30)
+temporal_sum(
+  data_nc,
+  time_sum = c("annual", "monthly", "window"),
+  win_length = 30
+)
 }
 \arguments{
 \item{data_nc}{object obtained from the extrat_nc_value() function corresponding to the time-period of interest}

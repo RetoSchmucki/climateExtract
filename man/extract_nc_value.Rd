@@ -4,22 +4,30 @@
 \alias{extract_nc_value}
 \title{extract_nc_value}
 \usage{
-extract_nc_value(first.year = NULL, last.year = NULL,
-  local_file = TRUE, clim_variable = "temp", statistic = "mean",
-  grid_size = 0.25)
+extract_nc_value(
+  first.year = NULL,
+  last.year = NULL,
+  local_file = TRUE,
+  file_path = NULL,
+  clim_variable = "temp",
+  statistic = "mean",
+  grid_size = 0.25
+)
 }
 \arguments{
+\item{first.year}{a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL}
+
 \item{last.year}{a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL}
 
 \item{local_file}{logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE}
+
+\item{file_path}{string defining the path of the local file (works only if local_file = TRUE), default=NULL}
 
 \item{clim_variable}{string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"}
 
 \item{statistic}{string defining the metric to retreave, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields. The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
 
 \item{grid_size}{numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.1 (ca. xx meters), default=0.25}
-
-\item{firs.year}{a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL}
 }
 \description{
 This function extract climate data from NETCDF file produced by the European Climate Assesment & Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles

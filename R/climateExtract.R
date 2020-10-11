@@ -1,7 +1,7 @@
 #' extract_nc_value
 #'
 #' This function extract climate data from NETCDF file produced by the European Climate Assesment & Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles
-#' @param firs.year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
+#' @param first.year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
 #' @param last.year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
 #' @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
 #' @param file_path string defining the path of the local file (works only if local_file = TRUE), default=NULL
@@ -12,6 +12,7 @@
 #' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. If first.year and last.year are not provided, the function extract the full data set
 #' @import ncdf4
 #' @import chron
+#' @import utils
 #' @export extract_nc_value
 #'
 

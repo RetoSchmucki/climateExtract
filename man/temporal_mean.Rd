@@ -4,8 +4,11 @@
 \alias{temporal_mean}
 \title{temporal_mean}
 \usage{
-temporal_mean(data_nc, time_avg = c("annual", "monthly", "window"),
-  win_length = 30)
+temporal_mean(
+  data_nc,
+  time_avg = c("annual", "monthly", "window"),
+  win_length = 30
+)
 }
 \arguments{
 \item{data_nc}{object obtained from the extrat_nc_value() function corresponding to the time-period of interest}
