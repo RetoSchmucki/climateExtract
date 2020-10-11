@@ -14,6 +14,7 @@ Authors@R:
 Description: A toolbox to ease the extraction and manipulaiton of daily gridded climate data from a NETCDF object available from the European Climate Assessement & Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.
 Depends: R (>= 3.4.0)
 License: MIT + file LICENSE
+URL: https://retoschmucki.github.io/climateExtract
 LazyData: true
 Imports: ncdf4,
          chron,
