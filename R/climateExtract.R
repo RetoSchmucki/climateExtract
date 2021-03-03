@@ -101,7 +101,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
 get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size){
 
   if(is.null(sml_chunk)){
-
+  
     cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
@@ -127,7 +127,7 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
     }else{
       year_toget <- paste0(sml_chunk,"_")
 
-      cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution \n"))
+      cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution from sml_chunk data \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
     if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
@@ -137,7 +137,6 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
-         year_toget <- "2011-2020_"
          urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
          dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
     }

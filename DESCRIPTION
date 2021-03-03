@@ -1,7 +1,7 @@
 Package: climateExtract
 Title: Extract Climate Data From a Local NETCDF File
-Version: 1.21.0
-Date: 11-10-2020
+Version: 1.22.0
+Date: 03-03-2021
 Authors@R:
 	c(person(given = "Reto",
 			family ="Schmucki",
