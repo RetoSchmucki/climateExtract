@@ -1,8 +1,8 @@
 #' extract_nc_value
 #'
 #' Function to extract climate data from NETCDF file produced by the European Climate Assessment & Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
-#' @param first.year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
-#' @param last.year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
+#' @param first_year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
+#' @param last_year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
 #' @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
 #' @param file_path string defining the path of the local file (works only if local_file = TRUE), default=NULL
 #' @param sml_chunk string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"
@@ -10,10 +10,10 @@
 #' @param statistic string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
 #' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
 #' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
-#' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.1 (ca. xx meters), default=0.25
+#' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
 #' @author Reto Schmucki
 #' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
-#' If first.year and last.year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
+#' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
 #' can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
 #' @import ncdf4
 #' @import chron
@@ -21,7 +21,7 @@
 #' @export extract_nc_value
 #'
 
-extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, clim_variable="mean temp", statistic="mean", grid_size=0.25) {
+extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, clim_variable="mean temp", statistic="mean", grid_size=0.25) {
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
@@ -31,64 +31,9 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, f
           nc.ncdf <- ncdf4::nc_open(file_path)
           }
   } else {
-  if(is.null(sml_chunk)){
-
-    cat(paste0("Let's try to get the ",clim_variable," from ",first.year," at ",grid_size," degree resolution \n"))
-
-    if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
-    if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
-    if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
-    if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
-
-    if (grid_size == 0.25) {grid_size <- "0.25deg"}
-    if (grid_size == 0.1) {grid_size <- "0.1deg"}
-
-    if (first.year >= 2011) {
-         year_toget <- "2011-2020_"
-         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
-         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v21.0e.nc")
-     } else {
-        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_v22.0e.nc")
-        dest_file <- paste0(clim_var,"_",grid_size,"_reg_v21.0e.nc")
-     }
-
-  } else {
-    if(sml_chunk %in% c("2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964")){
-      stop("sml_chunk must be one of the following period:\n
-            \"2011-2020\", \"1995-2010\", \"1980-1994\", \"1965-1979\" or \"1950-1964\"")
-    }else{
-      year_toget <- paste0(sml_chunk,"_")
-
-      cat(paste0("Let's try to get the ",clim_variable," from ",first.year," at ",grid_size," degree resolution \n"))
-
-    if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
-    if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
-    if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
-    if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
-
-    if (grid_size == 0.25) {grid_size <- "0.25deg"}
-    if (grid_size == 0.1) {grid_size <- "0.1deg"}
-
-         year_toget <- "2011-2020_"
-         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
-         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v21.0e.nc")
-    }
+  nc.ncdf <- get_nc_online(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size)
   }
-    x <- "N"
-
-    if(file.exists(dest_file)){
-        x <- readline("The requested climate data already exist, do you want to download them again? (Y/N) \n")
-    	}
-
-    if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
-       download.file(urltoget, dest_file, mode = "wb")
-    }
-
-    cat(paste0("your data (.nc file) is located in ",getwd(),"/", dest_file, "\n"))
-
-    nc.ncdf <- ncdf4::nc_open(dest_file)
-    }
-
+  
   lon <- ncdf4::ncvar_get(nc.ncdf,"longitude")
   lat <- ncdf4::ncvar_get(nc.ncdf,"latitude")
   nlon <- dim(lon)
@@ -111,17 +56,17 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, f
   avg_temp_transect$month <- chron::month.day.year(avg_temp_transect$julianday, c(month = init_month, day =init_day, year = init_year))$month
   avg_temp_transect$year <- chron::month.day.year(avg_temp_transect$julianday, c(month = init_month, day =init_day, year = init_year))$year
 
-  if (is.null(first.year)){ first.year <- min(avg_temp_transect$year)}
-  if (is.null(last.year)){ last.year <- max(avg_temp_transect$year)}
+  if (is.null(first_year)){ first_year <- min(avg_temp_transect$year)}
+  if (is.null(last_year)){ last_year <- max(avg_temp_transect$year)}
 
-  first.month <- head(avg_temp_transect$month[avg_temp_transect$year==first.year],1)
-  first.day <- head(avg_temp_transect$day[avg_temp_transect$year==first.year],1)
-  last.month <- tail(avg_temp_transect$month[avg_temp_transect$year==last.year],1)
-  last.day <- tail(avg_temp_transect$day[avg_temp_transect$year==last.year],1)
+  first.month <- head(avg_temp_transect$month[avg_temp_transect$year==first_year],1)
+  first.day <- head(avg_temp_transect$day[avg_temp_transect$year==first_year],1)
+  last.month <- tail(avg_temp_transect$month[avg_temp_transect$year==last_year],1)
+  last.day <- tail(avg_temp_transect$day[avg_temp_transect$year==last_year],1)
 
-  firstday <- avg_temp_transect$julianday[avg_temp_transect$day==first.day&avg_temp_transect$month==first.month&avg_temp_transect$year==first.year]
+  firstday <- avg_temp_transect$julianday[avg_temp_transect$day==first.day&avg_temp_transect$month==first.month&avg_temp_transect$year==first_year]
 
-  lastday <- avg_temp_transect$julianday[avg_temp_transect$day==last.day&avg_temp_transect$month==last.month&avg_temp_transect$year==last.year]
+  lastday <- avg_temp_transect$julianday[avg_temp_transect$day==last.day&avg_temp_transect$month==last.month&avg_temp_transect$year==last_year]
 
   date_extract <- avg_temp_transect[avg_temp_transect$julianday >= firstday & avg_temp_transect$julianday <= lastday,]
   date_extract <- as.Date(paste(date_extract$day,date_extract$month,date_extract$year,sep="/"), "%d/%m/%Y")
@@ -132,7 +77,86 @@ extract_nc_value <- function(first.year=NULL, last.year=NULL, local_file=TRUE, f
   result <- list(variable_name=nc_varname,value_array=tmp.array,longitude=lon,latitude=lat,date_extract=date_extract)
 
   return(result)
+}
 
+#' get_nc_online
+#'
+#' Function to retrieve climate data from https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
+#' @param first_year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
+#' @param last_year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
+#' @param sml_chunk string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"
+#' @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
+#' @param statistic string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
+#' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
+#' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
+#' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
+#' @author Reto Schmucki
+#' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
+#' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
+#' can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
+#' @import ncdf4
+#' @import utils
+#' @export get_nc_online
+#'
+get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size){
+
+  if(is.null(sml_chunk)){
+
+    cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution \n"))
+
+    if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
+    if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
+    if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
+    if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
+
+    if (grid_size == 0.25) {grid_size <- "0.25deg"}
+    if (grid_size == 0.1) {grid_size <- "0.1deg"}
+
+    if (first_year >= 2011) {
+         year_toget <- "2011-2020_"
+         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
+         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
+     } else {
+        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_v22.0e.nc")
+        dest_file <- paste0(clim_var,"_",grid_size,"_reg_v22.0e.nc")
+     }
+  } else {
+    if(!sml_chunk %in% c("2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964")){
+      stop("sml_chunk must be one of the following period:\n
+            \"2011-2020\", \"1995-2010\", \"1980-1994\", \"1965-1979\" or \"1950-1964\"")
+    }else{
+      year_toget <- paste0(sml_chunk,"_")
+
+      cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution \n"))
+
+    if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
+    if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
+    if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
+    if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
+
+    if (grid_size == 0.25) {grid_size <- "0.25deg"}
+    if (grid_size == 0.1) {grid_size <- "0.1deg"}
+
+         year_toget <- "2011-2020_"
+         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
+         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
+    }
+  }
+    x <- "N"
+
+    if(file.exists(dest_file)){
+        x <- readline("The requested climate data already exist, do you want to download them again? (Y/N) \n")
+    	}
+
+    if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
+       download.file(urltoget, dest_file, mode = "wb")
+    }
+
+    cat(paste0("your data (.nc file) is located in ",getwd(),"/", dest_file, "\n"))
+
+    nc.ncdf <- ncdf4::nc_open(dest_file)
+
+  return(nc.ncdf)
 }
 
 #' temporal_mean
@@ -151,15 +175,15 @@ temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_
 
   result <- list(longitude=data_nc$longitude,latitude=data_nc$latitude)
 
-  first.year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-  last.year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
+  first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
+  last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
 
   if ("annual" %in% time_avg){
 
-    annual.mean <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),(last.year-first.year)+1))
+    annual.mean <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),(last_year-first_year)+1))
     year_list <- c()
     for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
-      annual.mean[,,y-(first.year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),mean,na.rm=T)
+      annual.mean[,,y-(first_year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),mean,na.rm=T)
       year_list <- c(year_list,y)
     }
     annual.mean <- list(value_array=annual.mean,date_extract=year_list,longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
@@ -208,15 +232,15 @@ temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_l
 
   result <- list(longitude=data_nc$longitude,latitude=data_nc$latitude)
 
-  first.year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-  last.year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
+  first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
+  last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
 
   if ("annual" %in% time_sum){
 
-    annual.sum <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),(last.year-first.year)+1))
+    annual.sum <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),(last_year-first_year)+1))
     year_list <- c()
     for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
-      annual.sum[,,y-(first.year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),sum,na.rm=F)
+      annual.sum[,,y-(first_year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),sum,na.rm=F)
       year_list <- c(year_list,y)
     }
     annual.sum <- list(value_array=annual.sum,date_extract=year_list,longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)

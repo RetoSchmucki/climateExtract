@@ -8,13 +8,18 @@ ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/ac
 
 Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
+**NEWS (06/02/2021):**
+- Updated to E-OBS v22 (December 2020)
+- Added option for accessing smaller chunk (15 years) with the argument `sml_chunk` in the function `extract_nc_value()`
+- Changing argument names to underscore format to avoid possible confusion with generic method functions
+
 **NEWS (11/10/2020):** 
 - Updated to allow manual entry of nc path as an argument in `extract_nc_value()`, using the argument `file_path= "YOUR/PATH"`: contribution [Romain Lorrilliere](https://github.com/romainlorrilliere) 
 - ECAD URL has moved, this is now functional again -sorry- :cat:
 
 #### Suggested citation for the climateExtract package
 
-Schmucki R. (2020) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D . R package version 1.21.0. https://github.com/RetoSchmucki/climateExtract
+Schmucki R. (2020) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.21.0. https://github.com/RetoSchmucki/climateExtract
 
 
 #### Installation
@@ -24,30 +29,30 @@ install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")
 ```
 
-This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `ncdf4` can be installed directly from CRAN. *Windows* users should refer to the instructions available at http://cirrus.ucsd.edu/~pierce/ncdf/ and install the `ncdf4` package manually from the appropriate `.zip` file.
+This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `ncdf4` can be installed directly from CRAN. For *Windows* users, if CRAN installation does not work, refer to the instructions available at http://cirrus.ucsd.edu/~pierce/ncdf/ and install the `ncdf4` package manually from the appropriate `.zip` file, note the latest version (v1.17) is available on CRAN https://cran.r-project.org/web/packages/ncdf4/index.html.
 
-**Windows users** also need to install a tool to unzip the file from your command prompt. So to make it easy and cross-platform, I rely on Rtools that is available for download from [here] (https://cran.r-project.org/bin/windows/Rtools/index.html). The Rtools installer should install it in "C:\Rtools\bin". This need to be added to your PATH environment variable (if you forgot how to do this, follow the [instruction here](http://www.computerhope.com/issues/ch000549.htm)). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system("gzip -h"). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to  go and extract some climate data! Well, almost... you might encounter some issues related to R's memory limit under Windows. This is partly my fault as I did not pay much attention to this while coding under UNIX systems (Linux or Mac). But slowly, I am working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround the memory issue under Windows and this is by extracting a smaller chunk of data at the time (see point no.5 below).
+**Windows users** also need to install a tool to unzip the file from your command prompt. To make it easy and cross-platform, I rely on Rtools that is available for download from [here] (https://cran.r-project.org/bin/windows/Rtools/index.html). The Rtools installer should install it in "C:\Rtools\bin". This need to be added to your PATH environment variable (if you forgot how to do this, follow the [instruction here](http://www.computerhope.com/issues/ch000549.htm)). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system("gzip -h"). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to go and extract some climate data! Well, almost as you might encounter some issues related to R's memory limit under Windows. I am slowly working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround the memory issue under Windows, and this is by extracting a smaller chunk of data at the time (see point no.5 below).
 
 
 **Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).**
 **Note** that shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
-**Data available at 0.1 deg regular grid are ca. 5GB and can be difficult to handle with this framework. However, 0.25deg seem to be working.**
+** Data available at 0.1 deg regular grid are ca. 5GB and can be challenging to handle with this framework. However, 0.25deg seem to be working.**
 
-**You could download the high-resolution grid and subset the area of interest to build a manageable dataset, I am working on some alternatives but this will depend on my inspiration and time.**
+**You could download the high-resolution grid and subset the area of interest to build a manageable dataset, I am working on some alternatives, but this will depend on my inspiration and time.**
 
 #### Example
 
 You can get your climate data from the web repository https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles and decompress the data to extract the `.nc` file.
 
-Or you can use the function `extract_nc_value()` to download the data directly by setting the parameter local_file to FALSE and adding the details of the data you want to be extracted.
+Or you can use the function `extract_nc_value()` to download the Data directly by setting the parameter local_file to FALSE and adding the details of the Data you want to be extracted.
 
-**1.** To extract climate values for a specific time period, use the function `extract_nc_value()`. By default this function will open an interactive window asking you to select a local `.nc` file from which you want the data to extract from, in this case you just have to specify the firs and the last years of the time period you are interested.
+**1.** To extract climate values for a specific time period, use the function `extract_nc_value()`. By default this function will open an interactive window asking you to select a local `.nc` file from which you want the data to extract from, in this case, you need to specify the first and the last years of the period you are interested.
 ```R
 library(climateExtract)
 climate_data <- extract_nc_value(2012,2015)
 ```
-**2.** If you don't have a local .nc file, you can ask the function to download the desired data directly from the web repository.
+**2.** If you don't have a local .nc file, you can ask the function to download the desired Data directly from the web repository.
 
 ```R
 climate_data <- extract_nc_value(2012, 2015, local_file = FALSE, clim_variable = 'precipitation', grid_size = 0.25)
@@ -63,13 +68,13 @@ climate_data <- extract_nc_value(2012, 2015, local_file = FALSE, clim_variable =
 * 0.25 extract a grid with a 0.25-degree resolution
 * 0.10 extract a grid with a 0.10-degree resolution
 
-**3.** To compute summary value of the daily values, use the function `temporal_mean()` for temperature or `temporal_sum()` for precipitation . This function computes the mean for a specified time period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. **NOTE** This function use the data extracted with the function `extract_nc_value`.
+**3.** To compute summary value of the daily values, use the function `temporal_mean()` for temperature or `temporal_sum()` for precipitation . This function computes the mean for a specified period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. **NOTE** This function use the data extracted with the function `extract_nc_value`.
 
 ```
 annual_mean <- temporal_mean(climate_data,"annual")
 monthly_sum <- temporal_sum(climate_data,"monthly")
 ```
-**4.** To extract the weather data for a set of specific locations (points), use the function `point_grid_extract()`. With this function, you can extracts either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a `data.frame` with the coordinates of the points in a degree decimal format and using the epsg projection 4326 - **wgs 84**
+**4.** To extract the weather data for a set of specific locations (points), use the function `point_grid_extract()`. With this function, you can extract either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a `data.frame` with the coordinates of the points in a degree decimal format and using the epsg projection 4326 - **wgs 84**
 
 ```
 point_coord <- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
