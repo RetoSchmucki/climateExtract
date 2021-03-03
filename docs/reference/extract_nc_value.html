@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="extract_nc_value — extract_nc_value" />
-<meta property="og:description" content="This function extract climate data from NETCDF file produced by the European Climate Assesment &amp;amp; Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles" />
+<meta property="og:description" content="Function to extract climate data from NETCDF file produced by the European Climate Assessment &amp;amp; Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.21.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.0</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -109,14 +109,15 @@
     </div>
 
     <div class="ref-description">
-    <p>This function extract climate data from NETCDF file produced by the European Climate Assesment &amp; Dataset for a specific time-period and available at http://www.ecad.eu/download/ensembles/download.php#datafiles</p>
+    <p>Function to extract climate data from NETCDF file produced by the European Climate Assessment &amp; Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</p>
     </div>
 
     <pre class="usage"><span class='fu'>extract_nc_value</span><span class='op'>(</span>
-  first.year <span class='op'>=</span> <span class='cn'>NULL</span>,
-  last.year <span class='op'>=</span> <span class='cn'>NULL</span>,
+  first_year <span class='op'>=</span> <span class='cn'>NULL</span>,
+  last_year <span class='op'>=</span> <span class='cn'>NULL</span>,
   local_file <span class='op'>=</span> <span class='cn'>TRUE</span>,
   file_path <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sml_chunk <span class='op'>=</span> <span class='cn'>NULL</span>,
   clim_variable <span class='op'>=</span> <span class='st'>"mean temp"</span>,
   statistic <span class='op'>=</span> <span class='st'>"mean"</span>,
   grid_size <span class='op'>=</span> <span class='fl'>0.25</span>
@@ -126,11 +127,11 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>first.year</th>
+      <th>first_year</th>
       <td><p>a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL</p></td>
     </tr>
     <tr>
-      <th>last.year</th>
+      <th>last_year</th>
       <td><p>a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL</p></td>
     </tr>
     <tr>
@@ -142,22 +143,30 @@
       <td><p>string defining the path of the local file (works only if local_file = TRUE), default=NULL</p></td>
     </tr>
     <tr>
+      <th>sml_chunk</th>
+      <td><p>string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"</p></td>
+    </tr>
+    <tr>
       <th>clim_variable</th>
       <td><p>string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"</p></td>
     </tr>
     <tr>
       <th>statistic</th>
-      <td><p>string defining the metric to retreave, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields. The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90% uncertainty range. For more details see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</p></td>
+      <td><p>string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
+The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90% uncertainty range. For more details 
+see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</p></td>
     </tr>
     <tr>
       <th>grid_size</th>
-      <td><p>numeric value in degree defining the resolution of the grid, 0.25 (ca. xx meters) or 0.1 (ca. xx meters), default=0.25</p></td>
+      <td><p>numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. If first.year and last.year are not provided, the function extract the full data set</p>
+    <p>This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
+If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
+can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Reto Schmucki</p>
