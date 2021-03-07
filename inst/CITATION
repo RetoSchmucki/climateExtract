@@ -1,0 +1,11 @@
+citHeader("To cite climateExtract in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D",
+  author   = "Reto Schmucki",
+  journal  = "R package version 1.22.0.",
+  year     = "2021",
+  url      = "https://github.com/RetoSchmucki/climateExtract",
+  textVersion = paste("Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.22.0. https://github.com/RetoSchmucki/climateExtract")
+)

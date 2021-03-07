@@ -25,7 +25,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
-          print("select your climate file [.nc]")
+          print("select your climate file [.nc] or use \"local_file=FALSE\" to access online data")
           nc.ncdf <- ncdf4::nc_open(file.choose())
       } else {
           nc.ncdf <- ncdf4::nc_open(file_path)
