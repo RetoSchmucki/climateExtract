@@ -10,6 +10,7 @@ extract_nc_value(
   local_file = TRUE,
   file_path = NULL,
   sml_chunk = NULL,
+  spatial_extent = NULL,
   clim_variable = "mean temp",
   statistic = "mean",
   grid_size = 0.25,
@@ -26,6 +27,8 @@ extract_nc_value(
 \item{file_path}{string defining the path of the local file (works only if local_file = TRUE), default=NULL}
 
 \item{sml_chunk}{string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"}
+
+\item{spatial_extent}{spatial extent to extract data, can be an "sf" or an "sp" object or a vector with 4 values defining the bounding box c(xmin, ymax, xmax, ymax), if NULL the entire extent is extracted}
 
 \item{clim_variable}{string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"}
 

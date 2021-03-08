@@ -10,6 +10,7 @@
 #' @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
 #' @param file_path string defining the path of the local file (works only if local_file = TRUE), default=NULL
 #' @param sml_chunk string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"
+#' @param spatial_extent spatial extent to extract data, can be an "sf" or an "sp" object or a vector with 4 values defining the bounding box c(xmin, ymax, xmax, ymax), if NULL the entire extent is extracted
 #' @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
 #' @param statistic string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
 #' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
@@ -21,14 +22,17 @@
 #' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
 #' can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
 #' @import ncdf4
-#' @import chron
+#' @import lubridate
+#' @import sf
 #' @import utils
 #' @export extract_nc_value
 #'
 
-extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, clim_variable="mean temp", statistic="mean", grid_size=0.25, ecad_v = NULL) {
+extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, spatial_extent=NULL,  clim_variable="mean temp", statistic="mean", grid_size=0.25, ecad_v = NULL) {
 
-  if (is.null(ecad_v)){ ecad_v = ecad_version}
+  if (is.null(ecad_v)){ 
+    ecad_v = ecad_version
+  }
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
@@ -37,51 +41,72 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
       } else {
           nc.ncdf <- ncdf4::nc_open(file_path)
           }
-  } else {
+  }else{
   nc.ncdf <- get_nc_online(first_year = first_year, last_year = last_year, sml_chunk = sml_chunk, clim_variable = clim_variable, statistic = statistic, grid_size = grid_size, ecad_v = ecad_v)
   }
-  
-  lon <- ncdf4::ncvar_get(nc.ncdf,"longitude")
-  lat <- ncdf4::ncvar_get(nc.ncdf,"latitude")
-  nlon <- dim(lon)
-  nlat <- dim(lat)
+
+  lon <- ncdf4::ncvar_get(nc.ncdf, "longitude")
+  lat <- ncdf4::ncvar_get(nc.ncdf, "latitude")
   nc_var <- names(nc.ncdf$var)
-  nc_varname <- ncdf4::ncatt_get(nc.ncdf, nc_var,"long_name")$value
-
-  # set day since in the data
-  day_since <- ncdf4::ncatt_get(nc.ncdf,"time")$units
-  timeserie_length <- length(ncdf4::ncvar_get(nc.ncdf,"time"))
+  nc_varname <- ncdf4::ncatt_get(nc.ncdf, nc_var, "long_name")$value
+  day_since <- ncdf4::ncatt_get(nc.ncdf, "time")$units
+  day_vals <- ncdf4::ncvar_get(nc.ncdf, "time")
   fillvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "_FillValue")
-  day_vals <- ncdf4::ncvar_get(nc.ncdf,"time")
+  date_seq <- lubridate::ymd(as.Date(gsub("days since ", "", day_since, fixed = TRUE))) + day_vals
+  res <- lon[2] - lon[1]
 
-  init_year <- as.numeric(strsplit(unlist(strsplit(gsub('days since ','',day_since),'-',fixed=TRUE)),' ',fixed=TRUE)[[1]][1])
-  init_month <- as.numeric(strsplit(unlist(strsplit(gsub('days since ','',day_since),'-',fixed=TRUE)),' ',fixed=TRUE)[[2]][1])
-  init_day <- as.numeric(strsplit(unlist(strsplit(gsub('days since ','',day_since),'-',fixed=TRUE)),' ',fixed=TRUE)[[3]][1])
+  if(is.null(first_year)){
+  start_date <- date_seq[1]
+  }else{
+  start_date <- lubridate::ymd(as.Date(paste0(first_year, "-01-01")))
+  }
+  if(is.null(last_year)){
+  end_date <- rev(date_seq)[1]
+  }else{
+  end_date <- lubridate::ymd(as.Date(paste0(last_year, "-12-31")))
+  }
+  time_toget <- which(date_seq >= start_date & date_seq <= end_date)  
+  ext_ <- c()
+  if(!is.null(spatial_extent)){
+    if(class(spatial_extent) == "bbox"){
+    ext_ <- spatial_extent
+    }else{
+    if (class(spatial_extent) %in% c("sf", "SpatialPolygonsDataFrame", "SpatialPointsDataFrame")) {
+      ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
+    }else{
+      if(class(spatial_extent) == "numeric" & length(spatial_extent) == 4){
+        if(sum(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent)) == 4){
+          ext_ <- sf::st_bbox(c(xmin = spatial_extent$xmin,
+                                ymin = spatial_extent$ymin,
+                                xmax = spatial_extent$xmax,
+                                ymax = spatial_extent$ymax))
+          }else{
+          ext_ <- sf::st_bbox(c(xmin = spatial_extent[1],
+                                ymin = spatial_extent[2],
+                                xmax = spatial_extent[3],
+                                ymax = spatial_extent[4]))
+          }
+      }
+    }
+    if(class(ext_) != "bbox"){
+      stop("spatial_extent must be an sf, a spatial or a vector with four values c(xmin, ymin, xmax, ymax)")
+    }
+    }
+    lon_toget <- which(lon >= (ext_$xmin-res) & lon <= (ext_$xmax+res))
+    lat_toget <- which(lat >= (ext_$ymin-res) & lat <= (ext_$ymax+res))
+  }else{
+    lon_toget <- seq_along(lon)
+    lat_toget <- seq_along(lat)
+  }
 
-  avg_temp_transect <- data.frame(julianday=day_vals)
-  avg_temp_transect$day <- chron::month.day.year(avg_temp_transect$julianday, c(month = init_month, day =init_day, year = init_year))$day
-  avg_temp_transect$month <- chron::month.day.year(avg_temp_transect$julianday, c(month = init_month, day =init_day, year = init_year))$month
-  avg_temp_transect$year <- chron::month.day.year(avg_temp_transect$julianday, c(month = init_month, day =init_day, year = init_year))$year
-
-  if (is.null(first_year)){ first_year <- min(avg_temp_transect$year)}
-  if (is.null(last_year)){ last_year <- max(avg_temp_transect$year)}
-
-  first.month <- head(avg_temp_transect$month[avg_temp_transect$year==first_year],1)
-  first.day <- head(avg_temp_transect$day[avg_temp_transect$year==first_year],1)
-  last.month <- tail(avg_temp_transect$month[avg_temp_transect$year==last_year],1)
-  last.day <- tail(avg_temp_transect$day[avg_temp_transect$year==last_year],1)
-
-  firstday <- avg_temp_transect$julianday[avg_temp_transect$day==first.day&avg_temp_transect$month==first.month&avg_temp_transect$year==first_year]
-
-  lastday <- avg_temp_transect$julianday[avg_temp_transect$day==last.day&avg_temp_transect$month==last.month&avg_temp_transect$year==last_year]
-
-  date_extract <- avg_temp_transect[avg_temp_transect$julianday >= firstday & avg_temp_transect$julianday <= lastday,]
-  date_extract <- as.Date(paste(date_extract$day,date_extract$month,date_extract$year,sep="/"), "%d/%m/%Y")
-
-  tmp.array <- ncdf4::ncvar_get(nc.ncdf,nc_var,start=c(1,1,which(day_vals==firstday)),count=c(nlon,nlat,(lastday-firstday)+1))
+  tmp.array <- ncdf4::ncvar_get(nc.ncdf, nc_var, start = c(lon_toget[1], lat_toget[1], time_toget[1]), count = c(length(lon_toget), length(lat_toget), length(time_toget)))
   tmp.array[tmp.array == fillvalue$value] <- NA
 
-  result <- list(variable_name=nc_varname,value_array=tmp.array,longitude=lon,latitude=lat,date_extract=date_extract)
+  result <- list(variable_name = nc_varname,
+                value_array = tmp.array,
+                longitude = lon[lon_toget],
+                latitude = lat[lat_toget],
+                date_extract = date_seq[time_toget])
 
   return(result)
 }
@@ -178,9 +203,10 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
 #' @export temporal_mean
 #'
 
-temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_length=30) {
+temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"), win_length = 30) {
 
-  result <- list(longitude=data_nc$longitude,latitude=data_nc$latitude)
+  result <- list(longitude = data_nc$longitude, 
+                 latitude = data_nc$latitude)
 
   first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
   last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
@@ -193,7 +219,7 @@ temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_
       annual.mean[,,y-(first_year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),mean,na.rm=T)
       year_list <- c(year_list,y)
     }
-    annual.mean <- list(value_array=annual.mean,date_extract=year_list,longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
+    annual.mean <- list(value_array=annual.mean,date_extract=year_list,variable_name=data_nc$variable_name)
     result <- c(result,annual.mean)
   }
 
@@ -203,24 +229,28 @@ temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_
     monthly.mean <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),length(year_month)))
 
     for (ym in year_month) {
-      monthly.mean[,,which(year_month==ym)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y%m"))==ym],c(1,2),mean,na.rm=T)
+      monthly.mean[,, which(year_month == ym)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y%m"))==ym],c(1,2),mean,na.rm=T)
     }
-    monthly.mean <- list(value_array=monthly.mean,date_extract=year_month,year_month=data.frame(year=substr(year_month,1,4),month=substr(year_month,5,6))
-                         ,longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
+    monthly.mean <- list(value_array = monthly.mean,
+                         date_extract = year_month,
+                         year_month = data.frame(year = substr(year_month, 1, 4),
+                                                 month = substr(year_month, 5, 6)),
+                         variable_name = data_nc$variable_name)
+
     result <- c(result,monthly.mean)
   }
-
 
   if ("window" %in% time_avg) {
 
     roll.mean <- apply(data_nc$value_array[,,],c(1,2),zoo::rollmean,k=win_length,na.rm=T)
     roll.mean <- aperm(roll.mean, c(2,3,1))
-    roll.mean <- list(value_array=roll.mean,date_extract=data_nc$date_extract[-c(1:(win_length-1))],longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
+    roll.mean <- list(value_array = roll.mean,
+                      date_extract = data_nc$date_extract[-c(1:(win_length-1))],
+                      variable_name = data_nc$variable_name)
     result <- c(result,roll.mean)
     }
 
   return(result)
-
 }
 
 #' temporal_sum
@@ -235,7 +265,7 @@ temporal_mean <- function(data_nc, time_avg=c("annual","monthly","window"), win_
 #' @export temporal_sum
 #'
 
-temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_length=30) {
+temporal_sum <- function(data_nc, time_sum=c("annual", "monthly", "window"), win_length=30) {
 
   result <- list(longitude=data_nc$longitude,latitude=data_nc$latitude)
 
@@ -244,14 +274,19 @@ temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_l
 
   if ("annual" %in% time_sum){
 
-    annual.sum <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),(last_year-first_year)+1))
+    annual.sum <- array(NA, c(length(data_nc$longitude), length(data_nc$latitude), (last_year-first_year)+1))
     year_list <- c()
     for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
       annual.sum[,,y-(first_year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),sum,na.rm=F)
       year_list <- c(year_list,y)
     }
-    annual.sum <- list(value_array=annual.sum,date_extract=year_list,longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
-    result <- c(result,annual.sum)
+    annual.sum <- list(value_array = annual.sum,
+                       date_extract = year_list,
+                       longitude = data_nc$longitude,
+                       latitude = data_nc$latitude,
+                       variable_name = data_nc$variable_name)
+
+    result <- c(result, annual.sum)
   }
 
   if ("monthly" %in% time_sum) {
@@ -262,8 +297,11 @@ temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_l
     for (ym in year_month) {
       monthly.sum[,,which(year_month==ym)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y%m"))==ym],c(1,2),sum,na.rm=F)
     }
-    monthly.sum <- list(value_array=monthly.sum,date_extract=year_month,year_month=data.frame(year=substr(year_month,1,4),month=substr(year_month,5,6))
-                         ,longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
+    monthly.sum <- list(value_array = monthly.sum,
+                        date_extract = year_month,
+                        year_month = data.frame(year = substr(year_month, 1, 4),
+                                                month = substr(year_month, 5, 6)),
+                        variable_name = data_nc$variable_name)
     result <- c(result,monthly.sum)
   }
 
@@ -272,12 +310,13 @@ temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_l
 
     roll.sum <- apply(data_nc$value_array[,,],c(1,2),zoo::rollsum,k=win_length,na.rm=F)
     roll.sum <- aperm(roll.sum, c(2,3,1))
-    roll.sum <- list(value_array=roll.sum,date_extract=data_nc$date_extract[-c(1:(win_length-1))],longitude=data_nc$longitude,latitude=data_nc$latitude,variable_name=data_nc$variable_name)
+    roll.sum <- list(value_array = roll.sum,
+                    date_extract = data_nc$date_extract[-c(1:(win_length-1))],
+                    variable_name = data_nc$variable_name)
     result <- c(result,roll.sum)
   }
 
   return(result)
-
 }
 
 #' get_thepoint Function
@@ -290,10 +329,9 @@ temporal_sum <- function(data_nc, time_sum=c("annual","monthly","window"), win_l
 #' @export get_thepoint
 #'
 
-get_thepoint <- function(x,nc_index){
-  value_vect <- x[nc_index$x_index,nc_index$y_index,]
+get_thepoint <- function(x, nc_index){
+  value_vect <- x[nc_index$x_index, nc_index$y_index,]
 }
-
 
 #' point_grid_extract
 #'
@@ -306,7 +344,7 @@ get_thepoint <- function(x,nc_index){
 #' @export point_grid_extract
 #'
 
-point_grid_extract <- function(data_nc,point_coord) {
+point_grid_extract <- function(data_nc, point_coord) {
 
   ## Get the layer with the widest spatial extent in the data
   na.profile <- apply(data_nc$value_array,3,function(x) sum(!is.na(x)))
