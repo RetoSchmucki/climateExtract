@@ -308,8 +308,8 @@ temporal_sum <- function(data_nc, time_sum=c("annual", "monthly", "window"), win
 
   if ("window" %in% time_sum) {
 
-    roll.sum <- apply(data_nc$value_array[,,],c(1,2),zoo::rollsum,k=win_length,na.rm=F)
-    roll.sum <- aperm(roll.sum, c(2,3,1))
+    roll.sum <- apply(data_nc$value_array[,,], c(1, 2), zoo::rollsum, k = win_length, na.rm = F)
+    roll.sum <- aperm(roll.sum, c(2, 3, 1))
     roll.sum <- list(value_array = roll.sum,
                     date_extract = data_nc$date_extract[-c(1:(win_length-1))],
                     variable_name = data_nc$variable_name)
@@ -347,49 +347,59 @@ get_thepoint <- function(x, nc_index){
 point_grid_extract <- function(data_nc, point_coord) {
 
   ## Get the layer with the widest spatial extent in the data
-  na.profile <- apply(data_nc$value_array,3,function(x) sum(!is.na(x)))
-  max_extent <- which(na.profile==max(na.profile))[1]
+  na.profile <- apply(data_nc$value_array, 3, function(x) sum(!is.na(x)))
+  max_extent <- which(na.profile == max(na.profile))[1]
 
-  lonlat <- expand.grid(data_nc$longitude,data_nc$latitude)
-  tmp.vec <- as.vector(data_nc$value_array[,,max_extent])
-  tmp.df01 <- data.frame(cbind(lonlat,tmp.vec))
-  names(tmp.df01) <- c("lon","lat",data_nc$variable_name)
-  tmp.df_noNA <- tmp.df01[!is.na(tmp.df01[,3]) ,]
+  lonlat <- expand.grid(data_nc$longitude, data_nc$latitude)
+  tmp.vec <- as.vector(data_nc$value_array[, , max_extent])
+  tmp.df01 <- data.frame(cbind(lonlat, tmp.vec))
+  names(tmp.df01) <- c("lon", "lat", data_nc$variable_name)
+  tmp.df_noNA <- tmp.df01[!is.na(tmp.df01[, 3]),]
 
   # get index of closest point in the climate grid
-  nc_index<-data.frame(site_id=NA,gr.longitude=NA,gr.latitude=NA,x_index=NA,y_index=NA,pt.x_coord=NA,pt.y_coord=NA)
+  nc_index<-data.frame(site_id = NA,
+                      gr.longitude = NA,
+                      gr.latitude = NA,
+                      x_index = NA,
+                      y_index = NA,
+                      pt.x_coord = NA,
+                      pt.y_coord = NA)
 
-  pb <- tcltk::tkProgressBar(title = "progress bar", min = 0,max = dim(point_coord)[1], width = 300)
+  pb <- tcltk::tkProgressBar(title = "progress bar", min = 0, max = dim(point_coord)[1], width = 300)
 
-  point_coord <- point_coord[,c("site_id","longitude","latitude")]
+  point_coord <- point_coord[,c("site_id", "longitude", "latitude")]
 
   for (i in 1:dim(point_coord)[1]){
     tcltk::setTkProgressBar(pb, i, label=paste( round(i/dim(point_coord)[1]*100, 0),"% extracted"))
 
     nnindex<-FNN::get.knnx(tmp.df_noNA[,-3],point_coord[i,-1],1)
 
-    nc_index <- rbind(nc_index,data.frame(site_id=as.character(point_coord$site_id[i]),gr.longitude=tmp.df_noNA[nnindex$nn.index,-3]$lon,gr.latitude=tmp.df_noNA[nnindex$nn.index,-3]$lat,
-                                          x_index=which(data_nc$longitude == tmp.df_noNA[nnindex$nn.index,-3]$lon),y_index=which(data_nc$latitude ==tmp.df_noNA[nnindex$nn.index,-3]$lat),
-                                          pt.x_coord=point_coord$lon[i],pt.y_coord=point_coord$lat[i]))
+    nc_index <- rbind(nc_index, data.frame(site_id = as.character(point_coord$site_id[i]),
+                                          gr.longitude = tmp.df_noNA[nnindex$nn.index,-3]$lon,
+                                          gr.latitude = tmp.df_noNA[nnindex$nn.index,-3]$lat,
+                                          x_index = which(data_nc$longitude == tmp.df_noNA[nnindex$nn.index,-3]$lon),
+                                          y_index = which(data_nc$latitude ==tmp.df_noNA[nnindex$nn.index,-3]$lat),
+                                          pt.x_coord = point_coord$lon[i],
+                                          pt.y_coord = point_coord$lat[i]))
   }
   nc_index <- nc_index[-1,]
 
   close(pb)
 
-  pb <- tcltk::tkProgressBar(title = "progress bar", min = 0,max = length(nc_index$site_id), width = 300)
+  pb <- tcltk::tkProgressBar(title = "progress bar", min = 0, max = length(nc_index$site_id), width = 300)
 
   result <- data.frame()
 
   for (p in 1:length(nc_index$site_id)){
-    tcltk::setTkProgressBar(pb, p, label=paste( round(p/length(nc_index$site_id)*100, 0),"% extracted"))
-    result1 <- get_thepoint(data_nc$value_array,nc_index[p,])
-    result <- rbind(result,result1)
+    tcltk::setTkProgressBar(pb, p, label = paste( round(p / length(nc_index$site_id) * 100, 0), "% extracted"))
+    result1 <- get_thepoint(data_nc$value_array, nc_index[p,])
+    result <- rbind(result, result1)
   }
 
   result <- as.data.frame(t(result))
   names(result) <- nc_index$site_id
   result$date_extract <- data_nc$date_extract
-  result <- result[,c(dim(result)[2],c(1:(dim(result)[2]-1)))]
+  result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
 
   close(pb)
 
