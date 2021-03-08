@@ -10,7 +10,8 @@ get_nc_online(
   sml_chunk = sml_chunk,
   clim_variable = clim_variable,
   statistic = statistic,
-  grid_size = grid_size
+  grid_size = grid_size,
+  ecad_v = ecad_v
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ The spread is calculated as the difference between the 5th and 95th percentiles 
 see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
 
 \item{grid_size}{numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25}
+
+\item{ecad_v}{ECA&D data version, default = package version.}
 }
 \description{
 Function to retrieve climate data from https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php

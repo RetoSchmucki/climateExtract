@@ -1,3 +1,7 @@
+#' version of ECA&D to use
+#' @format character string (e.g. "22.0")
+"ecad_version"
+
 #' extract_nc_value
 #'
 #' Function to extract climate data from NETCDF file produced by the European Climate Assessment & Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
@@ -11,6 +15,7 @@
 #' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
 #' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
 #' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
+#' @param ecad_v ECA&D data version, default = package version.
 #' @author Reto Schmucki
 #' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
 #' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
@@ -21,7 +26,9 @@
 #' @export extract_nc_value
 #'
 
-extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, clim_variable="mean temp", statistic="mean", grid_size=0.25) {
+extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, clim_variable="mean temp", statistic="mean", grid_size=0.25, ecad_v = NULL) {
+
+  if (is.null(ecad_v)){ ecad_v = ecad_version}
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
@@ -31,7 +38,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
           nc.ncdf <- ncdf4::nc_open(file_path)
           }
   } else {
-  nc.ncdf <- get_nc_online(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size)
+  nc.ncdf <- get_nc_online(first_year = first_year, last_year = last_year, sml_chunk = sml_chunk, clim_variable = clim_variable, statistic = statistic, grid_size = grid_size, ecad_v = ecad_v)
   }
   
   lon <- ncdf4::ncvar_get(nc.ncdf,"longitude")
@@ -90,6 +97,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
 #' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
 #' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
 #' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
+#' @param ecad_v ECA&D data version, default = package version.
 #' @author Reto Schmucki
 #' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
 #' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
@@ -98,7 +106,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
 #' @import utils
 #' @export get_nc_online
 #'
-get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size){
+get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size, ecad_v = ecad_v){
 
   if(is.null(sml_chunk)){
   
@@ -114,11 +122,11 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
 
     if (first_year >= 2011) {
          year_toget <- "2011-2020_"
-         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
+         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
          dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
      } else {
-        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_v22.0e.nc")
-        dest_file <- paste0(clim_var,"_",grid_size,"_reg_v22.0e.nc")
+        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_v", ecad_v,"e.nc")
+        dest_file <- paste0(clim_var, "_", grid_size, "_reg_v", ecad_version, "e.nc")
      }
   } else {
     if(!sml_chunk %in% c("2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964")){
@@ -137,8 +145,8 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
-         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v22.0e.nc")
-         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
+         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
+         dest_file <- paste0(clim_var, "_", grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
     }
   }
     x <- "N"

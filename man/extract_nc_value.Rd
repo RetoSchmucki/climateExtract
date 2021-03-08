@@ -12,7 +12,8 @@ extract_nc_value(
   sml_chunk = NULL,
   clim_variable = "mean temp",
   statistic = "mean",
-  grid_size = 0.25
+  grid_size = 0.25,
+  ecad_v = NULL
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ The spread is calculated as the difference between the 5th and 95th percentiles 
 see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
 
 \item{grid_size}{numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25}
+
+\item{ecad_v}{ECA&D data version, default = package version.}
 }
 \description{
 Function to extract climate data from NETCDF file produced by the European Climate Assessment & Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
