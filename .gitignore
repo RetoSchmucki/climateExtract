@@ -3,4 +3,5 @@
 .RData
 *.nc
 *.rds
+temp/*
 

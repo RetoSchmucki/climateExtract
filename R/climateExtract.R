@@ -17,6 +17,9 @@
 #' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
 #' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
 #' @param ecad_v ECA&D data version, default = package version.
+#' @param write_raster logical, if TRUE the output will be written in a multilayer raster file
+#' @param out character string with the filename for the output raster, if null data will be written in climateExtract_raster.grd 
+#' @param return_data logical, if TRUE the data resulting from the extract will be stored in the object, if false, only the filename of the raster and the name of the layers are returned in a list, only if write_out is TRUE. 
 #' @author Reto Schmucki
 #' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
 #' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
@@ -28,7 +31,9 @@
 #' @export extract_nc_value
 #'
 
-extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, spatial_extent=NULL,  clim_variable="mean temp", statistic="mean", grid_size=0.25, ecad_v = NULL) {
+extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, spatial_extent=NULL, 
+                              clim_variable="mean temp", statistic="mean", grid_size=0.25, ecad_v = NULL, write_raster = FALSE, out = NULL,
+                              return_data = TRUE, ...) {
 
   if (is.null(ecad_v)){ 
     ecad_v = ecad_version
@@ -42,7 +47,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
           nc.ncdf <- ncdf4::nc_open(file_path)
           }
   }else{
-  nc.ncdf <- get_nc_online(first_year = first_year, last_year = last_year, sml_chunk = sml_chunk, clim_variable = clim_variable, statistic = statistic, grid_size = grid_size, ecad_v = ecad_v)
+  nc.ncdf <- get_nc_online(first_year = first_year, last_year = last_year, sml_chunk = sml_chunk, clim_variable = clim_variable, 
+                          statistic = statistic, grid_size = grid_size, ecad_v = ecad_v)
   }
 
   lon <- ncdf4::ncvar_get(nc.ncdf, "longitude")
@@ -108,7 +114,18 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
                 latitude = lat[lat_toget],
                 date_extract = date_seq[time_toget])
 
-  return(result)
+  if(write_raster == TRUE){
+    write_to_brick(result, out = out, ...)
+    if(is.null(out)){
+      out = "climateExtract_raster.grd"
+    }
+    print(paste0("writing our output file: ", out))
+  }
+  if(return_data == FALSE & write_raster == TRUE){
+    return(list(rasterFile = out, layersName = result$date_extract))
+  }else{
+    return(result)
+  }
 }
 
 #' get_nc_online
@@ -190,6 +207,41 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
 
   return(nc.ncdf)
 }
+
+#' write_to_brick
+#'
+#' Write results in a multilayer raster
+#' @param x object obtained from the extrat_nc_value() function corresponding to the time-period of interest
+#' @param out character string defining the filename to save (default extension is GeoTiff, ".tiff")
+#' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
+#' @details By default, this function overwrites file with the same name if existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
+#' @import raster
+#' @export write_to_brick
+#'
+ 
+write_to_brick <- function(x, out = out, ...) {
+  a <- x$value_array
+  ap <- aperm(a, c(2, 1, 3), resize = TRUE)
+  b <- raster::brick(
+                xmn = min(x$longitude),
+                ymn = min(x$latitude),
+                xmx = max(x$longitude),
+                ymx = max(x$latitude),
+                crs = 4326
+  )
+  dim(b) <- dim(ap[nrow(ap):1, , ])
+  b <- raster::setValues(b, ap[nrow(ap):1, , ])
+  names(b) <- as.character(x$date_extract)
+
+  if(!exists("overwrite")){
+    overwrite = TRUE
+  }
+  if(is.null(out)){
+    out = "climateExtract_raster.grd"
+  }
+   raster::writeRaster(b, filename = out, overwrite = overwrite, ...)
+}
+
 
 #' temporal_mean
 #'
