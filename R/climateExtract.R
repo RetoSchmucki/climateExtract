@@ -242,6 +242,110 @@ write_to_brick <- function(x, out = out, ...) {
    raster::writeRaster(b, filename = out, overwrite = overwrite, ...)
 }
 
+#' temporal_aggregate
+#'
+#' This function compute mean climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from an object obtained from the extrat_nc_value() function
+#' @param x object obtained from the extrat_nc_value() function or rasterBrick with date layers
+#' @param y point to extract values, must be a sf or spatialPointDataFrame object (sp)
+#' @param agg_function function used to aggregate data, "mean" or "sum"
+#' @param variable_name character string to identify the resulting variable
+#' @param time_step character string defining the level of averaging, "annual" or "monthly"
+#' @author Reto Schmucki
+#' @details the output of this function is a multilayer raster if no point are supplied in y or a data.table when points are provided in y
+#' @import data.table
+#' @export temporal_aggregate
+#'
+
+
+temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name = "average temp", time_step = c("annual", "monthly")){
+
+  if(class(x)[1] != "RasterBrick"){
+    if(length(dim(x$value_array)) != 3){
+      stop("x must be a rasterBrick object or an output from the extrat_nc_value() function")
+    }
+    a <- x$value_array
+    ap <- aperm(a, c(2, 1, 3), resize = TRUE)
+    a <- raster::brick(
+                  xmn = min(x$longitude),
+                  ymn = min(x$latitude),
+                  xmx = max(x$longitude),
+                  ymx = max(x$latitude),
+                  crs = 4326
+    )
+    dim(a) <- dim(ap[nrow(ap):1, , ])
+    a <- raster::setValues(a, ap[nrow(ap):1, , ])
+    names(a) <- as.character(x$date_extract)
+    x <- a
+  }
+
+  Date_seq <- lubridate::ymd(gsub("X", "", names(x)))
+  date_dt <- data.table::data.table(date = Date_seq, 
+                                    year = lubridate::year(Date_seq),
+                                    month = lubridate::month(Date_seq),
+                                    day =lubridate::day(Date_seq) )
+
+  if(time_step == "annual"){
+    indices <- as.numeric(as.factor(date_dt$year))
+  }
+  if(time_step == "monthly"){
+    indices <- as.numeric(as.factor(paste0(date_dt$year, "_", date_dt$month)))
+  }
+
+  if(!is.null(y)){
+    if(!class(y)[1] %in% c("sf", "SpatialPointsDataFrame")) {stop("y must be a sf or a SpatialpointsDataFrame object")}
+    my_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
+    val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
+    if("site_id" %in% names(y)){
+      dimnames(val)[[1]] <- y$site_id
+    }else{
+      dimnames(val)[[1]] <- paste0("site_", seq_len(dim(y)[1]))
+    }
+    dt <- cbind(date_dt, t(as.matrix(val)))
+
+    if(time_step == "annual"){
+    if(agg_function == "mean"){
+      dt_agg <- dt[, lapply(.SD, function(x) mean(x, na.rm = TRUE)), by = .(year), .SDcols = dimnames(val)[[1]]]
+    }
+    if(agg_function == "sum"){ 
+    dt_agg <- dt[, lapply(.SD, function(x) sum(x, na.rm = TRUE)), by = .(year), .SDcols = dimnames(val)[[1]]]
+    }
+    dt_agg <- data.table::melt(dt_agg,
+                id.vars = c("year"),
+                measure.vars = patterns("site_"),
+                variable.name = "site",
+                value.name = c(paste0(agg_function, "_", variable_name)))
+    }
+
+    if(time_step == "monthly"){
+      if(agg_function == "mean"){
+        dt_agg <- dt[, lapply(.SD, function(x) mean(x, na.rm = TRUE)), by = .(year, month), .SDcols = dimnames(val)[[1]]]
+      }
+      if(agg_function == "sum"){  
+        dt_agg <- dt[, lapply(.SD, function(x) sum(x, na.rm = TRUE)), by = .(year, month), .SDcols = dimnames(val)[[1]]]
+      }
+    dt_agg <- data.table::melt(dt_agg,
+                id.vars = c("year", "month"),
+                measure.vars = patterns("site_"),
+                variable.name = "site",
+                value.name = c(paste0(agg_function, "_", variable_name)))
+    }
+
+    return(dt_agg)
+
+  }else{
+    x_agg <- terra::tapp(terra::rast(x), index = indices, fun = agg_function)
+
+    if(time_step == "annual"){
+      names(x_agg) <- unique(date_dt$year)
+    }
+
+    if(time_step == "monthly"){
+      names(x_agg) <- unique(paste0(date_dt$year, "_", date_dt$month))
+    }
+
+  return(x_agg) 
+  }
+}
 
 #' temporal_mean
 #'
