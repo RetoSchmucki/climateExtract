@@ -256,7 +256,6 @@ write_to_brick <- function(x, out = out, ...) {
 #' @export temporal_aggregate
 #'
 
-
 temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name = "average temp", time_step = c("annual", "monthly")){
 
   if(class(x)[1] != "RasterBrick"){
@@ -277,75 +276,110 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name
     names(a) <- as.character(x$date_extract)
     x <- a
   }
-
   Date_seq <- lubridate::ymd(gsub("X", "", names(x)))
   date_dt <- data.table::data.table(date = Date_seq, 
                                     year = lubridate::year(Date_seq),
                                     month = lubridate::month(Date_seq),
                                     day =lubridate::day(Date_seq) )
-
   if(time_step == "annual"){
     indices <- as.numeric(as.factor(date_dt$year))
   }
   if(time_step == "monthly"){
     indices <- as.numeric(as.factor(paste0(date_dt$year, "_", date_dt$month)))
   }
-
   if(!is.null(y)){
     if(!class(y)[1] %in% c("sf", "SpatialPointsDataFrame")) {stop("y must be a sf or a SpatialpointsDataFrame object")}
     my_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
+    
+    nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
+    my_cell <- nona_cell_res$nona_cell
+
     val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
     if("site_id" %in% names(y)){
-      dimnames(val)[[1]] <- y$site_id
+      site_id_ <- y$site_id
     }else{
-      dimnames(val)[[1]] <- paste0("site_", seq_len(dim(y)[1]))
+      site_id_ <- paste0("site_", seq_len(dim(y)[1]))
     }
+    
+    dimnames(val)[[1]] <- site_id_
+
     dt <- cbind(date_dt, t(as.matrix(val)))
-
     if(time_step == "annual"){
-    if(agg_function == "mean"){
-      dt_agg <- dt[, lapply(.SD, function(x) mean(x, na.rm = TRUE)), by = .(year), .SDcols = dimnames(val)[[1]]]
+      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), by = .(year), .SDcols = dimnames(val)[[1]]]
+      dt_agg <- data.table::melt(dt_agg,
+                  id.vars = c("year"),
+                  measure.vars = patterns("site_"),
+                  variable.name = "site",
+                  value.name = c(paste0(agg_function, "_", variable_name)))
     }
-    if(agg_function == "sum"){ 
-    dt_agg <- dt[, lapply(.SD, function(x) sum(x, na.rm = TRUE)), by = .(year), .SDcols = dimnames(val)[[1]]]
-    }
-    dt_agg <- data.table::melt(dt_agg,
-                id.vars = c("year"),
-                measure.vars = patterns("site_"),
-                variable.name = "site",
-                value.name = c(paste0(agg_function, "_", variable_name)))
-    }
-
     if(time_step == "monthly"){
-      if(agg_function == "mean"){
-        dt_agg <- dt[, lapply(.SD, function(x) mean(x, na.rm = TRUE)), by = .(year, month), .SDcols = dimnames(val)[[1]]]
-      }
-      if(agg_function == "sum"){  
-        dt_agg <- dt[, lapply(.SD, function(x) sum(x, na.rm = TRUE)), by = .(year, month), .SDcols = dimnames(val)[[1]]]
-      }
-    dt_agg <- data.table::melt(dt_agg,
-                id.vars = c("year", "month"),
-                measure.vars = patterns("site_"),
-                variable.name = "site",
-                value.name = c(paste0(agg_function, "_", variable_name)))
+      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), by = .(year, month), .SDcols = dimnames(val)[[1]]]
+      dt_agg <- data.table::melt(dt_agg,
+                  id.vars = c("year", "month"),
+                  measure.vars = patterns("site_"),
+                  variable.name = "site",
+                  value.name = c(paste0(agg_function, "_", variable_name)))
     }
-
+    dt_dist <- data.table::data.table(site = site_id_[nona_cell_res[[2]]$gid], distance_from_pnt = round(nona_cell_res$dist_nona_cell, 0))
+    dt_agg <- merge(dt_agg, dt_dist, by = "site", all.x = TRUE)
     return(dt_agg)
-
   }else{
     x_agg <- terra::tapp(terra::rast(x), index = indices, fun = agg_function)
-
     if(time_step == "annual"){
       names(x_agg) <- unique(date_dt$year)
     }
-
     if(time_step == "monthly"){
       names(x_agg) <- unique(paste0(date_dt$year, "_", date_dt$month))
     }
-
   return(x_agg) 
   }
 }
+
+#' get_near_nona
+#'
+#' Return cell number of the nearest data point available in the the raster layer
+#' @param x raster object (raster, stack or brick)
+#' @param y point as sf or spatial ojbect
+#' @param x_cell cell id if already extracted, if not provide this will be computed
+#' @author Reto Schmucki
+#' @details Linking a raster cell id to each points and searching for the nearest cell with data if points are within a NA cell 
+#' @export get_near_nona
+#'
+
+get_near_nona <- function(x = x, y = y, x_cell = NULL){
+    
+    if(is.null(x_cell)){
+      x_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
+    }
+    wna <- which(is.na(terra::extract(x[[1]], x_cell)))
+    mc_na <- x_cell[wna]
+    if(length(mc_na) > 0){
+      near_cell <- c(rep(NA, length(mc_na)))
+      dist_cell <- c(rep(NA, length(mc_na)))
+      for(i in seq_along(mc_na)){
+        a <- mc_na[i]
+        row_fact <- c(ncol(x), 2*ncol(x), 3*ncol(x))
+        
+        ms1 <- c(a + c(-3:3) - row_fact[3],
+                a + c(-3:3) - row_fact[2],
+                a + c(-3:3) - row_fact[1],
+                a + c(-3:3),
+                a + c(-3:3) + row_fact[1],
+                a + c(-3:3) + row_fact[2],
+                a + c(-3:3) + row_fact[3])
+
+        ms2 <- ms1[which(!is.na(terra::extract(x[[1]], c(ms1))))]
+        dist_nonan_cell <- sf::st_distance(y[wna[i],], sf::st_as_sf(data.frame(terra::xyFromCell(x[[1]], c(ms2))), coords = c("x", "y"), crs = 4326))
+        near_cell[i] <- ms2[order(dist_nonan_cell)[1]]
+        dist_cell[i] <- dist_nonan_cell[order(dist_nonan_cell)[1]]
+      }
+    x_cell[wna] <- near_cell   
+    }
+    points_nacell <- y[wna,]
+    points_nacell$gid <- wna 
+ return(list(nona_cell = x_cell, points_nacell, dist_nona_cell = dist_cell))
+}
+
 
 #' temporal_mean
 #'
