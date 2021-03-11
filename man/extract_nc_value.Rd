@@ -69,6 +69,8 @@ data will be written in climateExtract_raster.grd}
 \item{return_data}{logical, if TRUE the data resulting from the extract will
 be stored in the object, if false, only the filename of the raster and the
 name of the layers are returned in a list, only if write_out is TRUE.}
+
+\item{...}{additional arguments for for writing files, see \link[raster]{writeRaster}}
 }
 \value{
 If 'write_raster' is TRUE, return a list with the path to raster 

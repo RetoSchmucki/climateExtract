@@ -1,5 +1,8 @@
 #' version of ECA&D to use
 #' @format character string (e.g. "22.0")
+#' \describe{
+#'   \item{ecad_version}{version number used to gather ECAD data}
+#' }
 "ecad_version"
 
 #' extract_nc_value
@@ -42,6 +45,7 @@
 #' @param return_data logical, if TRUE the data resulting from the extract will
 #'  be stored in the object, if false, only the filename of the raster and the
 #'  name of the layers are returned in a list, only if write_out is TRUE. 
+#' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
 #' @details By default, this function asks to select the ".nc" file from your
 #'  local disc, but this can be changed by setting the argument 'local_file' to
 #'  FALSE. When local_file is false, the nc file with data will be downloaded
@@ -59,6 +63,7 @@
 #' an 3D array with the value extracted, a vector with the longitude, a vector with
 #' latitude and a vector with date extracted.
 #' @author Reto Schmucki
+#' @importFrom methods as
 #' @export
 #'
 
@@ -112,14 +117,14 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
   time_toget <- which(date_seq >= start_date & date_seq <= end_date)
   ext_ <- c()
   if(!is.null(spatial_extent)){
-    if(class(spatial_extent) == "bbox"){
+    if(class(spatial_extent)[1] == "bbox"){
       ext_ <- spatial_extent
     }else{
       if (class(spatial_extent)[1] %in% c("sf", "SpatialPolygonsDataFrame", 
                                           "SpatialPointsDataFrame")){
         ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
       }else{
-        if(class(spatial_extent) == "numeric" & length(spatial_extent) == 4){
+        if(class(spatial_extent)[1] == "numeric" & length(spatial_extent) == 4){
           if(sum(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent)) == 4){
             ext_ <- sf::st_bbox(c(xmin = spatial_extent$xmin,
                                   ymin = spatial_extent$ymin,
@@ -133,7 +138,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
           }
         }
       }
-      if(class(ext_) != "bbox"){
+      if(class(ext_)[1] != "bbox"){
         stop("spatial_extent must be an sf, a spatial or a vector with four 
               values c(xmin, ymin, xmax, ymax)")
       }
@@ -239,12 +244,12 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
          urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
                              grid_size, "_reg_ensemble/", clim_var, "_",
                              grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
-         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
+         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, ecad_v, "e.nc")
      } else {
         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
                            grid_size, "_reg_ensemble/", clim_var, "_",
                            grid_size, "_reg_v", ecad_v,"e.nc")
-        dest_file <- paste0(clim_var, "_", grid_size, "_reg_v", ecad_version, "e.nc")
+        dest_file <- paste0(clim_var, "_", grid_size, "_reg_v", ecad_v, "e.nc")
      }
   } else {
     if(!sml_chunk %in% smc){
@@ -346,6 +351,7 @@ write_to_brick <- function(x, out = out, ...) {
 #' data output. If the point is within a cell with value, the distance is set to
 #' NA.
 #' @import data.table
+#' @importFrom methods as
 #' @author Reto Schmucki
 #' @export
 #'
@@ -375,14 +381,14 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
   }
   Date_seq <- lubridate::ymd(gsub("X", "", names(x)))
   date_dt <- data.table::data.table(date = Date_seq, 
-                                    year = lubridate::year(Date_seq),
-                                    month = lubridate::month(Date_seq),
-                                    day = lubridate::day(Date_seq) )
+                                    year = substr(Date_seq, 1, 4),
+                                    month = substr(Date_seq, 6, 7),
+                                    day = substr(Date_seq, 9, 19))
   if(time_step == "annual"){
     indices <- as.numeric(as.factor(date_dt$year))
   }
   if(time_step == "monthly"){
-    indices <- as.numeric(as.factor(paste0(date_dt$year, "_", date_dt$month)))
+    indices <- as.numeric(as.factor(paste0(date_dt$year, ".", date_dt$month)))
   }
   if(!is.null(y)){
     if(!class(y)[1] %in% c("sf", "SpatialPointsDataFrame")) {stop("y must be a 
@@ -426,7 +432,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       names(x_agg) <- unique(date_dt$year)
     }
     if(time_step == "monthly"){
-      names(x_agg) <- unique(paste0(date_dt$year, "_", date_dt$month))
+      names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
     }
   return(x_agg) 
   }
@@ -443,7 +449,8 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 #' @return a list of cell for all points. Point falling in NA cell are assigned 
 #' to the nearest with a value within a range of 3 cell around the points. The 
 #' sf of points with NA is provided and the distance to the nearest cell with 
-#' a non NA value. 
+#' a non NA value.
+#' @importFrom methods as
 #' @author Reto Schmucki
 #' @export
 #'
