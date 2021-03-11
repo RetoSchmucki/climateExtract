@@ -3,4 +3,8 @@
 .RData
 *.nc
 *.rds
+*.grd
+*.gri
+*.tif
+temp/*
 
