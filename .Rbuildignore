@@ -4,3 +4,5 @@
 /develop/
 ^.*\.rds$
 ^.*\.nc$
+^.*\.grd$
+^.*\.gri$
