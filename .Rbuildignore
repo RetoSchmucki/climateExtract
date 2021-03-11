@@ -2,3 +2,7 @@
 ^\.Rproj\.user$
 .travis.yml
 /develop/
+^.*\.rds$
+^.*\.nc$
+^.*\.grd$
+^.*\.gri$
