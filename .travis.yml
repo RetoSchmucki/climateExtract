@@ -5,4 +5,4 @@ warnings_are_errors: false
 before_install:
   - sudo apt-get install libnetcdf-dev
   - sudo apt-get install netcdf-bin
-  - sudo apt-get -y update && apt-get install -y  libudunits2-dev libgdal-dev libgeos-dev libproj-devm 
+  - sudo apt-get -y update && apt-get install -y  libudunits2-dev libgdal-dev libgeos-dev libproj-dev

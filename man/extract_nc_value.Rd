@@ -10,37 +10,90 @@ extract_nc_value(
   local_file = TRUE,
   file_path = NULL,
   sml_chunk = NULL,
+  spatial_extent = NULL,
   clim_variable = "mean temp",
   statistic = "mean",
-  grid_size = 0.25
+  grid_size = 0.25,
+  ecad_v = NULL,
+  write_raster = FALSE,
+  out = NULL,
+  return_data = TRUE,
+  ...
 )
 }
 \arguments{
-\item{first_year}{a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL}
+\item{first_year}{a numeric value defining the first year of the time period 
+to extract, 1950 if NULL, default=NULL}
 
-\item{last_year}{a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL}
+\item{last_year}{a numeric value defining the last year of the time period to
+extract, 2014 if NULL, default=NULL}
 
-\item{local_file}{logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE}
+\item{local_file}{logical if the ".nc" data are available on your local disc, 
+if FALSE, the function will download the data from ECAD data portal,
+ default=TRUE}
 
-\item{file_path}{string defining the path of the local file (works only if local_file = TRUE), default=NULL}
+\item{file_path}{character string with the path to the local ".nc" file. Works
+only if local_file = TRUE), default=NULL}
 
-\item{sml_chunk}{string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"}
+\item{sml_chunk}{a character string for specific time period to be downloaded. 
+Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+and "1950-1964"}
 
-\item{clim_variable}{string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"}
+\item{spatial_extent}{object to define the spatial extent for the data 
+extraction, can be an "sf" or an "sp" object or a vector with 4 values 
+defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
+ entire extent is extracted}
 
-\item{statistic}{string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
-The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
-see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
+\item{clim_variable}{a character string defining the daily climate variable to 
+retrieve and extract; "mean temp","max temp","min temp","precipitation", 
+default="mean temp"}
 
-\item{grid_size}{numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25}
+\item{statistic}{a character string defining the metric to retrieve, "mean" or
+ "spread", where the mean is computed across 100 members of the ensemble and 
+is provided as the "best-guess" fields. The spread is calculated as the 
+difference between the 5th and 95th percentiles over the ensemble to provide
+ a measure indicative of the 90\% uncertainty range (see details)}
+
+\item{grid_size}{numeric, measured in degree defining the resolution of the 
+grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
+latitude), default=0.25}
+
+\item{ecad_v}{ECA&D data version, default = package version.}
+
+\item{write_raster}{logical, if TRUE the output will be written in a
+multilayer raster file}
+
+\item{out}{character string with the filename for the output raster, if null
+data will be written in climateExtract_raster.grd}
+
+\item{return_data}{logical, if TRUE the data resulting from the extract will
+be stored in the object, if false, only the filename of the raster and the
+name of the layers are returned in a list, only if write_out is TRUE.}
+}
+\value{
+If 'write_raster' is TRUE, return a list with the path to raster 
+Brick written to the disk and the name of the layers in the object (date). If
+'return_data' = TRUE, a list of object is returned, with the variable_name,
+an 3D array with the value extracted, a vector with the longitude, a vector with
+latitude and a vector with date extracted.
 }
 \description{
-Function to extract climate data from NETCDF file produced by the European Climate Assessment & Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
+Extract climate data from a NETCDF file produced and made available by the 
+European Climate Assessment & Dataset for a specific period and 
+available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
 }
 \details{
-This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
-If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
-can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
+By default, this function asks to select the ".nc" file from your
+ local disc, but this can be changed by setting the argument 'local_file' to
+ FALSE. When local_file is false, the nc file with data will be downloaded
+ from the ECAD. If first_year and last_year are not provided, the function
+ extract the full data set. Smaller chunks of about 15 years of the most
+ recent version of the E-OBS dataset can be specified for download 
+can be specified directly with the argument "sm_chunk" (period available are
+ 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+about the mean and the spread metric see Cornes et al. (2018) and the 
+guidance on how to use ensemble datasets available from 
+\url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
 }
 \author{
 Reto Schmucki

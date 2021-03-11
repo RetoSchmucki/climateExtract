@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>temporal_mean — temporal_mean • climateExtract</title>
+<title>get_near_nona — get_near_nona • climateExtract</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,8 @@
 
 
 
-<meta property="og:title" content="temporal_mean — temporal_mean" />
-<meta property="og:description" content="Compute mean climatic value for specific periods &quot;annual&quot;, &quot;monthly&quot;, or 
-using a sliding &quot;window&quot; of specific length, from an object obtained from 
-the extrat_nc_value() function" />
+<meta property="og:title" content="get_near_nona — get_near_nona" />
+<meta property="og:description" content="Return cell number of the nearest data point available in the the raster layer" />
 
 
 
@@ -105,47 +103,44 @@ the extrat_nc_value() function" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>temporal_mean</h1>
+    <h1>get_near_nona</h1>
     
-    <div class="hidden name"><code>temporal_mean.Rd</code></div>
+    <div class="hidden name"><code>get_near_nona.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compute mean climatic value for specific periods "annual", "monthly", or 
-using a sliding "window" of specific length, from an object obtained from 
-the extrat_nc_value() function</p>
+    <p>Return cell number of the nearest data point available in the the raster layer</p>
     </div>
 
-    <pre class="usage"><span class='fu'>temporal_mean</span><span class='op'>(</span>
-  <span class='va'>data_nc</span>,
-  time_avg <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"annual"</span>, <span class='st'>"monthly"</span>, <span class='st'>"window"</span><span class='op'>)</span>,
-  win_length <span class='op'>=</span> <span class='fl'>30</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_near_nona</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, y <span class='op'>=</span> <span class='va'>y</span>, x_cell <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data_nc</th>
-      <td><p>object obtained from the extrat_nc_value() function 
-corresponding to the time-period of interest</p></td>
+      <th>x</th>
+      <td><p>raster object (raster, rasterStack or rasterBrick)</p></td>
     </tr>
     <tr>
-      <th>time_avg</th>
-      <td><p>character string defining the level of averaging, "annual", 
-"monthly", "window"</p></td>
+      <th>y</th>
+      <td><p>point as sf or spatial ojbect</p></td>
     </tr>
     <tr>
-      <th>win_length</th>
-      <td><p>the number of days defining the span of the sliding window,
-default set to 30 days</p></td>
+      <th>x_cell</th>
+      <td><p>cell id if already extracted, if not provide this will be computed</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list of cell for all points. Point falling in NA cell are assigned 
+to the nearest with a value within a range of 3 cell around the points. The 
+sf of points with NA is provided and the distance to the nearest cell with 
+a non NA value.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that this function can be relatively slow if you compute 
-sliding window average over a long period</p>
+    <p>This function links a raster cell id to each points and search for 
+the nearest cell with data (not NA) if the points fall within a cell with NA.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Reto Schmucki</p>

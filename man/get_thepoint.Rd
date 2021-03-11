@@ -7,15 +7,19 @@
 get_thepoint(x, nc_index)
 }
 \arguments{
-\item{x}{object obtained from the temporal_mean() function containing the array of averaged values}
+\item{x}{object obtained from the temporal_mean() function containing the 
+array of averaged values}
 
-\item{nc_index}{spatial indices corresponding to the coordinates of the geographic points}
+\item{nc_index}{spatial indices corresponding to the coordinates of the 
+geographic points}
 }
 \description{
-Function to retrieve values corresponding to geographic points get_thepoint(data_nc$value_array,nc_index[p,])
+Retrieve values corresponding to geographic points 
+get_thepoint(data_nc$value_array,nc_index[p,])
 }
 \details{
-This function is internal and used to extract value from the grid with the function point_grid_extract()
+This function is internal and used to extract value from the grid 
+with the function point_grid_extract()
 }
 \author{
 Reto Schmucki

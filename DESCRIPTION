@@ -1,5 +1,5 @@
 Package: climateExtract
-Title: Extract Climate Data From a Local NETCDF File
+Title: Extract Climate Data From a Local or online NETCDF  
 Version: 1.22.0
 Date: 03-03-2021
 Authors@R:
@@ -17,7 +17,11 @@ License: MIT + file LICENSE
 URL: https://retoschmucki.github.io/climateExtract
 LazyData: true
 Imports: ncdf4,
-         chron,
+         data.table,
+         lubridate,
+         sf,
+         raster,
+         terra,
          zoo,
          FNN,
          tcltk

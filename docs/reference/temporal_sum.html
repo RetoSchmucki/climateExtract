@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="temporal_sum — temporal_sum" />
-<meta property="og:description" content="This function compute sum of climatic value for specific periods &quot;annual&quot;, &quot;monthly&quot;, or using a sliding &quot;window&quot; of specific length, from and object obtained from the extrat_nc_value() function" />
+<meta property="og:description" content="Compute sum of climatic value for specific periods &quot;annual&quot;, &quot;monthly&quot;, or 
+using a sliding &quot;window&quot; of specific length, from and object obtained from 
+the extrat_nc_value() function" />
 
 
 
@@ -109,7 +111,9 @@
     </div>
 
     <div class="ref-description">
-    <p>This function compute sum of climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from and object obtained from the extrat_nc_value() function</p>
+    <p>Compute sum of climatic value for specific periods "annual", "monthly", or 
+using a sliding "window" of specific length, from and object obtained from 
+the extrat_nc_value() function</p>
     </div>
 
     <pre class="usage"><span class='fu'>temporal_sum</span><span class='op'>(</span>
@@ -123,21 +127,25 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data_nc</th>
-      <td><p>object obtained from the extrat_nc_value() function corresponding to the time-period of interest</p></td>
+      <td><p>object obtained from the extrat_nc_value() function 
+corresponding to the period of interest</p></td>
     </tr>
     <tr>
       <th>time_sum</th>
-      <td><p>character string defining the level of summation, "annual", "monthly", "window"</p></td>
+      <td><p>character string defining the level of summation, "annual", 
+"monthly", "window"</p></td>
     </tr>
     <tr>
       <th>win_length</th>
-      <td><p>the number of days defining the span of the sliding window, default set to 30 days</p></td>
+      <td><p>the number of days defining the span of the sliding window,
+default set to 30 days</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function can be relatively slow if you compute sliding window total over a long period</p>
+    <p>This function can be relatively slow if you compute sliding window 
+total over a long period</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Reto Schmucki</p>

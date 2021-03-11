@@ -7,12 +7,16 @@
 point_grid_extract(data_nc, point_coord)
 }
 \arguments{
-\item{data_nc}{object obtained from the temporal_mean() function corresponding to the time-period of interest and the level of averaging}
+\item{data_nc}{object obtained from the temporal_mean() function corresponding 
+to the period of interest and the level of averaging}
 
-\item{point_coord}{a data.frame with three column named "site_id", "longitude", and "latitude" where coordinate of the points are in degree decimal (epsg projection 4326 - wgs 84)}
+\item{point_coord}{a data.frame with three column named "site_id", "longitude",
+ and "latitude" where coordinate of the points are in degree decimal 
+(epsg projection 4326 - wgs 84)}
 }
 \description{
-This function extract the mean climatic value (annual mean, monthly mean, sliding window mean) for each geographic points
+Extract the mean climatic value (annual mean, monthly mean, sliding window 
+mean) for each geographic points
 }
 \author{
 Reto Schmucki
