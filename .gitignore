@@ -3,5 +3,7 @@
 .RData
 *.nc
 *.rds
+*.grd
+*.gri
 temp/*
 
