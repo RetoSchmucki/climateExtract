@@ -17,8 +17,11 @@ License: MIT + file LICENSE
 URL: https://retoschmucki.github.io/climateExtract
 LazyData: true
 Imports: ncdf4,
+         data.table,
          lubridate,
          sf,
+         raster,
+         terra,
          zoo,
          FNN,
          tcltk

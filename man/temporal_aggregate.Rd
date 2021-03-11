@@ -13,21 +13,32 @@ temporal_aggregate(
 )
 }
 \arguments{
-\item{x}{object obtained from the extrat_nc_value() function or rasterBrick with date layers}
+\item{x}{object obtained from the extrat_nc_value function or a 
+rasterBrick with dates as layers}
 
-\item{y}{point to extract values, must be a sf or spatialPointDataFrame object (sp)}
+\item{y}{point to extract values, must be an sf or spatialPointDataFrame 
+object (sp)}
 
 \item{agg_function}{function used to aggregate data, "mean" or "sum"}
 
 \item{variable_name}{character string to identify the resulting variable}
 
-\item{time_step}{character string defining the level of averaging, "annual" or "monthly"}
+\item{time_step}{character string defining the level of averaging, "annual" 
+or "monthly"}
 }
 \description{
-This function compute mean climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from an object obtained from the extrat_nc_value() function
+Compute mean climatic values for specific periods from an object obtained 
+from the extrat_nc_value function
 }
 \details{
-the output of this function is a multilayer raster if no point are supplied in y or a data.table when points are provided in y
+The output is either a multilayer raster if no points are supplied 
+in y or a data.table with aggregated statistic computed for each point 
+provided in y. If points provided fall in areas with no data (e.g. in the sea
+along the coast), the function will search for the nearest value available, up
+to 3 cell in each direction. A distance (m) between the point and the raster 
+cell used to retrieve the climate metric is calculated and documented in the 
+data output. If the point is within a cell with value, the distance is set to
+NA.
 }
 \author{
 Reto Schmucki

@@ -7,15 +7,18 @@
 write_to_brick(x, out = out, ...)
 }
 \arguments{
-\item{x}{object obtained from the extrat_nc_value() function corresponding to the time-period of interest}
+\item{x}{object obtained from the extrat_nc_value function corresponding 
+to the specific period of interest}
 
-\item{out}{character string defining the filename to save (default extension is GeoTiff, ".tiff")}
+\item{out}{character string defining the filename to save (default extension 
+is GeoTiff, ".tiff")}
 
 \item{...}{additional arguments for for writing files, see \link[raster]{writeRaster}}
 }
 \description{
-Write results in a multilayer raster
+Write the output in a multilayer raster
 }
 \details{
-By default, this function overwrites file with the same name if existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
+By default, this function overwrites file with the same name if 
+existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
 }

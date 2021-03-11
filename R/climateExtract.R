@@ -4,36 +4,70 @@
 
 #' extract_nc_value
 #'
-#' Function to extract climate data from NETCDF file produced by the European Climate Assessment & Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
-#' @param first_year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
-#' @param last_year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
-#' @param local_file logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE
-#' @param file_path string defining the path of the local file (works only if local_file = TRUE), default=NULL
-#' @param sml_chunk string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"
-#' @param spatial_extent spatial extent to extract data, can be an "sf" or an "sp" object or a vector with 4 values defining the bounding box c(xmin, ymax, xmax, ymax), if NULL the entire extent is extracted
-#' @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
-#' @param statistic string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
-#' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
-#' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
-#' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
+#' Extract climate data from a NETCDF file produced and made available by the 
+#' European Climate Assessment & Dataset for a specific period and 
+#' available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
+#' @param first_year a numeric value defining the first year of the time period 
+#' to extract, 1950 if NULL, default=NULL
+#' @param last_year a numeric value defining the last year of the time period to
+#'  extract, 2014 if NULL, default=NULL
+#' @param local_file logical if the ".nc" data are available on your local disc, 
+#' if FALSE, the function will download the data from ECAD data portal,
+#'  default=TRUE
+#' @param file_path character string with the path to the local ".nc" file. Works
+#'  only if local_file = TRUE), default=NULL
+#' @param sml_chunk a character string for specific time period to be downloaded. 
+#' Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+#' and "1950-1964"
+#' @param spatial_extent object to define the spatial extent for the data 
+#' extraction, can be an "sf" or an "sp" object or a vector with 4 values 
+#' defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
+#'  entire extent is extracted
+#' @param clim_variable a character string defining the daily climate variable to 
+#' retrieve and extract; "mean temp","max temp","min temp","precipitation", 
+#' default="mean temp"
+#' @param statistic a character string defining the metric to retrieve, "mean" or
+#'  "spread", where the mean is computed across 100 members of the ensemble and 
+#' is provided as the "best-guess" fields. The spread is calculated as the 
+#' difference between the 5th and 95th percentiles over the ensemble to provide
+#'  a measure indicative of the 90\% uncertainty range (see details)
+#' @param grid_size numeric, measured in degree defining the resolution of the 
+#' grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
+#' latitude), default=0.25
 #' @param ecad_v ECA&D data version, default = package version.
-#' @param write_raster logical, if TRUE the output will be written in a multilayer raster file
-#' @param out character string with the filename for the output raster, if null data will be written in climateExtract_raster.grd 
-#' @param return_data logical, if TRUE the data resulting from the extract will be stored in the object, if false, only the filename of the raster and the name of the layers are returned in a list, only if write_out is TRUE. 
+#' @param write_raster logical, if TRUE the output will be written in a
+#'  multilayer raster file
+#' @param out character string with the filename for the output raster, if null
+#'  data will be written in climateExtract_raster.grd 
+#' @param return_data logical, if TRUE the data resulting from the extract will
+#'  be stored in the object, if false, only the filename of the raster and the
+#'  name of the layers are returned in a list, only if write_out is TRUE. 
+#' @details By default, this function asks to select the ".nc" file from your
+#'  local disc, but this can be changed by setting the argument 'local_file' to
+#'  FALSE. When local_file is false, the nc file with data will be downloaded
+#'  from the ECAD. If first_year and last_year are not provided, the function
+#'  extract the full data set. Smaller chunks of about 15 years of the most
+#'  recent version of the E-OBS dataset can be specified for download 
+#' can be specified directly with the argument "sm_chunk" (period available are
+#'  2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+#' about the mean and the spread metric see Cornes et al. (2018) and the 
+#' guidance on how to use ensemble datasets available from 
+#' \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
+#' @return If 'write_raster' is TRUE, return a list with the path to raster 
+#' Brick written to the disk and the name of the layers in the object (date). If
+#' 'return_data' = TRUE, a list of object is returned, with the variable_name,
+#' an 3D array with the value extracted, a vector with the longitude, a vector with
+#' latitude and a vector with date extracted.
 #' @author Reto Schmucki
-#' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
-#' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
-#' can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
-#' @import ncdf4
-#' @import lubridate
-#' @import sf
-#' @import utils
-#' @export extract_nc_value
+#' @export
 #'
 
-extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, file_path=NULL, sml_chunk=NULL, spatial_extent=NULL, 
-                              clim_variable="mean temp", statistic="mean", grid_size=0.25, ecad_v = NULL, write_raster = FALSE, out = NULL,
-                              return_data = TRUE, ...) {
+extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
+                             file_path=NULL, sml_chunk=NULL, 
+                             spatial_extent=NULL, clim_variable="mean temp",
+                             statistic="mean", grid_size=0.25, ecad_v = NULL, 
+                             write_raster = FALSE, out = NULL,
+                             return_data = TRUE, ...){
 
   if (is.null(ecad_v)){ 
     ecad_v = ecad_version
@@ -41,14 +75,17 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
-          print("select your climate file [.nc] or use \"local_file=FALSE\" to access online data")
+          print("select your climate file [.nc] or use \"local_file=FALSE\" to 
+                 access online data")
           nc.ncdf <- ncdf4::nc_open(file.choose())
       } else {
           nc.ncdf <- ncdf4::nc_open(file_path)
           }
   }else{
-  nc.ncdf <- get_nc_online(first_year = first_year, last_year = last_year, sml_chunk = sml_chunk, clim_variable = clim_variable, 
-                          statistic = statistic, grid_size = grid_size, ecad_v = ecad_v)
+  nc.ncdf <- get_nc_online(first_year = first_year, last_year = last_year, 
+                           sml_chunk = sml_chunk, clim_variable = clim_variable, 
+                           statistic = statistic, grid_size = grid_size, 
+                           ecad_v = ecad_v)
   }
 
   lon <- ncdf4::ncvar_get(nc.ncdf, "longitude")
@@ -58,7 +95,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
   day_since <- ncdf4::ncatt_get(nc.ncdf, "time")$units
   day_vals <- ncdf4::ncvar_get(nc.ncdf, "time")
   fillvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "_FillValue")
-  date_seq <- lubridate::ymd(as.Date(gsub("days since ", "", day_since, fixed = TRUE))) + day_vals
+  date_seq <- lubridate::ymd(as.Date(gsub("days since ", "", day_since, 
+                                          fixed = TRUE))) + day_vals
   res <- lon[2] - lon[1]
 
   if(is.null(first_year)){
@@ -71,32 +109,34 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
   }else{
   end_date <- lubridate::ymd(as.Date(paste0(last_year, "-12-31")))
   }
-  time_toget <- which(date_seq >= start_date & date_seq <= end_date)  
+  time_toget <- which(date_seq >= start_date & date_seq <= end_date)
   ext_ <- c()
   if(!is.null(spatial_extent)){
     if(class(spatial_extent) == "bbox"){
-    ext_ <- spatial_extent
+      ext_ <- spatial_extent
     }else{
-    if (class(spatial_extent) %in% c("sf", "SpatialPolygonsDataFrame", "SpatialPointsDataFrame")) {
-      ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
-    }else{
-      if(class(spatial_extent) == "numeric" & length(spatial_extent) == 4){
-        if(sum(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent)) == 4){
-          ext_ <- sf::st_bbox(c(xmin = spatial_extent$xmin,
-                                ymin = spatial_extent$ymin,
-                                xmax = spatial_extent$xmax,
-                                ymax = spatial_extent$ymax))
+      if (class(spatial_extent)[1] %in% c("sf", "SpatialPolygonsDataFrame", 
+                                          "SpatialPointsDataFrame")){
+        ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
+      }else{
+        if(class(spatial_extent) == "numeric" & length(spatial_extent) == 4){
+          if(sum(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent)) == 4){
+            ext_ <- sf::st_bbox(c(xmin = spatial_extent$xmin,
+                                  ymin = spatial_extent$ymin,
+                                  xmax = spatial_extent$xmax,
+                                  ymax = spatial_extent$ymax))
           }else{
-          ext_ <- sf::st_bbox(c(xmin = spatial_extent[1],
-                                ymin = spatial_extent[2],
-                                xmax = spatial_extent[3],
-                                ymax = spatial_extent[4]))
+            ext_ <- sf::st_bbox(c(xmin = spatial_extent[1],
+                                  ymin = spatial_extent[2],
+                                  xmax = spatial_extent[3],
+                                  ymax = spatial_extent[4]))
           }
+        }
       }
-    }
-    if(class(ext_) != "bbox"){
-      stop("spatial_extent must be an sf, a spatial or a vector with four values c(xmin, ymin, xmax, ymax)")
-    }
+      if(class(ext_) != "bbox"){
+        stop("spatial_extent must be an sf, a spatial or a vector with four 
+              values c(xmin, ymin, xmax, ymax)")
+      }
     }
     lon_toget <- which(lon >= (ext_$xmin-res) & lon <= (ext_$xmax+res))
     lat_toget <- which(lat >= (ext_$ymin-res) & lat <= (ext_$ymax+res))
@@ -105,7 +145,14 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
     lat_toget <- seq_along(lat)
   }
 
-  tmp.array <- ncdf4::ncvar_get(nc.ncdf, nc_var, start = c(lon_toget[1], lat_toget[1], time_toget[1]), count = c(length(lon_toget), length(lat_toget), length(time_toget)))
+  tmp.array <- ncdf4::ncvar_get(nc.ncdf, nc_var, 
+                                start = c(lon_toget[1], 
+                                          lat_toget[1], 
+                                          time_toget[1]), 
+                                count = c(length(lon_toget), 
+                                          length(lat_toget), 
+                                          length(time_toget))
+                                )
   tmp.array[tmp.array == fillvalue$value] <- NA
 
   result <- list(variable_name = nc_varname,
@@ -130,29 +177,54 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE, f
 
 #' get_nc_online
 #'
-#' Function to retrieve climate data from https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
-#' @param first_year a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL
-#' @param last_year a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL
-#' @param sml_chunk string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"
-#' @param clim_variable string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"
-#' @param statistic string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
-#' The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
-#' see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php
-#' @param grid_size numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25
+#' Download and connect climate data from NetCDF file (.nc) retrieved from
+#' \url{https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php}
+#' @param first_year a numeric value defining the first year of the time period 
+#' to extract, 1950 if NULL, default=NULL
+#' @param last_year a numeric value defining the last year of the time period to
+#'  extract, 2014 if NULL, default=NULL
+#' @param sml_chunk a character string for specific time period to be downloaded. 
+#' Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+#' and "1950-1964"
+#' @param clim_variable a character string defining the daily climate variable to 
+#' retrieve and extract; "mean temp","max temp","min temp","precipitation", 
+#' default="mean temp"
+#' @param statistic a character string defining the metric to retrieve, "mean" or
+#'  "spread", where the mean is computed across 100 members of the ensemble and 
+#' is provided as the "best-guess" fields. The spread is calculated as the 
+#' difference between the 5th and 95th percentiles over the ensemble to provide
+#'  a measure indicative of the 90\% uncertainty range (see details)
+#' @param grid_size numeric, measured in degree defining the resolution of the 
+#' grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
+#' latitude), default=0.25
 #' @param ecad_v ECA&D data version, default = package version.
+#' @details This function access online ECAD data portal to download the climate
+#' ".nc" file to local disk. This is an internal function used within the 
+#' 'extract_nc_value' function, but can be used independently if needed. 
+#' If first_year and last_year are not provided, the function
+#'  extract the full data set. Smaller chunks of about 15 years of the most
+#'  recent version of the E-OBS dataset can be specified for download 
+#' can be specified directly with the argument "sm_chunk" (period available are
+#'  2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+#' about the mean and the spread metric see Cornes et al. (2018) and the 
+#' guidance on how to use ensemble datasets available from 
+#' \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
+#' @return A connection via the ncdf4 package to a ".nc" file 
+#' downloaded to the local disk
 #' @author Reto Schmucki
-#' @details This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
-#' If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
-#' can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
-#' @import ncdf4
-#' @import utils
-#' @export get_nc_online
+#' @export
 #'
-get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=sml_chunk, clim_variable=clim_variable, statistic=statistic, grid_size=grid_size, ecad_v = ecad_v){
+get_nc_online <- function(first_year = first_year, last_year = last_year, 
+                          sml_chunk = sml_chunk, clim_variable = clim_variable, 
+                          statistic = statistic, grid_size = grid_size, 
+                          ecad_v = ecad_v){
+
+  smc <- c("2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964")
 
   if(is.null(sml_chunk)){
   
-    cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution \n"))
+    cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",
+                grid_size," degree resolution \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
     if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
@@ -164,20 +236,24 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
 
     if (first_year >= 2011) {
          year_toget <- "2011-2020_"
-         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
+         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
+                             grid_size, "_reg_ensemble/", clim_var, "_",
+                             grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
          dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v22.0e.nc")
      } else {
-        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_v", ecad_v,"e.nc")
+        urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
+                           grid_size, "_reg_ensemble/", clim_var, "_",
+                           grid_size, "_reg_v", ecad_v,"e.nc")
         dest_file <- paste0(clim_var, "_", grid_size, "_reg_v", ecad_version, "e.nc")
      }
   } else {
-    if(!sml_chunk %in% c("2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964")){
-      stop("sml_chunk must be one of the following period:\n
-            \"2011-2020\", \"1995-2010\", \"1980-1994\", \"1965-1979\" or \"1950-1964\"")
+    if(!sml_chunk %in% smc){
+      stop(paste0("sml_chunk must be one of the following period:\n",smc))
     }else{
-      year_toget <- paste0(sml_chunk,"_")
+      year_toget <- paste0(sml_chunk, "_")
 
-      cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",grid_size," degree resolution from sml_chunk data \n"))
+      cat(paste0("Try to get the ", clim_variable, " from ", first_year, 
+                " at ", grid_size, " degree resolution from sml_chunk data \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
     if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
@@ -187,21 +263,26 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
-         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_", grid_size, "_reg_ensemble/", clim_var, "_", grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
-         dest_file <- paste0(clim_var, "_", grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
+    urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
+                        grid_size, "_reg_ensemble/", clim_var, "_", grid_size,
+                        "_reg_", year_toget, "v", ecad_v, "e.nc")
+    dest_file <- paste0(clim_var, "_", grid_size, "_reg_", year_toget, "v",
+                        ecad_v, "e.nc")
     }
   }
     x <- "N"
 
     if(file.exists(dest_file)){
-        x <- readline("The requested climate data already exist, do you want to download them again? (Y/N) \n")
+        x <- readline("The requested climate data already exist, do you want to
+                       download them again? (Y/N) \n")
     	}
 
     if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
-       download.file(urltoget, dest_file, mode = "wb")
+       utils::download.file(urltoget, dest_file, mode = "wb")
     }
 
-    cat(paste0("your data (.nc file) is located in ",getwd(),"/", dest_file, "\n"))
+    cat(paste0("your data (.nc file) is located in ", getwd(), "/",
+               dest_file, "\n"))
 
     nc.ncdf <- ncdf4::nc_open(dest_file)
 
@@ -210,13 +291,15 @@ get_nc_online <- function(first_year=first_year, last_year=last_year, sml_chunk=
 
 #' write_to_brick
 #'
-#' Write results in a multilayer raster
-#' @param x object obtained from the extrat_nc_value() function corresponding to the time-period of interest
-#' @param out character string defining the filename to save (default extension is GeoTiff, ".tiff")
+#' Write the output in a multilayer raster
+#' @param x object obtained from the extrat_nc_value function corresponding 
+#' to the specific period of interest
+#' @param out character string defining the filename to save (default extension 
+#' is GeoTiff, ".tiff")
 #' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
-#' @details By default, this function overwrites file with the same name if existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
-#' @import raster
-#' @export write_to_brick
+#' @details By default, this function overwrites file with the same name if 
+#' existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
+#' @export
 #'
  
 write_to_brick <- function(x, out = out, ...) {
@@ -244,23 +327,37 @@ write_to_brick <- function(x, out = out, ...) {
 
 #' temporal_aggregate
 #'
-#' This function compute mean climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from an object obtained from the extrat_nc_value() function
-#' @param x object obtained from the extrat_nc_value() function or rasterBrick with date layers
-#' @param y point to extract values, must be a sf or spatialPointDataFrame object (sp)
+#' Compute mean climatic values for specific periods from an object obtained 
+#' from the extrat_nc_value function
+#' @param x object obtained from the extrat_nc_value function or a 
+#' rasterBrick with dates as layers
+#' @param y point to extract values, must be an sf or spatialPointDataFrame 
+#' object (sp)
 #' @param agg_function function used to aggregate data, "mean" or "sum"
 #' @param variable_name character string to identify the resulting variable
-#' @param time_step character string defining the level of averaging, "annual" or "monthly"
-#' @author Reto Schmucki
-#' @details the output of this function is a multilayer raster if no point are supplied in y or a data.table when points are provided in y
+#' @param time_step character string defining the level of averaging, "annual" 
+#' or "monthly"
+#' @details The output is either a multilayer raster if no points are supplied 
+#' in y or a data.table with aggregated statistic computed for each point 
+#' provided in y. If points provided fall in areas with no data (e.g. in the sea
+#' along the coast), the function will search for the nearest value available, up
+#' to 3 cell in each direction. A distance (m) between the point and the raster 
+#' cell used to retrieve the climate metric is calculated and documented in the 
+#' data output. If the point is within a cell with value, the distance is set to
+#' NA.
 #' @import data.table
-#' @export temporal_aggregate
+#' @author Reto Schmucki
+#' @export
 #'
 
-temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name = "average temp", time_step = c("annual", "monthly")){
+temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
+                              variable_name = "average temp", 
+                              time_step = c("annual", "monthly")){
 
   if(class(x)[1] != "RasterBrick"){
     if(length(dim(x$value_array)) != 3){
-      stop("x must be a rasterBrick object or an output from the extrat_nc_value() function")
+      stop("x must be a rasterBrick object or an output from the 
+        extrat_nc_value() function")
     }
     a <- x$value_array
     ap <- aperm(a, c(2, 1, 3), resize = TRUE)
@@ -280,7 +377,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name
   date_dt <- data.table::data.table(date = Date_seq, 
                                     year = lubridate::year(Date_seq),
                                     month = lubridate::month(Date_seq),
-                                    day =lubridate::day(Date_seq) )
+                                    day = lubridate::day(Date_seq) )
   if(time_step == "annual"){
     indices <- as.numeric(as.factor(date_dt$year))
   }
@@ -288,24 +385,22 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name
     indices <- as.numeric(as.factor(paste0(date_dt$year, "_", date_dt$month)))
   }
   if(!is.null(y)){
-    if(!class(y)[1] %in% c("sf", "SpatialPointsDataFrame")) {stop("y must be a sf or a SpatialpointsDataFrame object")}
+    if(!class(y)[1] %in% c("sf", "SpatialPointsDataFrame")) {stop("y must be a 
+        sf or a SpatialPointsDataFrame object")}
     my_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
-    
     nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
     my_cell <- nona_cell_res$nona_cell
-
     val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
     if("site_id" %in% names(y)){
       site_id_ <- y$site_id
     }else{
       site_id_ <- paste0("site_", seq_len(dim(y)[1]))
     }
-    
     dimnames(val)[[1]] <- site_id_
-
     dt <- cbind(date_dt, t(as.matrix(val)))
     if(time_step == "annual"){
-      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), by = .(year), .SDcols = dimnames(val)[[1]]]
+      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+                   by = .(year), .SDcols = dimnames(val)[[1]]]
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year"),
                   measure.vars = patterns("site_"),
@@ -313,14 +408,16 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name
                   value.name = c(paste0(agg_function, "_", variable_name)))
     }
     if(time_step == "monthly"){
-      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), by = .(year, month), .SDcols = dimnames(val)[[1]]]
+      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), 
+                  by = .(year, month), .SDcols = dimnames(val)[[1]]]
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year", "month"),
                   measure.vars = patterns("site_"),
                   variable.name = "site",
                   value.name = c(paste0(agg_function, "_", variable_name)))
     }
-    dt_dist <- data.table::data.table(site = site_id_[nona_cell_res[[2]]$gid], distance_from_pnt = round(nona_cell_res$dist_nona_cell, 0))
+    dt_dist <- data.table::data.table(site = site_id_[nona_cell_res[[2]]$gid], 
+                    distance_from_pnt = round(nona_cell_res$dist_nona_cell, 0))
     dt_agg <- merge(dt_agg, dt_dist, by = "site", all.x = TRUE)
     return(dt_agg)
   }else{
@@ -338,12 +435,17 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean', variable_name
 #' get_near_nona
 #'
 #' Return cell number of the nearest data point available in the the raster layer
-#' @param x raster object (raster, stack or brick)
+#' @param x raster object (raster, rasterStack or rasterBrick)
 #' @param y point as sf or spatial ojbect
 #' @param x_cell cell id if already extracted, if not provide this will be computed
+#' @details This function links a raster cell id to each points and search for 
+#' the nearest cell with data (not NA) if the points fall within a cell with NA.
+#' @return a list of cell for all points. Point falling in NA cell are assigned 
+#' to the nearest with a value within a range of 3 cell around the points. The 
+#' sf of points with NA is provided and the distance to the nearest cell with 
+#' a non NA value. 
 #' @author Reto Schmucki
-#' @details Linking a raster cell id to each points and searching for the nearest cell with data if points are within a NA cell 
-#' @export get_near_nona
+#' @export
 #'
 
 get_near_nona <- function(x = x, y = y, x_cell = NULL){
@@ -369,7 +471,11 @@ get_near_nona <- function(x = x, y = y, x_cell = NULL){
                 a + c(-3:3) + row_fact[3])
 
         ms2 <- ms1[which(!is.na(terra::extract(x[[1]], c(ms1))))]
-        dist_nonan_cell <- sf::st_distance(y[wna[i],], sf::st_as_sf(data.frame(terra::xyFromCell(x[[1]], c(ms2))), coords = c("x", "y"), crs = 4326))
+        dist_nonan_cell <- sf::st_distance(y[wna[i],], 
+                           sf::st_as_sf(data.frame(terra::xyFromCell(x[[1]], 
+                                        c(ms2))), 
+                                        coords = c("x", "y"), 
+                                        crs = 4326))
         near_cell[i] <- ms2[order(dist_nonan_cell)[1]]
         dist_cell[i] <- dist_nonan_cell[order(dist_nonan_cell)[1]]
       }
@@ -383,43 +489,53 @@ get_near_nona <- function(x = x, y = y, x_cell = NULL){
 
 #' temporal_mean
 #'
-#' This function compute mean climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from an object obtained from the extrat_nc_value() function
-#' @param data_nc object obtained from the extrat_nc_value() function corresponding to the time-period of interest
-#' @param time_avg character string defining the level of averaging, "annual", "monthly", "window"
-#' @param win_length the number of days defining the span of the sliding window, default set to 30 days
+#' Compute mean climatic value for specific periods "annual", "monthly", or 
+#' using a sliding "window" of specific length, from an object obtained from 
+#' the extrat_nc_value() function
+#' @param data_nc object obtained from the extrat_nc_value() function 
+#' corresponding to the time-period of interest
+#' @param time_avg character string defining the level of averaging, "annual", 
+#' "monthly", "window"
+#' @param win_length the number of days defining the span of the sliding window,
+#'  default set to 30 days
+#' @details Note that this function can be relatively slow if you compute 
+#' sliding window average over a long period
 #' @author Reto Schmucki
-#' @details This function can be relatively slow if you compute sliding window average over a long period
-#' @import zoo
-#' @export temporal_mean
+#' @export
 #'
 
-temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"), win_length = 30) {
+temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"),
+                          win_length = 30) {
 
   result <- list(longitude = data_nc$longitude, 
                  latitude = data_nc$latitude)
-
   first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
   last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-
   if ("annual" %in% time_avg){
-
-    annual.mean <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),(last_year-first_year)+1))
+    annual.mean <- array(NA, c(length(data_nc$longitude), length(data_nc$latitude),
+                    (last_year-first_year) + 1))
     year_list <- c()
     for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
-      annual.mean[,,y-(first_year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),mean,na.rm=T)
+      annual.mean[, , y - (first_year-1)] <- apply(data_nc$value_array[, , 
+                                              as.numeric(format(data_nc$date_extract,
+                                                               "%Y")) == y],
+                                              c(1,2), mean, na.rm = TRUE)
       year_list <- c(year_list,y)
     }
-    annual.mean <- list(value_array=annual.mean,date_extract=year_list,variable_name=data_nc$variable_name)
+    annual.mean <- list(value_array = annual.mean, date_extract = year_list,
+                        variable_name = data_nc$variable_name)
     result <- c(result,annual.mean)
   }
-
   if ("monthly" %in% time_avg) {
-
     year_month <- unique(as.numeric(format(data_nc$date_extract, "%Y%m")))
-    monthly.mean <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),length(year_month)))
+    monthly.mean <- array(NA, c(length(data_nc$longitude),
+                        length(data_nc$latitude), length(year_month)))
 
     for (ym in year_month) {
-      monthly.mean[,, which(year_month == ym)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y%m"))==ym],c(1,2),mean,na.rm=T)
+      monthly.mean[,, which(year_month == ym)] <- apply(data_nc$value_array[, ,
+                                                    as.numeric(format(data_nc$date_extract,
+                                                                      "%Y%m")) == ym],
+                                                    c(1, 2), mean, na.rm = TRUE)
     }
     monthly.mean <- list(value_array = monthly.mean,
                          date_extract = year_month,
@@ -427,17 +543,18 @@ temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"), wi
                                                  month = substr(year_month, 5, 6)),
                          variable_name = data_nc$variable_name)
 
-    result <- c(result,monthly.mean)
+    result <- c(result, monthly.mean)
   }
 
   if ("window" %in% time_avg) {
 
-    roll.mean <- apply(data_nc$value_array[,,],c(1,2),zoo::rollmean,k=win_length,na.rm=T)
+    roll.mean <- apply(data_nc$value_array[, , ], c(1, 2), 
+                            zoo::rollmean, k = win_length, na.rm = TRUE)
     roll.mean <- aperm(roll.mean, c(2,3,1))
     roll.mean <- list(value_array = roll.mean,
-                      date_extract = data_nc$date_extract[-c(1:(win_length-1))],
+                      date_extract = data_nc$date_extract[-c(seq_len(win_length - 1))],
                       variable_name = data_nc$variable_name)
-    result <- c(result,roll.mean)
+    result <- c(result, roll.mean)
     }
 
   return(result)
@@ -445,29 +562,38 @@ temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"), wi
 
 #' temporal_sum
 #'
-#' This function compute sum of climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from and object obtained from the extrat_nc_value() function
-#' @param data_nc object obtained from the extrat_nc_value() function corresponding to the time-period of interest
-#' @param time_sum character string defining the level of summation, "annual", "monthly", "window"
-#' @param win_length the number of days defining the span of the sliding window, default set to 30 days
+#' Compute sum of climatic value for specific periods "annual", "monthly", or 
+#' using a sliding "window" of specific length, from and object obtained from 
+#' the extrat_nc_value() function
+#' @param data_nc object obtained from the extrat_nc_value() function 
+#' corresponding to the period of interest
+#' @param time_sum character string defining the level of summation, "annual", 
+#' "monthly", "window"
+#' @param win_length the number of days defining the span of the sliding window,
+#'  default set to 30 days
+#' @details This function can be relatively slow if you compute sliding window 
+#' total over a long period
 #' @author Reto Schmucki
-#' @details This function can be relatively slow if you compute sliding window total over a long period
-#' @import zoo
-#' @export temporal_sum
+#' @export
 #'
 
-temporal_sum <- function(data_nc, time_sum=c("annual", "monthly", "window"), win_length=30) {
+temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
+                        win_length = 30) {
 
-  result <- list(longitude=data_nc$longitude,latitude=data_nc$latitude)
-
+  result <- list(longitude = data_nc$longitude, latitude = data_nc$latitude)
   first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
   last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-
   if ("annual" %in% time_sum){
-
-    annual.sum <- array(NA, c(length(data_nc$longitude), length(data_nc$latitude), (last_year-first_year)+1))
+    annual.sum <- array(NA,
+                        c(length(data_nc$longitude),
+                          length(data_nc$latitude),
+                          (last_year-first_year) + 1))
     year_list <- c()
     for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
-      annual.sum[,,y-(first_year-1)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y"))==y],c(1,2),sum,na.rm=F)
+      annual.sum[, , y - (first_year - 1)] <- apply(data_nc$value_array[, , 
+                                              as.numeric(format(data_nc$date_extract,
+                                                                "%Y")) == y],
+                                              c(1,2), sum, na.rm = FALSE)
       year_list <- c(year_list,y)
     }
     annual.sum <- list(value_array = annual.sum,
@@ -475,17 +601,20 @@ temporal_sum <- function(data_nc, time_sum=c("annual", "monthly", "window"), win
                        longitude = data_nc$longitude,
                        latitude = data_nc$latitude,
                        variable_name = data_nc$variable_name)
-
     result <- c(result, annual.sum)
   }
-
   if ("monthly" %in% time_sum) {
-
     year_month <- unique(as.numeric(format(data_nc$date_extract, "%Y%m")))
-    monthly.sum <- array(NA,c(length(data_nc$longitude),length(data_nc$latitude),length(year_month)))
+    monthly.sum <- array(NA,
+                        c(length(data_nc$longitude),
+                          length(data_nc$latitude),
+                          length(year_month)))
 
     for (ym in year_month) {
-      monthly.sum[,,which(year_month==ym)] <- apply(data_nc$value_array[,,as.numeric(format(data_nc$date_extract, "%Y%m"))==ym],c(1,2),sum,na.rm=F)
+      monthly.sum[, , which(year_month == ym)] <- apply(data_nc$value_array[, , 
+                                                  as.numeric(format(data_nc$date_extract, 
+                                                            "%Y%m"))==ym],
+                                                  c(1,2), sum, na.rm = FALSE)
     }
     monthly.sum <- list(value_array = monthly.sum,
                         date_extract = year_month,
@@ -494,29 +623,31 @@ temporal_sum <- function(data_nc, time_sum=c("annual", "monthly", "window"), win
                         variable_name = data_nc$variable_name)
     result <- c(result,monthly.sum)
   }
-
-
   if ("window" %in% time_sum) {
 
-    roll.sum <- apply(data_nc$value_array[,,], c(1, 2), zoo::rollsum, k = win_length, na.rm = F)
+    roll.sum <- apply(data_nc$value_array[,,], c(1, 2), 
+                        zoo::rollsum, k = win_length, na.rm = FALSE)
     roll.sum <- aperm(roll.sum, c(2, 3, 1))
     roll.sum <- list(value_array = roll.sum,
-                    date_extract = data_nc$date_extract[-c(1:(win_length-1))],
+                    date_extract = data_nc$date_extract[-c(seq_len(win_length-1))],
                     variable_name = data_nc$variable_name)
     result <- c(result,roll.sum)
   }
-
   return(result)
 }
 
 #' get_thepoint Function
 #'
-#' Function to retrieve values corresponding to geographic points get_thepoint(data_nc$value_array,nc_index[p,])
-#' @param x object obtained from the temporal_mean() function containing the array of averaged values
-#' @param nc_index spatial indices corresponding to the coordinates of the geographic points
+#' Retrieve values corresponding to geographic points 
+#' get_thepoint(data_nc$value_array,nc_index[p,])
+#' @param x object obtained from the temporal_mean() function containing the 
+#' array of averaged values
+#' @param nc_index spatial indices corresponding to the coordinates of the 
+#' geographic points
+#' @details This function is internal and used to extract value from the grid 
+#' with the function point_grid_extract()
 #' @author Reto Schmucki
-#' @details This function is internal and used to extract value from the grid with the function point_grid_extract()
-#' @export get_thepoint
+#' @export
 #'
 
 get_thepoint <- function(x, nc_index){
@@ -525,13 +656,15 @@ get_thepoint <- function(x, nc_index){
 
 #' point_grid_extract
 #'
-#' This function extract the mean climatic value (annual mean, monthly mean, sliding window mean) for each geographic points
-#' @param data_nc object obtained from the temporal_mean() function corresponding to the time-period of interest and the level of averaging
-#' @param point_coord a data.frame with three column named "site_id", "longitude", and "latitude" where coordinate of the points are in degree decimal (epsg projection 4326 - wgs 84)
+#' Extract the mean climatic value (annual mean, monthly mean, sliding window 
+#' mean) for each geographic points
+#' @param data_nc object obtained from the temporal_mean() function corresponding 
+#' to the period of interest and the level of averaging
+#' @param point_coord a data.frame with three column named "site_id", "longitude",
+#'  and "latitude" where coordinate of the points are in degree decimal 
+#' (epsg projection 4326 - wgs 84)
 #' @author Reto Schmucki
-#' @import tcltk
-#' @import FNN
-#' @export point_grid_extract
+#' @export
 #'
 
 point_grid_extract <- function(data_nc, point_coord) {
@@ -539,13 +672,11 @@ point_grid_extract <- function(data_nc, point_coord) {
   ## Get the layer with the widest spatial extent in the data
   na.profile <- apply(data_nc$value_array, 3, function(x) sum(!is.na(x)))
   max_extent <- which(na.profile == max(na.profile))[1]
-
   lonlat <- expand.grid(data_nc$longitude, data_nc$latitude)
   tmp.vec <- as.vector(data_nc$value_array[, , max_extent])
   tmp.df01 <- data.frame(cbind(lonlat, tmp.vec))
   names(tmp.df01) <- c("lon", "lat", data_nc$variable_name)
   tmp.df_noNA <- tmp.df01[!is.na(tmp.df01[, 3]),]
-
   # get index of closest point in the climate grid
   nc_index<-data.frame(site_id = NA,
                       gr.longitude = NA,
@@ -554,44 +685,41 @@ point_grid_extract <- function(data_nc, point_coord) {
                       y_index = NA,
                       pt.x_coord = NA,
                       pt.y_coord = NA)
-
-  pb <- tcltk::tkProgressBar(title = "progress bar", min = 0, max = dim(point_coord)[1], width = 300)
-
-  point_coord <- point_coord[,c("site_id", "longitude", "latitude")]
-
+  pb <- tcltk::tkProgressBar(title = "progress bar", 
+                             min = 0, 
+                             max = dim(point_coord)[1],
+                             width = 300)
+  point_coord <- point_coord[, c("site_id", "longitude", "latitude")]
   for (i in 1:dim(point_coord)[1]){
-    tcltk::setTkProgressBar(pb, i, label=paste( round(i/dim(point_coord)[1]*100, 0),"% extracted"))
-
+    tcltk::setTkProgressBar(pb, i, 
+            label=paste(round(i / dim(point_coord)[1] * 100, 0),"% extracted"))
     nnindex<-FNN::get.knnx(tmp.df_noNA[,-3],point_coord[i,-1],1)
-
-    nc_index <- rbind(nc_index, data.frame(site_id = as.character(point_coord$site_id[i]),
-                                          gr.longitude = tmp.df_noNA[nnindex$nn.index,-3]$lon,
-                                          gr.latitude = tmp.df_noNA[nnindex$nn.index,-3]$lat,
-                                          x_index = which(data_nc$longitude == tmp.df_noNA[nnindex$nn.index,-3]$lon),
-                                          y_index = which(data_nc$latitude ==tmp.df_noNA[nnindex$nn.index,-3]$lat),
-                                          pt.x_coord = point_coord$lon[i],
-                                          pt.y_coord = point_coord$lat[i]))
+    nc_index <- rbind(nc_index, 
+                    data.frame(site_id = as.character(point_coord$site_id[i]),
+                              gr.longitude = tmp.df_noNA[nnindex$nn.index, -3]$lon,
+                              gr.latitude = tmp.df_noNA[nnindex$nn.index, -3]$lat,
+                              x_index = which(data_nc$longitude == tmp.df_noNA[nnindex$nn.index, -3]$lon),
+                              y_index = which(data_nc$latitude == tmp.df_noNA[nnindex$nn.index, -3]$lat),
+                              pt.x_coord = point_coord$lon[i],
+                              pt.y_coord = point_coord$lat[i]))
   }
   nc_index <- nc_index[-1,]
-
   close(pb)
-
-  pb <- tcltk::tkProgressBar(title = "progress bar", min = 0, max = length(nc_index$site_id), width = 300)
-
+  pb <- tcltk::tkProgressBar(title = "progress bar",
+                             min = 0,
+                             max = length(nc_index$site_id),
+                             width = 300)
   result <- data.frame()
-
   for (p in 1:length(nc_index$site_id)){
-    tcltk::setTkProgressBar(pb, p, label = paste( round(p / length(nc_index$site_id) * 100, 0), "% extracted"))
+    tcltk::setTkProgressBar(pb, p, 
+            label = paste(round(p / length(nc_index$site_id) * 100, 0), "% extracted"))
     result1 <- get_thepoint(data_nc$value_array, nc_index[p,])
     result <- rbind(result, result1)
   }
-
   result <- as.data.frame(t(result))
   names(result) <- nc_index$site_id
   result$date_extract <- data_nc$date_extract
   result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
-
   close(pb)
-
   return(result)
 }

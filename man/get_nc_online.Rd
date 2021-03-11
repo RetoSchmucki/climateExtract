@@ -15,29 +15,52 @@ get_nc_online(
 )
 }
 \arguments{
-\item{first_year}{a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL}
+\item{first_year}{a numeric value defining the first year of the time period 
+to extract, 1950 if NULL, default=NULL}
 
-\item{last_year}{a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL}
+\item{last_year}{a numeric value defining the last year of the time period to
+extract, 2014 if NULL, default=NULL}
 
-\item{sml_chunk}{string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"}
+\item{sml_chunk}{a character string for specific time period to be downloaded. 
+Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+and "1950-1964"}
 
-\item{clim_variable}{string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"}
+\item{clim_variable}{a character string defining the daily climate variable to 
+retrieve and extract; "mean temp","max temp","min temp","precipitation", 
+default="mean temp"}
 
-\item{statistic}{string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
-The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90\% uncertainty range. For more details 
-see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
+\item{statistic}{a character string defining the metric to retrieve, "mean" or
+ "spread", where the mean is computed across 100 members of the ensemble and 
+is provided as the "best-guess" fields. The spread is calculated as the 
+difference between the 5th and 95th percentiles over the ensemble to provide
+ a measure indicative of the 90\% uncertainty range (see details)}
 
-\item{grid_size}{numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25}
+\item{grid_size}{numeric, measured in degree defining the resolution of the 
+grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
+latitude), default=0.25}
 
 \item{ecad_v}{ECA&D data version, default = package version.}
 }
+\value{
+A connection via the ncdf4 package to a ".nc" file 
+downloaded to the local disk
+}
 \description{
-Function to retrieve climate data from https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php
+Download and connect climate data from NetCDF file (.nc) retrieved from
+\url{https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php}
 }
 \details{
-This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
-If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
-can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
+This function access online ECAD data portal to download the climate
+".nc" file to local disk. This is an internal function used within the 
+'extract_nc_value' function, but can be used independently if needed. 
+If first_year and last_year are not provided, the function
+ extract the full data set. Smaller chunks of about 15 years of the most
+ recent version of the E-OBS dataset can be specified for download 
+can be specified directly with the argument "sm_chunk" (period available are
+ 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+about the mean and the spread metric see Cornes et al. (2018) and the 
+guidance on how to use ensemble datasets available from 
+\url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
 }
 \author{
 Reto Schmucki

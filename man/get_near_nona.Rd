@@ -7,17 +7,24 @@
 get_near_nona(x = x, y = y, x_cell = NULL)
 }
 \arguments{
-\item{x}{raster object (raster, stack or brick)}
+\item{x}{raster object (raster, rasterStack or rasterBrick)}
 
 \item{y}{point as sf or spatial ojbect}
 
 \item{x_cell}{cell id if already extracted, if not provide this will be computed}
 }
+\value{
+a list of cell for all points. Point falling in NA cell are assigned 
+to the nearest with a value within a range of 3 cell around the points. The 
+sf of points with NA is provided and the distance to the nearest cell with 
+a non NA value.
+}
 \description{
 Return cell number of the nearest data point available in the the raster layer
 }
 \details{
-Linking a raster cell id to each points and searching for the nearest cell with data if points are within a NA cell
+This function links a raster cell id to each points and search for 
+the nearest cell with data (not NA) if the points fall within a cell with NA.
 }
 \author{
 Reto Schmucki
