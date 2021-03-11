@@ -18,6 +18,7 @@ URL: https://retoschmucki.github.io/climateExtract
 LazyData: true
 Imports: ncdf4,
          chron,
+         utils,
          zoo,
          FNN,
          tcltk
