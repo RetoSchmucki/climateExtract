@@ -73,7 +73,7 @@ mean) for each geographic points" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.2</span>
       </span>
     </div>
 
@@ -90,7 +90,12 @@ mean) for each geographic points" />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/RetoSchmucki/climateExtract/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -105,7 +110,7 @@ mean) for each geographic points" />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>point_grid_extract</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/RetoSchmucki/climateExtract/blob/master/R/climateExtract.R'><code>R/climateExtract.R</code></a></small>
     <div class="hidden name"><code>point_grid_extract.Rd</code></div>
     </div>
 
@@ -114,21 +119,19 @@ mean) for each geographic points" />
 mean) for each geographic points</p>
     </div>
 
-    <pre class="usage"><span class='fu'>point_grid_extract</span><span class='op'>(</span><span class='va'>data_nc</span>, <span class='va'>point_coord</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>point_grid_extract</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>point_coord</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data_nc</th>
-      <td><p>object obtained from the temporal_mean() function corresponding 
-to the period of interest and the level of averaging</p></td>
+      <th>x</th>
+      <td><p>object obtained from the temporal_mean()  or temporal_sum()</p></td>
     </tr>
     <tr>
       <th>point_coord</th>
-      <td><p>a data.frame with three column named "site_id", "longitude",
- and "latitude" where coordinate of the points are in degree decimal 
-(epsg projection 4326 - wgs 84)</p></td>
+      <td><p>sf object or a data.frame with coordinates in degree decimal
+in two columns named "longitude" and "latitude" (epsg projection 4326 - wgs 84)</p></td>
     </tr>
     </table>
 

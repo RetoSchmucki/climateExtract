@@ -3,7 +3,6 @@
 export(extract_nc_value)
 export(get_nc_online)
 export(get_near_nona)
-export(get_thepoint)
 export(point_grid_extract)
 export(temporal_aggregate)
 export(temporal_mean)

@@ -4,15 +4,13 @@
 \alias{point_grid_extract}
 \title{point_grid_extract}
 \usage{
-point_grid_extract(data_nc, point_coord)
+point_grid_extract(x, point_coord)
 }
 \arguments{
-\item{data_nc}{object obtained from the temporal_mean() function corresponding 
-to the period of interest and the level of averaging}
+\item{x}{object obtained from the temporal_mean()  or temporal_sum()}
 
-\item{point_coord}{a data.frame with three column named "site_id", "longitude",
- and "latitude" where coordinate of the points are in degree decimal 
-(epsg projection 4326 - wgs 84)}
+\item{point_coord}{sf object or a data.frame with coordinates in degree decimal
+in two columns named "longitude" and "latitude" (epsg projection 4326 - wgs 84)}
 }
 \description{
 Extract the mean climatic value (annual mean, monthly mean, sliding window 

@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Extract Climate Data From a Local or online NETCDF  ">
-<meta property="og:description" content="A toolbox to ease the extraction and manipulaiton of daily gridded climate data from a NETCDF object available from the European Climate Assessement &amp; Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.">
+<meta property="og:description" content="A toolbox to ease the extraction and manipulaton of daily gridded climate data from a NETCDF object available from the European Climate Assessement &amp; Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.2</span>
       </span>
     </div>
 
@@ -47,7 +47,14 @@
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/RetoSchmucki/climateExtract/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -130,8 +137,9 @@ devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
 <li>0.10 extract a grid with a 0.10-degree resolution</li>
 </ul>
 <p><strong>3.</strong> To compute summary value of the daily values, use the function <code><a href="reference/temporal_mean.html">temporal_mean()</a></code> for temperature or <code><a href="reference/temporal_sum.html">temporal_sum()</a></code> for precipitation . This function computes the mean for a specified period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. <strong>NOTE</strong> This function use the data extracted with the function <code>extract_nc_value</code>.</p>
-<pre><code>annual_mean &lt;- temporal_mean(climate_data,"annual")
-monthly_sum &lt;- temporal_sum(climate_data,"monthly")</code></pre>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"annual"</span><span class="op">)</span>
+<span class="va">monthly_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/temporal_sum.html">temporal_sum</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"monthly"</span><span class="op">)</span></code></pre></div>
 <p><strong>4.</strong> To extract the weather data for a set of specific locations (points), use the function <code><a href="reference/point_grid_extract.html">point_grid_extract()</a></code>. With this function, you can extract either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a <code>data.frame</code> with the coordinates of the points in a degree decimal format and using the EPSG projection 4326 - <strong>wgs 84</strong></p>
 <pre><code>point_coord &lt;- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
 
@@ -223,7 +231,16 @@ update and improve documentation</li>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2>Links</h2>
+<ul class="list-unstyled">
+<li>Browse source code at <br><a href="https://github.com/RetoSchmucki/climateExtract/">https://​github.com/​RetoSchmucki/​climateExtract/​</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/RetoSchmucki/climateExtract/issues">https://​github.com/​RetoSchmucki/​climateExtract/​issues</a>
+</li>
+</ul>
+</div>
+<div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li>
@@ -248,7 +265,7 @@ update and improve documentation</li>
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/RetoSchmucki/climateExtract"><img src="https://travis-ci.org/RetoSchmucki/climateExtract.png?branch=master" alt="Build Status"></a></li>
+<li><a href="https://travis-ci.com/RetoSchmucki/climateExtract"><img src="https://travis-ci.com/RetoSchmucki/climateExtract.png?branch=master" alt="Build Status"></a></li>
 </ul>
 </div>
 </div>

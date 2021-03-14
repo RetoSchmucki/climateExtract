@@ -9,7 +9,7 @@ get_near_nona(x = x, y = y, x_cell = NULL)
 \arguments{
 \item{x}{raster object (raster, rasterStack or rasterBrick)}
 
-\item{y}{point as sf or spatial ojbect}
+\item{y}{point as an sf or spatial object}
 
 \item{x_cell}{cell id if already extracted, if not provide this will be computed}
 }
