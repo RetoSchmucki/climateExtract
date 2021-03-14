@@ -171,7 +171,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
     if(is.null(out)){
       out = "climateExtract_raster.grd"
     }
-    print(paste0("writing our output file: ", out))
+    message(paste0("writing our output file: ", out))
   }
   if(return_data == FALSE & write_raster == TRUE){
     return(list(rasterFile = out, layersName = result$date_extract))
@@ -228,7 +228,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
 
   if(is.null(sml_chunk)){
   
-    cat(paste0("Let's try to get the ",clim_variable," from ",first_year," at ",
+    message(paste0("Try to get the ",clim_variable," from ",first_year," at ",
                 grid_size," degree resolution \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
@@ -257,7 +257,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     }else{
       year_toget <- paste0(sml_chunk, "_")
 
-      cat(paste0("Try to get the ", clim_variable, " from ", first_year, 
+      message(paste0("Try to get the ", clim_variable, " from ", first_year, 
                 " at ", grid_size, " degree resolution from sml_chunk data \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
@@ -286,7 +286,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
        utils::download.file(urltoget, dest_file, mode = "wb")
     }
 
-    cat(paste0("your data (.nc file) is located in ", getwd(), "/",
+    message(paste0("your data (.nc file) is located in ", getwd(), "/",
                dest_file, "\n"))
 
     nc.ncdf <- ncdf4::nc_open(dest_file)
@@ -442,7 +442,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 #'
 #' Return cell number of the nearest data point available in the the raster layer
 #' @param x raster object (raster, rasterStack or rasterBrick)
-#' @param y point as sf or spatial ojbect
+#' @param y point as an sf or spatial object
 #' @param x_cell cell id if already extracted, if not provide this will be computed
 #' @details This function links a raster cell id to each points and search for 
 #' the nearest cell with data (not NA) if the points fall within a cell with NA.
@@ -492,7 +492,6 @@ get_near_nona <- function(x = x, y = y, x_cell = NULL){
     points_nacell$gid <- wna 
  return(list(nona_cell = x_cell, points_nacell, dist_nona_cell = dist_cell))
 }
-
 
 #' temporal_mean
 #'
@@ -605,8 +604,6 @@ temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
     }
     annual.sum <- list(value_array = annual.sum,
                        date_extract = year_list,
-                       longitude = data_nc$longitude,
-                       latitude = data_nc$latitude,
                        variable_name = data_nc$variable_name)
     result <- c(result, annual.sum)
   }
@@ -643,90 +640,84 @@ temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
   return(result)
 }
 
-#' get_thepoint Function
-#'
-#' Retrieve values corresponding to geographic points 
-#' get_thepoint(data_nc$value_array,nc_index[p,])
-#' @param x object obtained from the temporal_mean() function containing the 
-#' array of averaged values
-#' @param nc_index spatial indices corresponding to the coordinates of the 
-#' geographic points
-#' @details This function is internal and used to extract value from the grid 
-#' with the function point_grid_extract()
-#' @author Reto Schmucki
-#' @export
-#'
-
-get_thepoint <- function(x, nc_index){
-  value_vect <- x[nc_index$x_index, nc_index$y_index,]
-}
-
 #' point_grid_extract
 #'
 #' Extract the mean climatic value (annual mean, monthly mean, sliding window 
 #' mean) for each geographic points
-#' @param data_nc object obtained from the temporal_mean() function corresponding 
-#' to the period of interest and the level of averaging
-#' @param point_coord a data.frame with three column named "site_id", "longitude",
-#'  and "latitude" where coordinate of the points are in degree decimal 
-#' (epsg projection 4326 - wgs 84)
+#' @param x object obtained from the temporal_mean()  or temporal_sum()
+#' @param point_coord sf object or a data.frame with coordinates in degree decimal
+#' in two columns named "longitude" and "latitude" (epsg projection 4326 - wgs 84)
 #' @author Reto Schmucki
 #' @export
 #'
 
-point_grid_extract <- function(data_nc, point_coord) {
+point_grid_extract <- function(x, point_coord) {
 
-  ## Get the layer with the widest spatial extent in the data
-  na.profile <- apply(data_nc$value_array, 3, function(x) sum(!is.na(x)))
-  max_extent <- which(na.profile == max(na.profile))[1]
-  lonlat <- expand.grid(data_nc$longitude, data_nc$latitude)
-  tmp.vec <- as.vector(data_nc$value_array[, , max_extent])
-  tmp.df01 <- data.frame(cbind(lonlat, tmp.vec))
-  names(tmp.df01) <- c("lon", "lat", data_nc$variable_name)
-  tmp.df_noNA <- tmp.df01[!is.na(tmp.df01[, 3]),]
-  # get index of closest point in the climate grid
-  nc_index<-data.frame(site_id = NA,
-                      gr.longitude = NA,
-                      gr.latitude = NA,
-                      x_index = NA,
-                      y_index = NA,
-                      pt.x_coord = NA,
-                      pt.y_coord = NA)
-  pb <- tcltk::tkProgressBar(title = "progress bar", 
-                             min = 0, 
-                             max = dim(point_coord)[1],
-                             width = 300)
-  point_coord <- point_coord[, c("site_id", "longitude", "latitude")]
-  for (i in 1:dim(point_coord)[1]){
-    tcltk::setTkProgressBar(pb, i, 
-            label=paste(round(i / dim(point_coord)[1] * 100, 0),"% extracted"))
-    nnindex<-FNN::get.knnx(tmp.df_noNA[,-3],point_coord[i,-1],1)
-    nc_index <- rbind(nc_index, 
-                    data.frame(site_id = as.character(point_coord$site_id[i]),
-                              gr.longitude = tmp.df_noNA[nnindex$nn.index, -3]$lon,
-                              gr.latitude = tmp.df_noNA[nnindex$nn.index, -3]$lat,
-                              x_index = which(data_nc$longitude == tmp.df_noNA[nnindex$nn.index, -3]$lon),
-                              y_index = which(data_nc$latitude == tmp.df_noNA[nnindex$nn.index, -3]$lat),
-                              pt.x_coord = point_coord$lon[i],
-                              pt.y_coord = point_coord$lat[i]))
+  lyr_extent <- rev(order(apply(x$value_array, 3, function(x) sum(!is.na(x)))))[1]
+
+  a <- x$value_array
+  ap <- aperm(a, c(2, 1, 3), resize = TRUE)
+  a <- raster::brick(
+                 xmn = min(x$longitude),
+                 ymn = min(x$latitude),
+                 xmx = max(x$longitude),
+                 ymx = max(x$latitude),
+                 crs = 4326
+      )
+  dim(a) <- dim(ap[nrow(ap):1, , ])
+  a <- raster::setValues(a, ap[nrow(ap):1, , ])
+  names(a) <- as.character(x$date_extract)
+  x_r <- a
+ 
+  if(!class(point_coord)[1] %in% c("sf", "SpatialPointsDataFrame")) {
+    if(sum(c("longitude", "latitude") %in% names(point_coord)) == 2){
+      y <- sf::st_as_sf(point_coord, coords = c("longitude", "latitude"), crs = 4326)
+    }else{ stop("point_coord must either be a spatial object (sf or sp) or a data.frame with a longitude and a latitude column")}
+  }else{
+    y <- as(point_coord, "sf")
   }
-  nc_index <- nc_index[-1,]
-  close(pb)
-  pb <- tcltk::tkProgressBar(title = "progress bar",
-                             min = 0,
-                             max = length(nc_index$site_id),
-                             width = 300)
-  result <- data.frame()
-  for (p in 1:length(nc_index$site_id)){
-    tcltk::setTkProgressBar(pb, p, 
-            label = paste(round(p / length(nc_index$site_id) * 100, 0), "% extracted"))
-    result1 <- get_thepoint(data_nc$value_array, nc_index[p,])
-    result <- rbind(result, result1)
-  }
-  result <- as.data.frame(t(result))
-  names(result) <- nc_index$site_id
-  result$date_extract <- data_nc$date_extract
-  result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
-  close(pb)
+
+  y_cell <- terra::cellFromXY(raster::raster(x_r[[lyr_extent]]), as(y,"Spatial"))
+
+    wna <- which(is.na(terra::extract(x_r[[lyr_extent]], y_cell)))
+    mc_na <- y_cell[wna]
+    if(length(mc_na) > 0){
+      near_cell <- c(rep(NA, length(mc_na)))
+      for(i in seq_along(mc_na)){
+        a <- mc_na[i]
+        row_fact <- c(ncol(x_r), 2*ncol(x_r), 3*ncol(x_r))
+        
+        ms1 <- c(a + c(-3:3) - row_fact[3],
+                a + c(-3:3) - row_fact[2],
+                a + c(-3:3) - row_fact[1],
+                a + c(-3:3),
+                a + c(-3:3) + row_fact[1],
+                a + c(-3:3) + row_fact[2],
+                a + c(-3:3) + row_fact[3])
+
+        ms2 <- ms1[which(!is.na(terra::extract(x_r[[lyr_extent]], c(ms1))))]
+        dist_nonan_cell <- sf::st_distance(y[wna[i],], 
+                           sf::st_as_sf(data.frame(terra::xyFromCell(x_r[[1]], 
+                                        c(ms2))), 
+                                        coords = c("x", "y"), 
+                                        crs = 4326))
+        near_cell[i] <- ms2[order(dist_nonan_cell)[1]]
+      }
+
+    y_cell[wna] <- near_cell   
+    }
+
+    val <- terra::extract(x_r, y_cell)
+    if("site_id" %in% names(y)){
+      site_id_ <- y$site_id
+    }else{
+      site_id_ <- paste0("site_", seq_len(dim(y)[1]))
+    }
+
+    result <- as.data.frame(t(val))
+    names(result) <- site_id_
+    result$date_extract <- x$date_extract
+    result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
+
   return(result)
 }

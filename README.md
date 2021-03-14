@@ -78,7 +78,7 @@ climate_data <- extract_nc_value(first_year = 2012,
 
 **3.** To compute summary value of the daily values, use the function `temporal_mean()` for temperature or `temporal_sum()` for precipitation . This function computes the mean for a specified period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. **NOTE** This function use the data extracted with the function `extract_nc_value`.
 
-```
+```R
 annual_mean <- temporal_mean(climate_data,"annual")
 monthly_sum <- temporal_sum(climate_data,"monthly")
 ```
