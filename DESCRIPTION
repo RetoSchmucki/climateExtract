@@ -11,10 +11,11 @@ Authors@R:
       person(given = "Romain",
              family = "Lorrilliere",
              role = c("ctb")))
-Description: A toolbox to ease the extraction and manipulation of daily gridded climate data from a NETCDF object available from the European Climate Assessement & Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.
+Description: A toolbox to ease the extraction and manipulaton of daily gridded climate data from a NETCDF object available from the European Climate Assessement & Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 URL: https://retoschmucki.github.io/climateExtract
+BugReports: https://github.com/RetoSchmucki/climateExtract/issues
 LazyData: true
 Imports: ncdf4,
          data.table,
@@ -23,5 +24,6 @@ Imports: ncdf4,
          terra,
          zoo,
          methods
+VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 Encoding: UTF-8
