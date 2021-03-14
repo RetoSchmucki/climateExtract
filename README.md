@@ -1,5 +1,5 @@
 # climateExtract
-[![Build Status](https://travis-ci.org/RetoSchmucki/climateExtract.png?branch=master)](https://travis-ci.org/RetoSchmucki/climateExtract)
+[![Build Status](https://travis-ci.com/RetoSchmucki/climateExtract.png?branch=master)](https://travis-ci.com/RetoSchmucki/climateExtract)
 
 <img style="float: right;" src="climateExtractHex.png" width=200 hspace="20">
 

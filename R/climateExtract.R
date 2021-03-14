@@ -100,19 +100,19 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
   day_since <- ncdf4::ncatt_get(nc.ncdf, "time")$units
   day_vals <- ncdf4::ncvar_get(nc.ncdf, "time")
   fillvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "_FillValue")
-  date_seq <- lubridate::ymd(as.Date(gsub("days since ", "", day_since, 
-                                          fixed = TRUE))) + day_vals
+  
+  date_seq <- as.Date(gsub("days since ", "", day_since, fixed = TRUE), "%Y-%m-%d") + day_vals
   res <- lon[2] - lon[1]
 
   if(is.null(first_year)){
   start_date <- date_seq[1]
   }else{
-  start_date <- lubridate::ymd(as.Date(paste0(first_year, "-01-01")))
+  start_date <- as.Date(paste0(first_year, "-01-01"), "%Y-%m-%d")
   }
   if(is.null(last_year)){
   end_date <- rev(date_seq)[1]
   }else{
-  end_date <- lubridate::ymd(as.Date(paste0(last_year, "-12-31")))
+  end_date <- as.Date(paste0(last_year, "-12-31"), "%Y-%m-%d")
   }
   time_toget <- which(date_seq >= start_date & date_seq <= end_date)
   ext_ <- c()
@@ -379,11 +379,11 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     names(a) <- as.character(x$date_extract)
     x <- a
   }
-  Date_seq <- lubridate::ymd(gsub("X", "", names(x)))
+  Date_seq <- as.Date(gsub("X", "", names(x)), "%Y.%m.%d")
   date_dt <- data.table::data.table(date = Date_seq, 
-                                    year = substr(Date_seq, 1, 4),
-                                    month = substr(Date_seq, 6, 7),
-                                    day = substr(Date_seq, 9, 19))
+                                    year = format(Date_seq, "%Y"),
+                                    month = format(Date_seq, "%m"),
+                                    day = format(Date_seq, "%d"))
   if(time_step == "annual"){
     indices <- as.numeric(as.factor(date_dt$year))
   }
