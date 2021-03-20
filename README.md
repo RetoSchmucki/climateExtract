@@ -1,7 +1,8 @@
-# climateExtract
-[![Build Status](https://travis-ci.com/RetoSchmucki/climateExtract.png?branch=master)](https://travis-ci.com/RetoSchmucki/climateExtract)
+# climateExtract <img src="man/figures/logo.png" align="right" alt="" width="120" />
 
-<img style="float: right;" src="climateExtractHex.png" width=200 hspace="20">
+<!-- badges: start -->
+[![Build Status](https://travis-ci.com/RetoSchmucki/climateExtract.png?branch=master)](https://travis-ci.com/RetoSchmucki/climateExtract)
+<!-- badges: end -->
 
 R functions to extract climate data from local NETCDF file that you can download from the
 ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)

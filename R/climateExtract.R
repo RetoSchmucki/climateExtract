@@ -1,9 +1,13 @@
+utils::globalVariables(c("ecad_version"))
+
 #' version of ECA&D to use
 #' @format character string (e.g. "22.0")
 #' \describe{
 #'   \item{ecad_version}{version number used to gather ECAD data}
 #' }
 "ecad_version"
+
+
 
 #' extract_nc_value
 #'
@@ -125,7 +129,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
         ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
       }else{
         if(class(spatial_extent)[1] == "numeric" & length(spatial_extent) == 4){
-          if(sum(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent)) == 4){
+          if(all(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent))){
             ext_ <- sf::st_bbox(c(xmin = spatial_extent$xmin,
                                   ymin = spatial_extent$ymin,
                                   xmax = spatial_extent$xmax,
@@ -278,8 +282,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     x <- "N"
 
     if(file.exists(dest_file)){
-        x <- readline("The requested climate data already exist, do you want to
-                       download them again? (Y/N) \n")
+        x <- readline(paste("The requested climate data already exist, we will use ", dest_file, " as input NetCDF\n"))
     	}
 
     if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
@@ -340,8 +343,10 @@ write_to_brick <- function(x, out = out, ...) {
 #' object (sp)
 #' @param agg_function function used to aggregate data, "mean" or "sum"
 #' @param variable_name character string to identify the resulting variable
-#' @param time_step character string defining the level of averaging, "annual" 
-#' or "monthly"
+#' @param time_step character string defining the level of averaging, "annual",
+#' "monthly" or "window"; if time_step = "window" the rolling function is returned,
+#' computed over the temporal window defined by "wind_length".
+#' @param win_length integer length of the temporal window to apply the rolling function
 #' @details The output is either a multilayer raster if no points are supplied 
 #' in y or a data.table with aggregated statistic computed for each point 
 #' provided in y. If points provided fall in areas with no data (e.g. in the sea
@@ -350,7 +355,6 @@ write_to_brick <- function(x, out = out, ...) {
 #' cell used to retrieve the climate metric is calculated and documented in the 
 #' data output. If the point is within a cell with value, the distance is set to
 #' NA.
-#' @import data.table
 #' @importFrom methods as
 #' @author Reto Schmucki
 #' @export
@@ -358,9 +362,21 @@ write_to_brick <- function(x, out = out, ...) {
 
 temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                               variable_name = "average temp", 
-                              time_step = c("annual", "monthly")){
+                              time_step = c("annual", "monthly", "window"),
+                              win_length = NULL){
 
-  if(class(x)[1] != "RasterBrick"){
+  year = NULL
+  month = NULL
+  day = NULL
+  .SD = NULL
+
+  if(time_step == "window" & is.null(win_length)){
+    win_length <- 30
+    message("rolling function will be computed over 30-days window, set win_length
+     to change the extent of the window")
+  }
+
+  if(!any(class(x) == "RasterBrick")){
     if(length(dim(x$value_array)) != 3){
       stop("x must be a rasterBrick object or an output from the 
         extrat_nc_value() function")
@@ -384,14 +400,15 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                                     year = format(Date_seq, "%Y"),
                                     month = format(Date_seq, "%m"),
                                     day = format(Date_seq, "%d"))
-  if(time_step == "annual"){
-    indices <- as.numeric(as.factor(date_dt$year))
-  }
-  if(time_step == "monthly"){
-    indices <- as.numeric(as.factor(paste0(date_dt$year, ".", date_dt$month)))
-  }
-  if(!is.null(y)){
-    if(!class(y)[1] %in% c("sf", "SpatialPointsDataFrame")) {stop("y must be a 
+    if(time_step == "annual"){
+      indices <- as.numeric(as.factor(date_dt$year))
+    }
+    if(time_step == "monthly"){
+      indices <- as.numeric(as.factor(paste0(date_dt$year, ".", date_dt$month)))
+    }
+  
+   if(!is.null(y)){
+    if(!any(class(y) %in% c("sf", "SpatialPointsDataFrame"))) {stop("y must be a 
         sf or a SpatialPointsDataFrame object")}
     my_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
     nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
@@ -406,33 +423,113 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     dt <- cbind(date_dt, t(as.matrix(val)))
     if(time_step == "annual"){
       dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
-                   by = .(year), .SDcols = dimnames(val)[[1]]]
+                   by = c("year"), .SDcols = dimnames(val)[[1]]]
+      
+      v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year"),
-                  measure.vars = patterns("site_"),
+                  measure.vars = v_col,
                   variable.name = "site",
-                  value.name = c(paste0(agg_function, "_", variable_name)))
+                  value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
     }
     if(time_step == "monthly"){
       dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), 
-                  by = .(year, month), .SDcols = dimnames(val)[[1]]]
+                  by = c("year", "month"), .SDcols = dimnames(val)[[1]]]
+      v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year", "month"),
-                  measure.vars = patterns("site_"),
+                  measure.vars = v_col,
                   variable.name = "site",
-                  value.name = c(paste0(agg_function, "_", variable_name)))
+                  value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
     }
+    if(time_step == "window"){
+      if(agg_function == 'mean'){
+          v_col <- unlist(lapply("site_", grep, names(dt)))
+          dt_agg <- data.table::setDT(data.table::frollmean(dt[, v_col, with = FALSE],
+                                                            n = win_length,
+                                                            fill = NA,
+                                                            align = "right",
+                                                            na.rm = TRUE))
+          names(dt_agg) <- names(dt)[v_col]
+          dt_agg <- cbind(dt[, -c(v_col), with = FALSE], dt_agg)
+          v_col <- lapply("site_", grep, names(dt_agg))
+          dt_agg <- data.table::melt(dt_agg,
+                      id.vars = c("date", "year", "month", "day"),
+                      measure.vars = v_col,
+                      variable.name = "site",
+                      value.name = c(paste0(agg_function, "_",
+                                            gsub(" ", "_", variable_name),
+                                            "_roll-",
+                                            win_length,
+                                            "-days")))
+      }
+      if(agg_function == 'sum'){
+          v_col <- unlist(lapply("site_", grep, names(dt)))
+          dt_agg <- data.table::setDT(data.table::frollsum(dt[, v_col, with = FALSE],
+                                                            n = win_length,
+                                                            fill = NA,
+                                                            align = "right",
+                                                            na.rm = TRUE))
+          names(dt_agg) <- names(dt)[v_col]
+          dt_agg <- cbind(dt[, -c(v_col), with = FALSE], dt_agg)
+          v_col <- lapply("site_", grep, names(dt_agg))
+          dt_agg <- data.table::melt(dt_agg,
+                      id.vars = c("date", "year", "month", "day"),
+                      measure.vars = v_col,
+                      variable.name = "site",
+                      value.name = c(paste0(agg_function, "_",
+                                            gsub(" ", "_", variable_name),
+                                            "_roll-",
+                                            win_length,
+                                            "-days")))
+      }
+      if(!any(agg_function %in% c("mean", "sum"))){
+          v_col <- unlist(lapply("site_", grep, names(dt)))
+          dt_agg <- data.table::setDT(data.table::frollapply(dt[, v_col, with = FALSE],
+                                                            n = win_length,
+                                                            FUN = get(agg_function),
+                                                            fill = NA,
+                                                            align = "right",
+                                                            na.rm = TRUE))
+          names(dt_agg) <- names(dt)[v_col]
+          dt_agg <- cbind(dt[, -c(v_col), with = FALSE], dt_agg)
+          v_col <- lapply("site_", grep, names(dt_agg))
+          dt_agg <- data.table::melt(dt_agg,
+                      id.vars = c("date", "year", "month", "day"),
+                      measure.vars = v_col,
+                      variable.name = "site",
+                      value.name = c(paste0(agg_function, "_", 
+                                            gsub(" ", "_", variable_name),
+                                            "_roll-",
+                                            win_length,
+                                            "-days")))
+      }
+    }
+
     dt_dist <- data.table::data.table(site = site_id_[nona_cell_res[[2]]$gid], 
                     distance_from_pnt = round(nona_cell_res$dist_nona_cell, 0))
     dt_agg <- merge(dt_agg, dt_dist, by = "site", all.x = TRUE)
     return(dt_agg)
   }else{
-    x_agg <- terra::tapp(terra::rast(x), index = indices, fun = agg_function)
-    if(time_step == "annual"){
-      names(x_agg) <- unique(date_dt$year)
+    if(time_step == "window"){
+      x_agg <- stars::st_as_stars(x)
+      x_agg <- stars::st_apply(x_agg, c(1, 2), function(x) raster::movingFun(x, 
+                                                            n = win_length,
+                                                            fun = get(agg_function),
+                                                            type = "to",
+                                                            circular = FALSE,
+                                                            na.rm = FALSE))
+      x_agg <- as(x_agg, "Raster")
+      names(x_agg) <- unique(date_dt$date)
     }
-    if(time_step == "monthly"){
-      names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
+    if(any(time_step %in% c("annual", "monthly"))){  
+      x_agg <- terra::tapp(terra::rast(x), index = indices, fun = agg_function)
+      if(time_step == "annual"){
+        names(x_agg) <- unique(date_dt$year)
+      }
+      if(time_step == "monthly"){
+        names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
+      }
     }
   return(x_agg) 
   }
@@ -669,8 +766,8 @@ point_grid_extract <- function(x, point_coord) {
   names(a) <- as.character(x$date_extract)
   x_r <- a
  
-  if(!class(point_coord)[1] %in% c("sf", "SpatialPointsDataFrame")) {
-    if(sum(c("longitude", "latitude") %in% names(point_coord)) == 2){
+  if(!any(class(point_coord) %in% c("sf", "SpatialPointsDataFrame"))) {
+    if(all(c("longitude", "latitude") %in% names(point_coord))){
       y <- sf::st_as_sf(point_coord, coords = c("longitude", "latitude"), crs = 4326)
     }else{ stop("point_coord must either be a spatial object (sf or sp) or a data.frame with a longitude and a latitude column")}
   }else{

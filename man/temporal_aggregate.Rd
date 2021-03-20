@@ -9,7 +9,8 @@ temporal_aggregate(
   y = NULL,
   agg_function = "mean",
   variable_name = "average temp",
-  time_step = c("annual", "monthly")
+  time_step = c("annual", "monthly", "window"),
+  win_length = NULL
 )
 }
 \arguments{
@@ -23,8 +24,11 @@ object (sp)}
 
 \item{variable_name}{character string to identify the resulting variable}
 
-\item{time_step}{character string defining the level of averaging, "annual" 
-or "monthly"}
+\item{time_step}{character string defining the level of averaging, "annual",
+"monthly" or "window"; if time_step = "window" the rolling function is returned,
+computed over the temporal window defined by "wind_length".}
+
+\item{win_length}{integer length of the temporal window to apply the rolling function}
 }
 \description{
 Compute mean climatic values for specific periods from an object obtained 

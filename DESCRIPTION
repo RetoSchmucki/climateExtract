@@ -20,6 +20,7 @@ LazyData: true
 Imports: ncdf4,
          data.table,
          sf,
+         stars,
          raster,
          terra,
          zoo,
