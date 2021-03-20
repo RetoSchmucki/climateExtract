@@ -48,7 +48,11 @@ utils::globalVariables(c("ecad_version"))
 #'  data will be written in climateExtract_raster.grd 
 #' @param return_data logical, if TRUE the data resulting from the extract will
 #'  be stored in the object, if false, only the filename of the raster and the
-#'  name of the layers are returned in a list, only if write_out is TRUE. 
+#'  name of the layers are returned in a list, only if write_out is TRUE.
+#' @param raw_datavals If TRUE, then the actual raw data values from the file are 
+#' returned with no conversion to NA (if equal to the missing value/fill value) 
+#' or scale/offset applied. Default is TRUE. This reduce the size of the object to 
+#' manipulate.
 #' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
 #' @details By default, this function asks to select the ".nc" file from your
 #'  local disc, but this can be changed by setting the argument 'local_file' to
@@ -76,7 +80,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                              spatial_extent=NULL, clim_variable="mean temp",
                              statistic="mean", grid_size=0.25, ecad_v = NULL, 
                              write_raster = FALSE, out = NULL,
-                             return_data = TRUE, ...){
+                             return_data = TRUE, raw_datavals = TRUE,
+                             write_raw = FALSE, ...){
 
   if (is.null(ecad_v)){ 
     ecad_v = ecad_version
@@ -104,6 +109,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
   day_since <- ncdf4::ncatt_get(nc.ncdf, "time")$units
   day_vals <- ncdf4::ncvar_get(nc.ncdf, "time")
   fillvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "_FillValue")
+  offsetvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "add_offset")
+  scale_factorvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "scale_factor")
   
   date_seq <- as.Date(gsub("days since ", "", day_since, fixed = TRUE), "%Y-%m-%d") + day_vals
   res <- lon[2] - lon[1]
@@ -160,15 +167,22 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                                           time_toget[1]), 
                                 count = c(length(lon_toget), 
                                           length(lat_toget), 
-                                          length(time_toget))
+                                          length(time_toget)),
+                                raw_datavals = raw_datavals
                                 )
-  tmp.array[tmp.array == fillvalue$value] <- NA
-
+  if(isTRUE(raw_datavals)){
+   tmp.array[tmp.array == fillvalue$value] <- NA
+  }
   result <- list(variable_name = nc_varname,
                 value_array = tmp.array,
                 longitude = lon[lon_toget],
                 latitude = lat[lat_toget],
-                date_extract = date_seq[time_toget])
+                date_extract = date_seq[time_toget],
+                scale_factorvalue = scale_factorvalue$value,
+                offsetvalue = offsetvalue$value,
+                write_raster = write_raster,
+                raw_datavals = raw_datavals
+                )
 
   if(write_raster == TRUE){
     write_to_brick(result, out = out, ...)
@@ -178,7 +192,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
     message(paste0("writing our output file: ", out))
   }
   if(return_data == FALSE & write_raster == TRUE){
-    return(list(rasterFile = out, layersName = result$date_extract))
+    return(list(rasterFile = out, 
+                layersName = result$date_extract))
   }else{
     return(result)
   }
@@ -282,7 +297,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     x <- "N"
 
     if(file.exists(dest_file)){
-        x <- readline(paste("The requested climate data already exist, we will use ", dest_file, " as input NetCDF\n"))
+        message(paste("The requested climate data already exist, we will use ", dest_file, " as input NetCDF"))
     	}
 
     if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
@@ -312,6 +327,9 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
  
 write_to_brick <- function(x, out = out, ...) {
   a <- x$value_array
+  if(isTRUE(x$raw_datavals)){
+  a <- (a * x$scale_factorvalue) + x$offsetvalue
+  }
   ap <- aperm(a, c(2, 1, 3), resize = TRUE)
   b <- raster::brick(
                 xmn = min(x$longitude),
@@ -369,6 +387,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
   month = NULL
   day = NULL
   .SD = NULL
+  raw_datavals = FALSE
 
   if(time_step == "window" & is.null(win_length)){
     win_length <- 30
@@ -381,6 +400,9 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       stop("x must be a rasterBrick object or an output from the 
         extrat_nc_value() function")
     }
+    raw_datavals <- x$raw_datavals
+    scale_factorvalue <- x$scale_factorvalue
+    offsetvalue <- x$offsetvalue
     a <- x$value_array
     ap <- aperm(a, c(2, 1, 3), resize = TRUE)
     a <- raster::brick(
@@ -420,10 +442,18 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       site_id_ <- paste0("site_", seq_len(dim(y)[1]))
     }
     dimnames(val)[[1]] <- site_id_
-    dt <- cbind(date_dt, t(as.matrix(val)))
+
+    if(isTRUE(raw_datavals)){
+      val <- (t(as.matrix(val)) * scale_factorvalue) + offsetvalue
+    } else{
+      val <- t(as.matrix(val))
+    }
+
+    dt <- cbind(date_dt, val)
+
     if(time_step == "annual"){
       dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
-                   by = c("year"), .SDcols = dimnames(val)[[1]]]
+                   by = c("year"), .SDcols = site_id_]
       
       v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
@@ -434,7 +464,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     }
     if(time_step == "monthly"){
       dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), 
-                  by = c("year", "month"), .SDcols = dimnames(val)[[1]]]
+                  by = c("year", "month"), .SDcols = site_id_]
       v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year", "month"),
@@ -457,11 +487,9 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                       id.vars = c("date", "year", "month", "day"),
                       measure.vars = v_col,
                       variable.name = "site",
-                      value.name = c(paste0(agg_function, "_",
+                      value.name = c(paste0("roll", agg_function, "_", 
                                             gsub(" ", "_", variable_name),
-                                            "_roll-",
-                                            win_length,
-                                            "-days")))
+                                            win_length,"-d")))
       }
       if(agg_function == 'sum'){
           v_col <- unlist(lapply("site_", grep, names(dt)))
@@ -477,11 +505,9 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                       id.vars = c("date", "year", "month", "day"),
                       measure.vars = v_col,
                       variable.name = "site",
-                      value.name = c(paste0(agg_function, "_",
+                      value.name = c(paste0("roll", agg_function, "_", 
                                             gsub(" ", "_", variable_name),
-                                            "_roll-",
-                                            win_length,
-                                            "-days")))
+                                            win_length,"-d")))
       }
       if(!any(agg_function %in% c("mean", "sum"))){
           v_col <- unlist(lapply("site_", grep, names(dt)))
@@ -498,11 +524,9 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                       id.vars = c("date", "year", "month", "day"),
                       measure.vars = v_col,
                       variable.name = "site",
-                      value.name = c(paste0(agg_function, "_", 
+                      value.name = c(paste0("roll", agg_function, "_", 
                                             gsub(" ", "_", variable_name),
-                                            "_roll-",
-                                            win_length,
-                                            "-days")))
+                                            win_length,"-d")))
       }
     }
 
@@ -530,6 +554,9 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       if(time_step == "monthly"){
         names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
       }
+    }
+    if(isTRUE(raw_datavals)){
+      x_agg <- (x_agg * scale_factorvalue) + offsetvalue
     }
   return(x_agg) 
   }
@@ -625,6 +652,9 @@ temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"),
                                               c(1,2), mean, na.rm = TRUE)
       year_list <- c(year_list,y)
     }
+    if(isTRUE(data_nc$raw_datavals)){
+      annual.mean <- (annual.mean * data_nc$scale_factorvalue) + data_nc$offsetvalue
+    }
     annual.mean <- list(value_array = annual.mean, date_extract = year_list,
                         variable_name = data_nc$variable_name)
     result <- c(result,annual.mean)
@@ -640,6 +670,9 @@ temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"),
                                                                       "%Y%m")) == ym],
                                                     c(1, 2), mean, na.rm = TRUE)
     }
+    if(isTRUE(data_nc$raw_datavals)){
+      monthly.mean <- (monthly.mean * data_nc$scale_factorvalue) + data_nc$offsetvalue
+    }
     monthly.mean <- list(value_array = monthly.mean,
                          date_extract = year_month,
                          year_month = data.frame(year = substr(year_month, 1, 4),
@@ -650,7 +683,9 @@ temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"),
   }
 
   if ("window" %in% time_avg) {
-
+    if(isTRUE(data_nc$raw_datavals)){
+      data_nc$value_array <- (data_nc$value_array * data_nc$scale_factorvalue) + data_nc$offsetvalue
+    }
     roll.mean <- apply(data_nc$value_array[, , ], c(1, 2), 
                             zoo::rollmean, k = win_length, na.rm = TRUE)
     roll.mean <- aperm(roll.mean, c(2,3,1))
@@ -659,7 +694,6 @@ temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"),
                       variable_name = data_nc$variable_name)
     result <- c(result, roll.mean)
     }
-
   return(result)
 }
 
@@ -699,6 +733,9 @@ temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
                                               c(1,2), sum, na.rm = FALSE)
       year_list <- c(year_list,y)
     }
+    if(isTRUE(data_nc$raw_datavals)){
+      annual.sum <- (annual.sum * data_nc$scale_factorvalue) + data_nc$offsetvalue
+    }
     annual.sum <- list(value_array = annual.sum,
                        date_extract = year_list,
                        variable_name = data_nc$variable_name)
@@ -717,6 +754,9 @@ temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
                                                             "%Y%m"))==ym],
                                                   c(1,2), sum, na.rm = FALSE)
     }
+    if(isTRUE(data_nc$raw_datavals)){
+      monthly.sum <- (monthly.sum * data_nc$scale_factorvalue) + data_nc$offsetvalue
+    }
     monthly.sum <- list(value_array = monthly.sum,
                         date_extract = year_month,
                         year_month = data.frame(year = substr(year_month, 1, 4),
@@ -725,7 +765,9 @@ temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
     result <- c(result,monthly.sum)
   }
   if ("window" %in% time_sum) {
-
+    if(isTRUE(data_nc$raw_datavals)){
+      mdata_nc$value_array <- (data_nc$value_array * data_nc$scale_factorvalue) + data_nc$offsetvalue
+    }
     roll.sum <- apply(data_nc$value_array[,,], c(1, 2), 
                         zoo::rollsum, k = win_length, na.rm = FALSE)
     roll.sum <- aperm(roll.sum, c(2, 3, 1))
