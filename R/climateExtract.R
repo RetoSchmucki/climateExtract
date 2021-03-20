@@ -80,8 +80,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                              spatial_extent=NULL, clim_variable="mean temp",
                              statistic="mean", grid_size=0.25, ecad_v = NULL, 
                              write_raster = FALSE, out = NULL,
-                             return_data = TRUE, raw_datavals = TRUE,
-                             write_raw = FALSE, ...){
+                             return_data = TRUE, raw_datavals = TRUE, 
+                             ...){
 
   if (is.null(ecad_v)){ 
     ecad_v = ecad_version

@@ -18,6 +18,7 @@ extract_nc_value(
   write_raster = FALSE,
   out = NULL,
   return_data = TRUE,
+  raw_datavals = TRUE,
   ...
 )
 }
@@ -69,6 +70,11 @@ data will be written in climateExtract_raster.grd}
 \item{return_data}{logical, if TRUE the data resulting from the extract will
 be stored in the object, if false, only the filename of the raster and the
 name of the layers are returned in a list, only if write_out is TRUE.}
+
+\item{raw_datavals}{If TRUE, then the actual raw data values from the file are 
+returned with no conversion to NA (if equal to the missing value/fill value) 
+or scale/offset applied. Default is TRUE. This reduce the size of the object to 
+manipulate.}
 
 \item{...}{additional arguments for for writing files, see \link[raster]{writeRaster}}
 }

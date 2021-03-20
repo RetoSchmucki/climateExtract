@@ -143,6 +143,7 @@ available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</p
   write_raster <span class='op'>=</span> <span class='cn'>FALSE</span>,
   out <span class='op'>=</span> <span class='cn'>NULL</span>,
   return_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  raw_datavals <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -222,6 +223,13 @@ data will be written in climateExtract_raster.grd</p></td>
       <td><p>logical, if TRUE the data resulting from the extract will
 be stored in the object, if false, only the filename of the raster and the
 name of the layers are returned in a list, only if write_out is TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>raw_datavals</th>
+      <td><p>If TRUE, then the actual raw data values from the file are 
+returned with no conversion to NA (if equal to the missing value/fill value) 
+or scale/offset applied. Default is TRUE. This reduce the size of the object to 
+manipulate.</p></td>
     </tr>
     <tr>
       <th>...</th>

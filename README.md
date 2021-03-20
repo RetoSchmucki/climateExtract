@@ -65,6 +65,7 @@ climate_data <- extract_nc_value(first_year = 2012,
                                  clim_variable = 'precipitation',
                                  statistic = "mean",
                                  grid_size = 0.25)
+
 ```
 
 *where clim_variable set to:*
@@ -87,7 +88,6 @@ monthly_sum <- temporal_sum(climate_data,"monthly")
 
 ```
 point_coord <- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
-
 point.ann_mean <- point_grid_extract(annual_mean,point_coord)
 point.month_sum <- point_grid_extract(monthly_sum,point_coord)
 ```

@@ -150,7 +150,6 @@ devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
 <span class="va">monthly_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/temporal_sum.html">temporal_sum</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"monthly"</span><span class="op">)</span></code></pre></div>
 <p><strong>4.</strong> To extract the weather data for a set of specific locations (points), use the function <code><a href="reference/point_grid_extract.html">point_grid_extract()</a></code>. With this function, you can extract either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a <code>data.frame</code> with the coordinates of the points in a degree decimal format and using the EPSG projection 4326 - <strong>wgs 84</strong></p>
 <pre><code>point_coord &lt;- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
-
 point.ann_mean &lt;- point_grid_extract(annual_mean,point_coord)
 point.month_sum &lt;- point_grid_extract(monthly_sum,point_coord)</code></pre>
 <p><strong>5.</strong> To extract long series, one chunk at a time (A quick and dirty workaround memory limit under Windows).</p>
