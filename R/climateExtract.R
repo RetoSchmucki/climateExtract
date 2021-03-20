@@ -248,7 +248,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
          urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
                              grid_size, "_reg_ensemble/", clim_var, "_",
                              grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
-         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, ecad_v, "e.nc")
+         dest_file <- paste0(clim_var,"_",grid_size,"_reg_", year_toget, "v", ecad_v, "e.nc")
      } else {
         urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
                            grid_size, "_reg_ensemble/", clim_var, "_",
