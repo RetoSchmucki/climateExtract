@@ -377,6 +377,7 @@ write_to_brick <- function(x, out = out, ...) {
 #' data output. If the point is within a cell with value, the distance is set to
 #' NA.
 #' @importFrom methods as
+#' @import data.table
 #' @author Reto Schmucki
 #' @export
 #'
@@ -452,10 +453,10 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       val <- t(as.matrix(val))
     }
 
-    dt <- cbind(date_dt, val)
+    dt_v <- cbind(date_dt, val)
 
     if(time_step == "annual"){
-      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
                    by = c("year"), .SDcols = site_id_]
       
       v_col <- lapply("site_", grep, names(dt_agg))
@@ -466,7 +467,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                   value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
     }
     if(time_step == "monthly"){
-      dt_agg <- dt[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), 
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), 
                   by = c("year", "month"), .SDcols = site_id_]
       v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
@@ -477,14 +478,14 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     }
     if(time_step == "window"){
       if(agg_function == 'mean'){
-          v_col <- unlist(lapply("site_", grep, names(dt)))
-          dt_agg <- data.table::setDT(data.table::frollmean(dt[, v_col, with = FALSE],
+          v_col <- unlist(lapply("site_", grep, names(dt_v)))
+          dt_agg <- data.table::setDT(data.table::frollmean(dt_v[, v_col, with = FALSE],
                                                             n = win_length,
                                                             fill = NA,
                                                             align = "right",
                                                             na.rm = TRUE))
-          names(dt_agg) <- names(dt)[v_col]
-          dt_agg <- cbind(dt[, -c(v_col), with = FALSE], dt_agg)
+          names(dt_agg) <- names(dt_v)[v_col]
+          dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
           v_col <- lapply("site_", grep, names(dt_agg))
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),
@@ -495,14 +496,14 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                                             win_length,"-d")))
       }
       if(agg_function == 'sum'){
-          v_col <- unlist(lapply("site_", grep, names(dt)))
-          dt_agg <- data.table::setDT(data.table::frollsum(dt[, v_col, with = FALSE],
+          v_col <- unlist(lapply("site_", grep, names(dt_v)))
+          dt_agg <- data.table::setDT(data.table::frollsum(dt_v[, v_col, with = FALSE],
                                                             n = win_length,
                                                             fill = NA,
                                                             align = "right",
                                                             na.rm = TRUE))
-          names(dt_agg) <- names(dt)[v_col]
-          dt_agg <- cbind(dt[, -c(v_col), with = FALSE], dt_agg)
+          names(dt_agg) <- names(dt_v)[v_col]
+          dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
           v_col <- lapply("site_", grep, names(dt_agg))
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),
@@ -513,15 +514,15 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                                             win_length,"-d")))
       }
       if(!any(agg_function %in% c("mean", "sum"))){
-          v_col <- unlist(lapply("site_", grep, names(dt)))
-          dt_agg <- data.table::setDT(data.table::frollapply(dt[, v_col, with = FALSE],
+          v_col <- unlist(lapply("site_", grep, names(dt_v)))
+          dt_agg <- data.table::setDT(data.table::frollapply(dt_v[, v_col, with = FALSE],
                                                             n = win_length,
                                                             FUN = get(agg_function),
                                                             fill = NA,
                                                             align = "right",
                                                             na.rm = TRUE))
-          names(dt_agg) <- names(dt)[v_col]
-          dt_agg <- cbind(dt[, -c(v_col), with = FALSE], dt_agg)
+          names(dt_agg) <- names(dt_v)[v_col]
+          dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
           v_col <- lapply("site_", grep, names(dt_agg))
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),

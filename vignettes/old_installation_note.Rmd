@@ -1,0 +1,13 @@
+---
+title: "Installation note for older systems"
+author: "Reto Schmucki (UKCEH)"
+date: "07 April 2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+---------
+
+This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `ncdf4` can be installed directly from CRAN. For *Windows* users, if CRAN installation does not work, refer to the instructions available at http://cirrus.ucsd.edu/\~pierce/ncdf/ and install the `ncdf4` package manually from the appropriate `.zip` file, note the latest version (v1.17) is available on CRAN https://cran.r-project.org/web/packages/ncdf4/index.html.
+
+**Windows users** also need to install a tool to unzip the file from your command prompt. To make it easy and cross-platform, I rely on Rtools that is available for download from [here](https://cran.r-project.org/bin/windows/Rtools/index.html). The Rtools installer should install it in "C:\Rtools\bin". This need to be added to your PATH environment variable (if you forgot how to do this, follow the [instruction here](http://www.computerhope.com/issues/ch000549.htm)). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system("gzip -h"). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to go and extract some climate data! Well, almost as you might encounter some issues related to R's memory limit under Windows. I am slowly working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround memory issue under Windows, and this is by extracting a smaller chunk of data at the time (see point no.5 below).

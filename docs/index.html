@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.23.1</span>
       </span>
     </div>
 
@@ -52,6 +52,21 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+    </li>
+    <li>
+      <a href="articles/old_installation_note.html">Installation note for older systems</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -100,7 +115,7 @@
 <div id="suggested-citation-for-the-climateextract-package" class="section level4">
 <h4 class="hasAnchor">
 <a href="#suggested-citation-for-the-climateextract-package" class="anchor"></a>Suggested citation for the climateExtract package</h4>
-<p>Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&amp;D. R package version 1.22.0. <a href="https://github.com/RetoSchmucki/climateExtract" class="uri">https://github.com/RetoSchmucki/climateExtract</a></p>
+<p>Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&amp;D. R package version 1.23.0. <a href="https://github.com/RetoSchmucki/climateExtract" class="uri">https://github.com/RetoSchmucki/climateExtract</a></p>
 </div>
 <div id="installation" class="section level4">
 <h4 class="hasAnchor">
@@ -108,133 +123,100 @@
 <p>You will need the package <code>devtools</code> (or <code>remotes</code>) and then use the function install_github()</p>
 <pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
-<p>This package depends on the <code>ncdf4</code> package. For <em>Linux</em> or <em>MacOS</em> users, the <code>ncdf4</code> can be installed directly from CRAN. For <em>Windows</em> users, if CRAN installation does not work, refer to the instructions available at <a href="http://cirrus.ucsd.edu/~pierce/ncdf/" class="uri">http://cirrus.ucsd.edu/~pierce/ncdf/</a> and install the <code>ncdf4</code> package manually from the appropriate <code>.zip</code> file, note the latest version (v1.17) is available on CRAN <a href="https://cran.r-project.org/web/packages/ncdf4/index.html" class="uri">https://cran.r-project.org/web/packages/ncdf4/index.html</a>.</p>
-<p><strong>Windows users</strong> also need to install a tool to unzip the file from your command prompt. To make it easy and cross-platform, I rely on Rtools that is available for download from [here] (<a href="https://cran.r-project.org/bin/windows/Rtools/index.html" class="uri">https://cran.r-project.org/bin/windows/Rtools/index.html</a>). The Rtools installer should install it in “C:\Rtools\bin”. This need to be added to your PATH environment variable (if you forgot how to do this, follow the <a href="http://www.computerhope.com/issues/ch000549.htm">instruction here</a>). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system(“gzip -h”). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to go and extract some climate data! Well, almost as you might encounter some issues related to R’s memory limit under Windows. I am slowly working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround memory issue under Windows, and this is by extracting a smaller chunk of data at the time (see point no.5 below).</p>
-<p><strong>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature).</strong> <strong>Note</strong> that shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
-<p>** Data available at 0.1 deg regular grid are ca. 5GB and can be challenging to handle with this framework. However, 0.25deg seem to be working.**</p>
-<p><strong>You could download the high-resolution grid and subset the area of interest to build a manageable dataset, I am working on some alternatives, but this will depend on my inspiration and time.</strong></p>
+<p>climateExtract depends on <code>ncdf4</code> <code>data.table</code> <code>sf</code> <code>stars</code> <code>raster</code> <code>terra</code> <code>zoo</code> <code>methods</code></p>
 </div>
-<div id="example" class="section level4">
+<div id="usage" class="section level4">
 <h4 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h4>
-<p>You can get your climate data from the web repository <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="uri">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles</a> and decompress the data to extract the <code>.nc</code> file.</p>
-<p>Or you can use the function <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code> to download the Data directly by setting the parameter local_file to FALSE and adding the details of the Data you want to be extracted.</p>
-<p><strong>1.</strong> To extract climate values for a specific time period, use the function <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code>. By default, this function will open an interactive window asking you to select a local <code>.nc</code> file from which you want the data to extract; you need to specify the first and the last years of the period you are interested.</p>
+<a href="#usage" class="anchor"></a>Usage</h4>
+<p>Load the library and check the version of the ECAD database</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span>
-<span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>,
-                                 last_year <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></code></pre></div>
-<p><strong>2.</strong> If you don’t have a local .nc file, you can ask the function to download the desired Data directly from the web repository. To reduce the size of the data to download and manipulate, you can select a specific period available as “chunks” of 15 years (see help(etract_nc_value)).</p>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span> 
+<span class="va">ecad_version</span></code></pre></div>
+<p>To limit the size of the object, we can limit the extract to a specific region of the data set. Here we will extract climate data for France and for 25 points (random) within the country. We use the package raster to retrieve a spatial object of France’s country borders and sf to generate 25 random point within the country. Because points are generated through a random number process, we set.seed for repeatability.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, 
-                                 last_year <span class="op">=</span> <span class="fl">2015</span>,
-                                 local_file <span class="op">=</span> <span class="cn">FALSE</span>,
-                                 file_path <span class="op">=</span> <span class="cn">NULL</span>, 
-                                 sml_chunk <span class="op">=</span> <span class="cn">NULL</span>,
-                                 clim_variable <span class="op">=</span> <span class="st">'precipitation'</span>,
-                                 statistic <span class="op">=</span> <span class="st">"mean"</span>,
-                                 grid_size <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></code></pre></div>
-<p><em>where clim_variable set to:</em></p>
-<ul>
-<li>“mean temp” extract the daily mean temperature</li>
-<li>“mim temp” extract the daily minimum temperature</li>
-<li>"max temp extract the daily maximum temperature</li>
-<li>“precipitation” extract the daily precipitation</li>
-</ul>
-<p><em>where grid_size set to:</em></p>
-<ul>
-<li>0.25 extract a grid with a 0.25-degree resolution</li>
-<li>0.10 extract a grid with a 0.10-degree resolution</li>
-</ul>
-<p><strong>3.</strong> To compute summary value of the daily values, use the function <code><a href="reference/temporal_mean.html">temporal_mean()</a></code> for temperature or <code><a href="reference/temporal_sum.html">temporal_sum()</a></code> for precipitation . This function computes the mean for a specified period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. <strong>NOTE</strong> This function use the data extracted with the function <code>extract_nc_value</code>.</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span>
+<span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<span class="va">sf_point</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html">st_sf</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_sample.html">st_sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fr_border</span>, size <span class="op">=</span> <span class="fl">25</span>, type <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Use the function <code>extract_nc_value</code> to retrieve the climate data from the online E-OBS server and crop the data within the extent of the spatial object provided. We specify the first and last year of interest, use <code>sml_chunk</code> to reduce the size of the file to download, see details help(extract_nc_value). The argument <code>write_raster=TRUE</code> will write a raster brick object in your directory of the region defined by the spatial extent. The argument <code>return_data = TRUE</code> returns an R object (a list) with the climate values stored in a numeric array.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"annual"</span><span class="op">)</span>
-<span class="va">monthly_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/temporal_sum.html">temporal_sum</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"monthly"</span><span class="op">)</span></code></pre></div>
-<p><strong>4.</strong> To extract the weather data for a set of specific locations (points), use the function <code><a href="reference/point_grid_extract.html">point_grid_extract()</a></code>. With this function, you can extract either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a <code>data.frame</code> with the coordinates of the points in a degree decimal format and using the EPSG projection 4326 - <strong>wgs 84</strong></p>
-<pre><code>point_coord &lt;- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
-point.ann_mean &lt;- point_grid_extract(annual_mean,point_coord)
-point.month_sum &lt;- point_grid_extract(monthly_sum,point_coord)</code></pre>
-<p><strong>5.</strong> To extract long series, one chunk at a time (A quick and dirty workaround memory limit under Windows).</p>
-<pre><code><a href="https://retoschmucki.github.io/climateExtract"># This is a workaround when facing memory issues under Windows while extracting a long series on a computer
-# with limited RAM.
+<code class="sourceCode R"><span class="va">climate_data</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, 
+                                last_year <span class="op">=</span> <span class="fl">2015</span>,
+                                local_file <span class="op">=</span> <span class="cn">FALSE</span>,
+                                file_path <span class="op">=</span> <span class="cn">NULL</span>,
+                                sml_chunk <span class="op">=</span> <span class="st">"2011-2020"</span>,
+                                spatial_extent <span class="op">=</span> <span class="va">fr_border</span>,
+                                clim_variable <span class="op">=</span> <span class="st">"mean temp"</span>,
+                                statistic <span class="op">=</span> <span class="st">"mean"</span>,
+                                grid_size <span class="op">=</span> <span class="fl">0.25</span>,
+                                ecad_v <span class="op">=</span> <span class="cn">NULL</span>,
+                                write_raster <span class="op">=</span> <span class="cn">TRUE</span>,
+                                out <span class="op">=</span> <span class="st">"raster_mean_temp.grd"</span>,
+                                return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p>From here, we can use the raster package to connect to the raster brick created. If this object is too big for being stored in Memory, raster will set pointer to the raster file on the disk.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rbk</span> <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"raster_mean_temp.grd"</span><span class="op">)</span>
 
-library(climateExtract)
-
-climate_data &lt;- extract_nc_value(1950, 1960, local_file=FALSE, clim_variable='mean temp', grid_size=0.25)
-point_coord &lt;- data.frame(site_id = c("site1"), longitude = c(-1.3177988), latitude = c(51.7503954))
-
-annual_mean &lt;- temporal_mean(climate_data, "annual")
-point.ann_mean &lt;- point_grid_extract(annual_mean, point_coord)
-
-climate_data &lt;- extract_nc_value(1961, 1970)
-annual_mean &lt;- temporal_mean(climate_data, "annual")
-point.ann_mean &lt;- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-climate_data &lt;- extract_nc_value(1971,1980)
-annual_mean &lt;- temporal_mean(climate_data,"annual")
-point.ann_mean &lt;- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
-
-climate_data &lt;- extract_nc_value(1981, 1990)
-annual_mean &lt;- temporal_mean(climate_data, "annual")
-point.ann_mean &lt;- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-climate_data &lt;- extract_nc_value(1991, 2000)
-annual_mean &lt;- temporal_mean(climate_data, "annual")
-point.ann_mean &lt;- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-climate_data &lt;- extract_nc_value(2001, 2012)
-annual_mean &lt;- temporal_mean(climate_data, "annual")
-point.ann_mean &lt;- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-
-names(point.ann_mean) &lt;- c("year", "mean_temp") # I really need to fix this
-
-plot(point.ann_mean$year, point.ann_mean$mean_temp, type = 'l')
-abline(h = mean(point.ann_mean$mean_temp), col = 'red')</a></code></pre>
-<p><strong>6.</strong> If you want a raster of the mean temperature across Europe for a specific year (e.g. 1988).</p>
-<pre><code># get a raster
-
-library(climateExtract)
-library(raster)
-climate_data &lt;- extract_nc_value(1988, 1988, local_file = FALSE, clim_variable = 'mean temp', grid_size = 0.25)
-
-# compute the annual mean temperature
-annual_mean &lt;- temporal_mean(climate_data, "annual")
-
-# get a XY data.frame for the 0.25deg grid
-grid.e &lt;- expand.grid(annual_mean$longitude, annual_mean$latitude)
-
-# extract the value for 1988 in one vector
-y1988 &lt;- as.vector(annual_mean$value_array[ , , 1])
-
-# build a XYZ object
-xyz_value &lt;- cbind(grid.e, y1988)
-
-# build a raster from the XYZ object with the library raster
-r &lt;- rasterFromXYZ(xyz_value, crs = CRS("+init=epsg:4326"))
-names(r) &lt;- annual_mean$date_extract[1]
-
-# voila!
-plot(r, main("Mean temperature in 1988")
-
-# you could use the stack() function to build a raster stack (multiple bands) with multiple years, months or days
-</code></pre>
-<p><em>This is a work in progress that is good for some tasks, but this comes with no guarantee. Suggestions and contributions for improvement are welcome.</em></p>
+<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></code></pre></div>
+<p>We can now aggregate the data over time, “annual”, “monthly” or using a rolling “window”. Here we show a monthly average, using the function <code>mean</code>, this could be set to <code>sum</code>, <code>sd</code> or many others.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># monthly mean</span>
+<span class="va">monthly_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
+                                        agg_function <span class="op">=</span> <span class="st">"mean"</span>,
+                                        variable_name <span class="op">=</span> <span class="st">"average temp"</span>,
+                                        time_step <span class="op">=</span> <span class="st">"monthly"</span><span class="op">)</span>
+<span class="co"># annual mean</span>
+<span class="va">annual_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
+                                       agg_function <span class="op">=</span> <span class="st">"mean"</span>,
+                                       variable_name <span class="op">=</span> <span class="st">"average temp"</span>,
+                                       time_step <span class="op">=</span> <span class="st">"annual"</span><span class="op">)</span>
+<span class="co"># 7-day rolling mean</span>
+<span class="va">window_7d_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
+                                          agg_function <span class="op">=</span> <span class="st">"mean"</span>,
+                                          variable_name <span class="op">=</span> <span class="st">"average temp"</span>,
+                                          time_step <span class="op">=</span> <span class="st">"window"</span>,
+                                          win_length <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></code></pre></div>
+<blockquote>
+<p>Note: the <code>x</code> object can be the climate_data object that resulted from the <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code> function.</p>
+</blockquote>
+<p>Aggregation can also be computed for specific points, if a spatial point object is provided as <code>y</code> argument (e.g. <code>y = sf_point</code>). This will return a data.table object.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># annual mean per point</span>
+<span class="va">annual_avg_temp_pnts</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
+                                          y <span class="op">=</span> <span class="va">sf_point</span>,
+                                          agg_function <span class="op">=</span> <span class="st">"mean"</span>,
+                                          variable_name <span class="op">=</span> <span class="st">"average temp"</span>,
+                                          time_step <span class="op">=</span> <span class="st">"annual"</span><span class="op">)</span></code></pre></div>
+<blockquote>
+<p>Note: Because the point that is referring to <code>site_1</code> falls outside of the raster cell having a value, along the coast, the function extract the value of the nearest cell with a value. The distance_from_pnt indicate how far the centroid of this cell is from the point, when the point falls in a cell, the distance_from_pnt is NA.</p>
+</blockquote>
+<p>We can produce a map of the averaged layer calculated. For example the average temperature for Sept 2012, <code>"2012.09"</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p>You can plot the points on this same map, with a circle around the point 1, falling in the see near the coast of Corse (bottom right corner). This is only true if the seed was set to <code><a href="https://rdrr.io/r/base/Random.html">set.seed(42876)</a></code> for the random sampling.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sf_point</span>, col <span class="op">=</span> <span class="st">'magenta'</span>, pch <span class="op">=</span> <span class="fl">17</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sf_point</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">'blue'</span>, border<span class="op">=</span> <span class="fl">1.5</span>, cex<span class="op">=</span> <span class="fl">2</span>, pch <span class="op">=</span> <span class="fl">1</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
+<div id="citation-and-term-of-use-from-ecad-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#citation-and-term-of-use-from-ecad-data" class="anchor"></a>Citation and term of use from ECAD Data</h3>
+<p>See citation and ECA&amp;D/E-OBS data policy at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles</a> You can register as an E-OBS user at <a href="https://surfobs.climate.copernicus.eu/dataaccess/registration.php">https://surfobs.climate.copernicus.eu/dataaccess/registration.php</a></p>
+<p><strong>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature).</strong> <strong>Note</strong> that shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
+<p>** Data available at 0.1 deg regular grid are ca. 5GB and can be challenging to handle when extracting the entire continent, consider using specific areas defined by spatial object (e.g. set of points or polygons).**</p>
+<p><strong>You can download the high-resolution grid and subset the area of interest to build a manageable dataset as demonstrated above.</strong></p>
+<p><em>This is a work in progress that is good for some tasks, but this comes with no guarantee. Suggestions and contributions for improvement are welcome.</em></p>
+<p><strong>Raise issues <span class="emoji" data-emoji="raised_hand">✋</span>: </strong> <a href="https://github.com/RetoSchmucki/climateExtract/issues">https://github.com/RetoSchmucki/climateExtract/issues</a></p>
 <div id="to-do" class="section level4">
 <h4 class="hasAnchor">
 <a href="#to-do" class="anchor"></a>TO DO</h4>
 <ul class="task-list">
 <li>
-<input type="checkbox" disabled checked>
-implement data.table approach to compute summary statistics to speed up the computation</li>
-<li>
-<input type="checkbox" disabled>
-optimize the script to avoid (limit) memory issues under Windows</li>
-<li>
 <input type="checkbox" disabled>
 update and improve documentation</li>
 </ul>
+</div>
 </div>
 </div>
   </div>

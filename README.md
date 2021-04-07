@@ -25,7 +25,7 @@ Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmuc
 
 #### Suggested citation for the climateExtract package
 
-Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.22.0. https://github.com/RetoSchmucki/climateExtract
+Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.23.0. https://github.com/RetoSchmucki/climateExtract
 
 
 #### Installation
@@ -35,142 +35,122 @@ install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")
 ```
 
-This package depends on the `ncdf4` package. For *Linux* or *MacOS* users, the `ncdf4` can be installed directly from CRAN. For *Windows* users, if CRAN installation does not work, refer to the instructions available at http://cirrus.ucsd.edu/~pierce/ncdf/ and install the `ncdf4` package manually from the appropriate `.zip` file, note the latest version (v1.17) is available on CRAN https://cran.r-project.org/web/packages/ncdf4/index.html.
+climateExtract depends on 
+`ncdf4`
+`data.table`
+`sf`
+`stars`
+`raster`
+`terra`
+`zoo`
+`methods`
 
-**Windows users** also need to install a tool to unzip the file from your command prompt. To make it easy and cross-platform, I rely on Rtools that is available for download from [here] (https://cran.r-project.org/bin/windows/Rtools/index.html). The Rtools installer should install it in "C:\Rtools\bin". This need to be added to your PATH environment variable (if you forgot how to do this, follow the [instruction here](http://www.computerhope.com/issues/ch000549.htm)). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system("gzip -h"). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to go and extract some climate data! Well, almost as you might encounter some issues related to R's memory limit under Windows. I am slowly working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround memory issue under Windows, and this is by extracting a smaller chunk of data at the time (see point no.5 below).
 
+#### Usage
 
-**Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).**
-**Note** that shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
-
-** Data available at 0.1 deg regular grid are ca. 5GB and can be challenging to handle with this framework. However, 0.25deg seem to be working.**
-
-**You could download the high-resolution grid and subset the area of interest to build a manageable dataset, I am working on some alternatives, but this will depend on my inspiration and time.**
-
-#### Example
-
-You can get your climate data from the web repository https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles and decompress the data to extract the `.nc` file.
-
-Or you can use the function `extract_nc_value()` to download the Data directly by setting the parameter local_file to FALSE and adding the details of the Data you want to be extracted.
-
-**1.** To extract climate values for a specific time period, use the function `extract_nc_value()`. By default, this function will open an interactive window asking you to select a local `.nc` file from which you want the data to extract; you need to specify the first and the last years of the period you are interested.
-```R
-library(climateExtract)
-climate_data <- extract_nc_value(first_year = 2012,
-                                 last_year = 2015)
-```
-**2.** If you don't have a local .nc file, you can ask the function to download the desired Data directly from the web repository. To reduce the size of the data to download and manipulate, you can select a specific period available as "chunks" of 15 years (see help(etract_nc_value)).
+Load the library and check the version of the ECAD database
 
 ```R
-climate_data <- extract_nc_value(first_year = 2012, 
-                                 last_year = 2015,
-                                 local_file = FALSE,
-                                 file_path = NULL, 
-                                 sml_chunk = NULL,
-                                 clim_variable = 'precipitation',
-                                 statistic = "mean",
-                                 grid_size = 0.25)
-
+library(climateExtract) 
+ecad_version
 ```
 
-*where clim_variable set to:*
-* "mean temp" extract the daily mean temperature
-* "mim temp" extract the daily minimum temperature
-* "max temp extract the daily maximum temperature
-* "precipitation" extract the daily precipitation
-
-*where grid_size set to:*
-* 0.25 extract a grid with a 0.25-degree resolution
-* 0.10 extract a grid with a 0.10-degree resolution
-
-**3.** To compute summary value of the daily values, use the function `temporal_mean()` for temperature or `temporal_sum()` for precipitation . This function computes the mean for a specified period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. **NOTE** This function use the data extracted with the function `extract_nc_value`.
+To limit the size of the object, we can limit the extract to a specific region of the data set. Here we will extract climate data for France and for 25 points (random) within the country. We use the package raster to retrieve a spatial object of France's country borders and sf to generate 25 random point within the country. Because points are generated through a random number process, we set.seed for repeatability.
 
 ```R
-annual_mean <- temporal_mean(climate_data,"annual")
-monthly_sum <- temporal_sum(climate_data,"monthly")
-```
-**4.** To extract the weather data for a set of specific locations (points), use the function `point_grid_extract()`. With this function, you can extract either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a `data.frame` with the coordinates of the points in a degree decimal format and using the EPSG projection 4326 - **wgs 84**
-
-```
-point_coord <- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
-point.ann_mean <- point_grid_extract(annual_mean,point_coord)
-point.month_sum <- point_grid_extract(monthly_sum,point_coord)
+set.seed(42876)
+fr_border = sf::st_as_sf(raster::getData("GADM", country = "FRA", level = 0))
+sf_point = sf::st_sf(sf::st_sample(x = fr_border, size = 25, type = "random"))
 ```
 
-**5.** To extract long series, one chunk at a time (A quick and dirty workaround memory limit under Windows).
-```
-# This is a workaround when facing memory issues under Windows while extracting a long series on a computer
-# with limited RAM.
+Use the function `extract_nc_value` to retrieve the climate data from the online E-OBS server and crop the data within the extent of the spatial object provided. We specify the first and last year of interest, use `sml_chunk` to reduce the size of the file to download, see details help(extract_nc_value). The argument `write_raster=TRUE` will write a raster brick object in your directory of the region defined by the spatial extent. The argument `return_data = TRUE` returns an R object (a list) with the climate values stored in a numeric array.  
 
-library(climateExtract)
-
-climate_data <- extract_nc_value(1950, 1960, local_file=FALSE, clim_variable='mean temp', grid_size=0.25)
-point_coord <- data.frame(site_id = c("site1"), longitude = c(-1.3177988), latitude = c(51.7503954))
-
-annual_mean <- temporal_mean(climate_data, "annual")
-point.ann_mean <- point_grid_extract(annual_mean, point_coord)
-
-climate_data <- extract_nc_value(1961, 1970)
-annual_mean <- temporal_mean(climate_data, "annual")
-point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-climate_data <- extract_nc_value(1971,1980)
-annual_mean <- temporal_mean(climate_data,"annual")
-point.ann_mean <- rbind(point.ann_mean,point_grid_extract(annual_mean,point_coord))
-
-climate_data <- extract_nc_value(1981, 1990)
-annual_mean <- temporal_mean(climate_data, "annual")
-point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-climate_data <- extract_nc_value(1991, 2000)
-annual_mean <- temporal_mean(climate_data, "annual")
-point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-climate_data <- extract_nc_value(2001, 2012)
-annual_mean <- temporal_mean(climate_data, "annual")
-point.ann_mean <- rbind(point.ann_mean, point_grid_extract(annual_mean, point_coord))
-
-
-names(point.ann_mean) <- c("year", "mean_temp") # I really need to fix this
-
-plot(point.ann_mean$year, point.ann_mean$mean_temp, type = 'l')
-abline(h = mean(point.ann_mean$mean_temp), col = 'red')
+```R
+climate_data = extract_nc_value(first_year = 2012, 
+                                last_year = 2015,
+                                local_file = FALSE,
+                                file_path = NULL,
+                                sml_chunk = "2011-2020",
+                                spatial_extent = fr_border,
+                                clim_variable = "mean temp",
+                                statistic = "mean",
+                                grid_size = 0.25,
+                                ecad_v = NULL,
+                                write_raster = TRUE,
+                                out = "raster_mean_temp.grd",
+                                return_data = TRUE)
 ```
 
-**6.** If you want a raster of the mean temperature across Europe for a specific year (e.g. 1988).
+From here, we can use the raster package to connect to the raster brick created. If this object is too big for being stored in Memory, raster will set pointer to the raster file on the disk.
+
+```R
+rbk = raster::brick("raster_mean_temp.grd")
+
+format(object.size(climate_data), "MB")
+format(object.size(rbk), "MB")
 ```
-# get a raster
 
-library(climateExtract)
-library(raster)
-climate_data <- extract_nc_value(1988, 1988, local_file = FALSE, clim_variable = 'mean temp', grid_size = 0.25)
+We can now aggregate the data over time, "annual", "monthly" or using a rolling "window". Here we show a monthly average, using the function `mean`, this could be set to `sum`, `sd` or many others. 
 
-# compute the annual mean temperature
-annual_mean <- temporal_mean(climate_data, "annual")
-
-# get a XY data.frame for the 0.25deg grid
-grid.e <- expand.grid(annual_mean$longitude, annual_mean$latitude)
-
-# extract the value for 1988 in one vector
-y1988 <- as.vector(annual_mean$value_array[ , , 1])
-
-# build a XYZ object
-xyz_value <- cbind(grid.e, y1988)
-
-# build a raster from the XYZ object with the library raster
-r <- rasterFromXYZ(xyz_value, crs = CRS("+init=epsg:4326"))
-names(r) <- annual_mean$date_extract[1]
-
-# voila!
-plot(r, main("Mean temperature in 1988")
-
-# you could use the stack() function to build a raster stack (multiple bands) with multiple years, months or days
-
+```R
+# monthly mean
+monthly_avg_temp_R = temporal_aggregate(x = rbk,
+                                        agg_function = "mean",
+                                        variable_name = "average temp",
+                                        time_step = "monthly")
+# annual mean
+annual_avg_temp_R = temporal_aggregate(x = rbk,
+                                       agg_function = "mean",
+                                       variable_name = "average temp",
+                                       time_step = "annual")
+# 7-day rolling mean
+window_7d_avg_temp_R = temporal_aggregate(x = rbk,
+                                          agg_function = "mean",
+                                          variable_name = "average temp",
+                                          time_step = "window",
+                                          win_length = 7)
 ```
+
+>Note: the `x` object can be the climate_data object that resulted from the `extract_nc_value()` function.
+
+Aggregation can also be computed for specific points, if a spatial point object is provided as `y` argument (e.g. `y = sf_point`). This will return a data.table object.
+
+```R
+# annual mean per point
+annual_avg_temp_pnts = temporal_aggregate(x = rbk,
+                                          y = sf_point,
+                                          agg_function = "mean",
+                                          variable_name = "average temp",
+                                          time_step = "annual")
+```
+>Note: Because the point that is referring to `site_1` falls outside of the raster cell having a value, along the coast, the function extract the value of the nearest cell with a value. The distance_from_pnt indicate how far the centroid of this cell is from the point, when the point falls in a cell, the distance_from_pnt is NA.
+
+We can produce a map of the averaged layer calculated. For example the average temperature for Sept 2012, `"2012.09"`.
+
+```R
+raster::plot(monthly_avg_temp_R[["2012.09"]])
+```
+You can plot the points on this same map, with a circle around the point 1, falling in the see near the coast of Corse (bottom right corner). This is only true if the seed was set to `set.seed(42876)` for the random sampling. 
+
+```R
+raster::plot(monthly_avg_temp_R[["2012.09"]])
+plot(sf_point, col = 'magenta', pch = 17, add = TRUE)
+plot(sf_point[1,], col = 'blue', border= 1.5, cex= 2, pch = 1, add = TRUE)
+```
+
+### Citation and term of use from ECAD Data
+
+See citation and ECA&D/E-OBS data policy at [https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php\#datafiles](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php\#datafiles)
+You can register as an E-OBS user at [https://surfobs.climate.copernicus.eu/dataaccess/registration.php](https://surfobs.climate.copernicus.eu/dataaccess/registration.php)
+
+**Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).** **Note** that shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
+
+** Data available at 0.1 deg regular grid are ca. 5GB and can be challenging to handle when extracting the entire continent, consider using specific areas defined by spatial object (e.g. set of points or polygons).**
+
+**You can download the high-resolution grid and subset the area of interest to build a manageable dataset as demonstrated above.**
 
 *This is a work in progress that is good for some tasks, but this comes with no guarantee. Suggestions and contributions for improvement are welcome.*
 
+**Raise issues :raised_hand:: ** [https://github.com/RetoSchmucki/climateExtract/issues](https://github.com/RetoSchmucki/climateExtract/issues)
 #### TO DO
-- [x] implement data.table approach to compute summary statistics to speed up the computation 
-- [ ] optimize the script to avoid (limit) memory issues under Windows
 - [ ] update and improve documentation
