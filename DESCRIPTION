@@ -18,16 +18,11 @@ URL: https://retoschmucki.github.io/climateExtract
 BugReports: https://github.com/RetoSchmucki/climateExtract/issues
 LazyData: true
 Imports: ncdf4,
-<<<<<<< HEAD
-         chron,
-         utils,
-=======
          data.table,
          sf,
          stars,
          raster,
          terra,
->>>>>>> dev
          zoo,
          methods
 RoxygenNote: 7.1.1
