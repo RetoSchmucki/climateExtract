@@ -9,14 +9,19 @@ ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/ac
 
 Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
+**NEWS (07/04/2021):** 
+- Updated to E-OBS v23.1 (March 2021) 
+- Optimized several functions
+- Added option to write data to a raster brick
+- Better used of memory
+- Extract data within a bounding box of polygons or points
+- Option to manually select the E-OBS version
+
 **NEWS (06/02/2021):**
 - Updated to E-OBS v22 (December 2020)
 - Added option for accessing smaller chunk (15 years) with the argument `sml_chunk` in the function `extract_nc_value()`
 - Changing argument names to underscore format to avoid possible confusion with generic method functions
 
-**NEWS (11/10/2020):** 
-- Updated to allow manual entry of nc path as an argument in `extract_nc_value()`, using the argument `file_path= "YOUR/PATH"`: contribution [Romain Lorrilliere](https://github.com/romainlorrilliere) 
-- ECAD URL has moved, this is now functional again -sorry- :cat:
 
 #### Suggested citation for the climateExtract package
 
@@ -65,6 +70,7 @@ climate_data <- extract_nc_value(first_year = 2012,
                                  clim_variable = 'precipitation',
                                  statistic = "mean",
                                  grid_size = 0.25)
+
 ```
 
 *where clim_variable set to:*
@@ -79,7 +85,7 @@ climate_data <- extract_nc_value(first_year = 2012,
 
 **3.** To compute summary value of the daily values, use the function `temporal_mean()` for temperature or `temporal_sum()` for precipitation . This function computes the mean for a specified period, monthly or annual or for a specified window, computing a rolling average over a specific number of days. **NOTE** This function use the data extracted with the function `extract_nc_value`.
 
-```
+```R
 annual_mean <- temporal_mean(climate_data,"annual")
 monthly_sum <- temporal_sum(climate_data,"monthly")
 ```
@@ -87,7 +93,6 @@ monthly_sum <- temporal_sum(climate_data,"monthly")
 
 ```
 point_coord <- data.frame(site_id=c("site1","site2","site3","site4","site5"), longitude=c(28.620000,6.401499,4.359062,-3.579906,-2.590392), latitude=c(61.29000,52.73953,52.06530,50.43031,52.02951))
-
 point.ann_mean <- point_grid_extract(annual_mean,point_coord)
 point.month_sum <- point_grid_extract(monthly_sum,point_coord)
 ```

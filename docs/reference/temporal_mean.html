@@ -47,7 +47,13 @@
 
 
 <meta property="og:title" content="temporal_mean — temporal_mean" />
+<<<<<<< HEAD
 <meta property="og:description" content="This function compute mean climatic value for specific periods &quot;annual&quot;, &quot;monthly&quot;, or using a sliding &quot;window&quot; of specific length, from an object obtained from the extrat_nc_value() function" />
+=======
+<meta property="og:description" content="Compute mean climatic value for specific periods &quot;annual&quot;, &quot;monthly&quot;, or 
+using a sliding &quot;window&quot; of specific length, from an object obtained from 
+the extrat_nc_value() function" />
+>>>>>>> dev
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +86,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.2</span>
       </span>
     </div>
 
@@ -97,7 +103,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/RetoSchmucki/climateExtract/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -112,12 +123,14 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>temporal_mean</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/RetoSchmucki/climateExtract/blob/master/R/climateExtract.R'><code>R/climateExtract.R</code></a></small>
     <div class="hidden name"><code>temporal_mean.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function compute mean climatic value for specific periods "annual", "monthly", or using a sliding "window" of specific length, from an object obtained from the extrat_nc_value() function</p>
+    <p>Compute mean climatic value for specific periods "annual", "monthly", or 
+using a sliding "window" of specific length, from an object obtained from 
+the extrat_nc_value() function</p>
     </div>
 
     <pre class="usage"><span class='fu'>temporal_mean</span><span class='op'>(</span>
@@ -131,21 +144,25 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data_nc</th>
-      <td><p>object obtained from the extrat_nc_value() function corresponding to the time-period of interest</p></td>
+      <td><p>object obtained from the extrat_nc_value() function 
+corresponding to the time-period of interest</p></td>
     </tr>
     <tr>
       <th>time_avg</th>
-      <td><p>character string defining the level of averaging, "annual", "monthly", "window"</p></td>
+      <td><p>character string defining the level of averaging, "annual", 
+"monthly", "window"</p></td>
     </tr>
     <tr>
       <th>win_length</th>
-      <td><p>the number of days defining the span of the sliding window, default set to 30 days</p></td>
+      <td><p>the number of days defining the span of the sliding window,
+default set to 30 days</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function can be relatively slow if you compute sliding window average over a long period</p>
+    <p>Note that this function can be relatively slow if you compute 
+sliding window average over a long period</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Reto Schmucki</p>

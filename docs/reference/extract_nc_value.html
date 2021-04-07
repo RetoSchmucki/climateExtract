@@ -47,7 +47,13 @@
 
 
 <meta property="og:title" content="extract_nc_value — extract_nc_value" />
+<<<<<<< HEAD
 <meta property="og:description" content="Function to extract climate data from NETCDF file produced by the European Climate Assessment &amp;amp; Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php" />
+=======
+<meta property="og:description" content="Extract climate data from a NETCDF file produced and made available by the 
+European Climate Assessment &amp;amp; Dataset for a specific period and 
+available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php" />
+>>>>>>> dev
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +86,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.2</span>
       </span>
     </div>
 
@@ -97,7 +103,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/RetoSchmucki/climateExtract/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -112,12 +123,14 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>extract_nc_value</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/RetoSchmucki/climateExtract/blob/master/R/climateExtract.R'><code>R/climateExtract.R</code></a></small>
     <div class="hidden name"><code>extract_nc_value.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Function to extract climate data from NETCDF file produced by the European Climate Assessment &amp; Dataset for a specific time-period and available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</p>
+    <p>Extract climate data from a NETCDF file produced and made available by the 
+European Climate Assessment &amp; Dataset for a specific period and 
+available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</p>
     </div>
 
     <pre class="usage"><span class='fu'>extract_nc_value</span><span class='op'>(</span>
@@ -126,9 +139,16 @@
   local_file <span class='op'>=</span> <span class='cn'>TRUE</span>,
   file_path <span class='op'>=</span> <span class='cn'>NULL</span>,
   sml_chunk <span class='op'>=</span> <span class='cn'>NULL</span>,
+  spatial_extent <span class='op'>=</span> <span class='cn'>NULL</span>,
   clim_variable <span class='op'>=</span> <span class='st'>"mean temp"</span>,
   statistic <span class='op'>=</span> <span class='st'>"mean"</span>,
-  grid_size <span class='op'>=</span> <span class='fl'>0.25</span>
+  grid_size <span class='op'>=</span> <span class='fl'>0.25</span>,
+  ecad_v <span class='op'>=</span> <span class='cn'>NULL</span>,
+  write_raster <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  out <span class='op'>=</span> <span class='cn'>NULL</span>,
+  return_data <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  raw_datavals <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -136,45 +156,111 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>first_year</th>
-      <td><p>a numeric value defining the first year of the time-period to extract, 1950 if NULL, default=NULL</p></td>
+      <td><p>a numeric value defining the first year of the time period 
+to extract, 1950 if NULL, default=NULL</p></td>
     </tr>
     <tr>
       <th>last_year</th>
-      <td><p>a numeric value defining the last year of the time-period to extract, 2014 if NULL, default=NULL</p></td>
+      <td><p>a numeric value defining the last year of the time period to
+extract, 2014 if NULL, default=NULL</p></td>
     </tr>
     <tr>
       <th>local_file</th>
-      <td><p>logical if the .nc data are available on your local disc, if FALSE the data will be downloaded, default=TRUE</p></td>
+      <td><p>logical if the ".nc" data are available on your local disc, 
+if FALSE, the function will download the data from ECAD data portal,
+ default=TRUE</p></td>
     </tr>
     <tr>
       <th>file_path</th>
-      <td><p>string defining the path of the local file (works only if local_file = TRUE), default=NULL</p></td>
+      <td><p>character string with the path to the local ".nc" file. Works
+only if local_file = TRUE), default=NULL</p></td>
     </tr>
     <tr>
       <th>sml_chunk</th>
-      <td><p>string defining the time period to be downloaded. Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964"</p></td>
+      <td><p>a character string for specific time period to be downloaded. 
+Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+and "1950-1964"</p></td>
+    </tr>
+    <tr>
+      <th>spatial_extent</th>
+      <td><p>object to define the spatial extent for the data 
+extraction, can be an "sf" or an "sp" object or a vector with 4 values 
+defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
+ entire extent is extracted</p></td>
     </tr>
     <tr>
       <th>clim_variable</th>
-      <td><p>string defining the daily climate variable of interest; "mean temp","max temp","min temp","precipitation", default="mean temp"</p></td>
+      <td><p>a character string defining the daily climate variable to 
+retrieve and extract; "mean temp","max temp","min temp","precipitation", 
+default="mean temp"</p></td>
     </tr>
     <tr>
       <th>statistic</th>
-      <td><p>string defining the metric to retrieve, "mean" or "spread", where the mean is computed across the 100 members and is provided as the "best-guess" fields.
-The spread is calculated as the difference between the 5th and 95th percentiles over the ensemble to provide a measure indicate of the 90% uncertainty range. For more details 
-see Cornes et al. (2018) and the guidance on how to use ensemble datasets available from http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</p></td>
+      <td><p>a character string defining the metric to retrieve, "mean" or
+ "spread", where the mean is computed across 100 members of the ensemble and 
+is provided as the "best-guess" fields. The spread is calculated as the 
+difference between the 5th and 95th percentiles over the ensemble to provide
+ a measure indicative of the 90% uncertainty range (see details)</p></td>
     </tr>
     <tr>
       <th>grid_size</th>
-      <td><p>numeric value in degree defining the resolution of the grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude), default=0.25</p></td>
+      <td><p>numeric, measured in degree defining the resolution of the 
+grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
+latitude), default=0.25</p></td>
+    </tr>
+    <tr>
+      <th>ecad_v</th>
+      <td><p>ECA&amp;D data version, default = package version.</p></td>
+    </tr>
+    <tr>
+      <th>write_raster</th>
+      <td><p>logical, if TRUE the output will be written in a
+multilayer raster file</p></td>
+    </tr>
+    <tr>
+      <th>out</th>
+      <td><p>character string with the filename for the output raster, if null
+data will be written in climateExtract_raster.grd</p></td>
+    </tr>
+    <tr>
+      <th>return_data</th>
+      <td><p>logical, if TRUE the data resulting from the extract will
+be stored in the object, if false, only the filename of the raster and the
+name of the layers are returned in a list, only if write_out is TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>raw_datavals</th>
+      <td><p>If TRUE, then the actual raw data values from the file are 
+returned with no conversion to NA (if equal to the missing value/fill value) 
+or scale/offset applied. Default is TRUE. This reduce the size of the object to 
+manipulate.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional arguments for for writing files, see <a href='https://rdrr.io/pkg/raster/man/writeRaster.html'>writeRaster</a></p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>If 'write_raster' is TRUE, return a list with the path to raster 
+Brick written to the disk and the name of the layers in the object (date). If
+'return_data' = TRUE, a list of object is returned, with the variable_name,
+an 3D array with the value extracted, a vector with the longitude, a vector with
+latitude and a vector with date extracted.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function ask you to select the .nc file containing the data of interest from your local disc, if local_file is FALSE, data will be downloaded from the ECAD. 
-If first_year and last_year are not provided, the function extract the full data set. Smaller chunks of about 15 years of the most recent version of the E-OBS dataset can be specified for download 
-can be specified directly with the argument "sm_chunk" (period available are 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).</p>
+    <p>By default, this function asks to select the ".nc" file from your
+ local disc, but this can be changed by setting the argument 'local_file' to
+ FALSE. When local_file is false, the nc file with data will be downloaded
+ from the ECAD. If first_year and last_year are not provided, the function
+ extract the full data set. Smaller chunks of about 15 years of the most
+ recent version of the E-OBS dataset can be specified for download 
+can be specified directly with the argument "sm_chunk" (period available are
+ 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+about the mean and the spread metric see Cornes et al. (2018) and the 
+guidance on how to use ensemble datasets available from 
+<a href='http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php'>http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</a></p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Reto Schmucki</p>

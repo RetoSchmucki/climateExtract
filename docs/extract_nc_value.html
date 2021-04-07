@@ -6,15 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Citation and Authors • climateExtract</title>
+<title>NA • climateExtract</title>
 
-<!-- favicons -->
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png" />
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png" />
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png" />
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -46,8 +39,7 @@
 
 
 
-<meta property="og:title" content="Citation and Authors" />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:title" content="NA" />
 
 
 
@@ -66,7 +58,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-citation-authors">
+    <div class="container template-title-body">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -79,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.22.0</span>
       </span>
     </div>
 
@@ -96,12 +88,7 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="https://github.com/RetoSchmucki/climateExtract/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+        
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -115,34 +102,71 @@
 <div class="row">
   <div class="contents col-md-9">
     <div class="page-header">
-      <h1>Citation</h1>
-      <small class="dont-index">Source: <a href='https://github.com/RetoSchmucki/climateExtract/blob/master/inst/CITATION'><code>inst/CITATION</code></a></small>
+      <h1>NA</h1>
     </div>
 
-    <p>Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.22.0. https://github.com/RetoSchmucki/climateExtract</p>
-    <pre>@Article{,
-  title = {climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D},
-  author = {Reto Schmucki},
-  journal = {R package version 1.22.0.},
-  year = {2021},
-  url = {https://github.com/RetoSchmucki/climateExtract},
-}</pre>
 
-    <div class="page-header">
-      <h1>Authors</h1>
-    </div>
+<p>#’ extract_nc_value
+#’
+#’ Extract climate data from a NETCDF file produced and made available by the
+#’ European Climate Assessment &amp; Dataset for a specific time-period and
+#’ available at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php" class="uri">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</a>
+#’ @param first_year a numeric value defining the first year of the time-period
+#’ to extract, 1950 if NULL, default=NULL
+#’ @param last_year a numeric value defining the last year of the time-period to
+#’ extract, 2014 if NULL, default=NULL
+#’ @param local_file logical if the .nc data are available on your local disc,
+#’ if FALSE the data will be downloaded, default=TRUE
+#’ @param file_path string defining the path of the local file (works only if
+#’ local_file = TRUE), default=NULL
+#’ @param sml_chunk string defining the time period to be downloaded. Chunk
+#’ available are “2011-2020”, “1995-2010”, “1980-1994”, “1965-1979”, “1950-1964”
+#’ @param spatial_extent spatial extent to extract data, can be an “sf” or an
+#’ “sp” object or a vector with 4 values defining the bounding box c(xmin, ymax,
+#’ xmax, ymax), if NULL the entire extent is extracted
+#’ @param clim_variable string defining the daily climate variable of interest;
+#’ “mean temp”,“max temp”,“min temp”,“precipitation”, default=“mean temp”
+#’ @param statistic string defining the metric to retrieve, “mean” or “spread”,
+#’ where the mean is computed across the 100 members and is provided as the
+#’ “best-guess” fields.
+#’ The spread is calculated as the difference between the 5th and 95th
+#’ percentiles over the ensemble to provide a measure indicate of the 90%
+#’ uncertainty range. For more details
+#’ see Cornes et al. (2018) and the guidance on how to use ensemble datasets
+#’ available from
+#’ \url{<a href="http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php" class="uri">http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</a>}
+#’ @param grid_size numeric value in degree defining the resolution of the grid,
+#’ 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in latitude),
+#’ default=0.25
+#’ @param ecad_v ECA&amp;D data version, default = package version.
+#’ @param write_raster logical, if TRUE the output will be written in a
+#’ multilayer raster file
+#’ @param out character string with the filename for the output raster, if null
+#’ data will be written in climateExtract_raster.grd
+#’ @param return_data logical, if TRUE the data resulting from the extract will
+#’ be stored in the object, if false, only the filename of the raster and the
+#’ name of the layers are returned in a list, only if write_out is TRUE.
+#’ @author Reto Schmucki
+#’ @details By default, this function ask you to select the .nc file from your
+#’ local disc but this can be changed by setting the argument ‘local_file’ to
+#’ FALSE. When local_file is false, the nc file with data will be downloaded
+#’ from the ECAD. If first_year and last_year are not provided, the function
+#’ extract the full data set. Smaller chunks of about 15 years of the most
+#’ recent version of the E-OBS dataset can be specified for download
+#’ can be specified directly with the argument “sm_chunk” (period available are
+#’ 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964).
+#’ @return
+#’ @export
+</p>
+<p>#’</p>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong>Reto Schmucki</strong>. Author, maintainer. <a href='https://orcid.org/0000-0003-3064-7553' target='orcid.widget' aria-label='ORCID'><span class='fab fa-orcid orcid' aria-hidden='true'></span></a>
-        </p>
-      </li>
-      <li>
-        <p><strong>Romain Lorrilliere</strong>. Contributor. 
-        </p>
-      </li>
-    </ul>
 
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 
 </div>
