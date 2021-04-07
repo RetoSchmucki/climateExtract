@@ -81,19 +81,21 @@
 
 <p>R functions to extract climate data from local NETCDF file that you can download from the ECAD at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
 <p>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a></p>
+<p><strong>NEWS (07/04/2021):</strong></p>
+<ul>
+<li>Updated to E-OBS v23.1 (March 2021)</li>
+<li>Optimized several functions</li>
+<li>Added option to write data to a raster brick</li>
+<li>Better used of memory</li>
+<li>Extract data within a bounding box of polygons or points</li>
+<li>Option to manually select the E-OBS version</li>
+</ul>
 <p><strong>NEWS (06/02/2021):</strong></p>
 <ul>
 <li>Updated to E-OBS v22 (December 2020)</li>
 <li>Added option for accessing smaller chunk (15 years) with the argument <code>sml_chunk</code> in the function <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code>
 </li>
 <li>Changing argument names to underscore format to avoid possible confusion with generic method functions</li>
-</ul>
-<p><strong>NEWS (11/10/2020):</strong></p>
-<ul>
-<li>Updated to allow manual entry of nc path as an argument in <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code>, using the argument <code>file_path= "YOUR/PATH"</code>: contribution <a href="https://github.com/romainlorrilliere">Romain Lorrilliere</a>
-</li>
-<li>ECAD URL has moved, this is now functional again -sorry- <span class="emoji" data-emoji="cat">🐱</span>
-</li>
 </ul>
 <div id="suggested-citation-for-the-climateextract-package" class="section level4">
 <h4 class="hasAnchor">

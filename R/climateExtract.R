@@ -111,6 +111,9 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
   fillvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "_FillValue")
   offsetvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "add_offset")
   scale_factorvalue <- ncdf4::ncatt_get(nc.ncdf, nc_var, "scale_factor")
+
+  scale_factorvalue = ifelse(isTRUE(scale_factorvalue$hasatt), scale_factorvalue$value, 1)
+  offsetvalue = ifelse(isTRUE(offsetvalue$hasatt), offsetvalue$value, 0)
   
   date_seq <- as.Date(gsub("days since ", "", day_since, fixed = TRUE), "%Y-%m-%d") + day_vals
   res <- lon[2] - lon[1]
@@ -178,8 +181,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                 longitude = lon[lon_toget],
                 latitude = lat[lat_toget],
                 date_extract = date_seq[time_toget],
-                scale_factorvalue = scale_factorvalue$value,
-                offsetvalue = offsetvalue$value,
+                scale_factorvalue = scale_factorvalue,
+                offsetvalue = offsetvalue,
                 write_raster = write_raster,
                 raw_datavals = raw_datavals
                 )

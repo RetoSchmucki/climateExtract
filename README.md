@@ -9,14 +9,19 @@ ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/ac
 
 Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
+**NEWS (07/04/2021):** 
+- Updated to E-OBS v23.1 (March 2021) 
+- Optimized several functions
+- Added option to write data to a raster brick
+- Better used of memory
+- Extract data within a bounding box of polygons or points
+- Option to manually select the E-OBS version
+
 **NEWS (06/02/2021):**
 - Updated to E-OBS v22 (December 2020)
 - Added option for accessing smaller chunk (15 years) with the argument `sml_chunk` in the function `extract_nc_value()`
 - Changing argument names to underscore format to avoid possible confusion with generic method functions
 
-**NEWS (11/10/2020):** 
-- Updated to allow manual entry of nc path as an argument in `extract_nc_value()`, using the argument `file_path= "YOUR/PATH"`: contribution [Romain Lorrilliere](https://github.com/romainlorrilliere) 
-- ECAD URL has moved, this is now functional again -sorry- :cat:
 
 #### Suggested citation for the climateExtract package
 
