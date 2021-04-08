@@ -9,7 +9,7 @@ temporal_aggregate(
   y = NULL,
   agg_function = "mean",
   variable_name = "average temp",
-  time_step = c("annual", "monthly", "window"),
+  time_step = c("annual", "monthly", "daily", "window"),
   win_length = NULL
 )
 }
@@ -26,7 +26,8 @@ object (sp)}
 
 \item{time_step}{character string defining the level of averaging, "annual",
 "monthly" or "window"; if time_step = "window" the rolling function is returned,
-computed over the temporal window defined by "wind_length".}
+computed over the temporal window defined by "wind_length". time_step = "daily" will
+return the daily value, per point if points are provided in y.}
 
 \item{win_length}{integer length of the temporal window to apply the rolling function}
 }

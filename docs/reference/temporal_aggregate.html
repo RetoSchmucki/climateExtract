@@ -147,7 +147,7 @@ from the extrat_nc_value function</p>
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   agg_function <span class='op'>=</span> <span class='st'>"mean"</span>,
   variable_name <span class='op'>=</span> <span class='st'>"average temp"</span>,
-  time_step <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"annual"</span>, <span class='st'>"monthly"</span>, <span class='st'>"window"</span><span class='op'>)</span>,
+  time_step <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"annual"</span>, <span class='st'>"monthly"</span>, <span class='st'>"daily"</span>, <span class='st'>"window"</span><span class='op'>)</span>,
   win_length <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
@@ -176,7 +176,8 @@ object (sp)</p></td>
       <th>time_step</th>
       <td><p>character string defining the level of averaging, "annual",
 "monthly" or "window"; if time_step = "window" the rolling function is returned,
-computed over the temporal window defined by "wind_length".</p></td>
+computed over the temporal window defined by "wind_length". time_step = "daily" will
+return the daily value, per point if points are provided in y.</p></td>
     </tr>
     <tr>
       <th>win_length</th>

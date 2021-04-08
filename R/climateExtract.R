@@ -366,7 +366,8 @@ write_to_brick <- function(x, out = out, ...) {
 #' @param variable_name character string to identify the resulting variable
 #' @param time_step character string defining the level of averaging, "annual",
 #' "monthly" or "window"; if time_step = "window" the rolling function is returned,
-#' computed over the temporal window defined by "wind_length".
+#' computed over the temporal window defined by "wind_length". time_step = "daily" will
+#' return the daily value, per point if points are provided in y.
 #' @param win_length integer length of the temporal window to apply the rolling function
 #' @details The output is either a multilayer raster if no points are supplied 
 #' in y or a data.table with aggregated statistic computed for each point 
@@ -384,7 +385,7 @@ write_to_brick <- function(x, out = out, ...) {
 
 temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                               variable_name = "average temp", 
-                              time_step = c("annual", "monthly", "window"),
+                              time_step = c("annual", "monthly", "daily", "window"),
                               win_length = NULL){
 
   year = NULL
@@ -455,6 +456,16 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 
     dt_v <- cbind(date_dt, val)
 
+    if(time_step == "daily"){
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+                   by = c("year", "month", "day"), .SDcols = site_id_]
+      v_col <- lapply("site_", grep, names(dt_agg))
+      dt_agg <- data.table::melt(dt_agg,
+                  id.vars = c("year", "month", "day"),
+                  measure.vars = v_col,
+                  variable.name = "site",
+                  value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
+    }
     if(time_step == "annual"){
       dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
                    by = c("year"), .SDcols = site_id_]
@@ -558,6 +569,10 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       if(time_step == "monthly"){
         names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
       }
+    }
+    if(time_step == "daily"){
+      x_agg <- x
+      names(x_agg) <- unique(date_dt$date)
     }
     if(isTRUE(raw_datavals)){
       x_agg <- (x_agg * scale_factorvalue) + offsetvalue

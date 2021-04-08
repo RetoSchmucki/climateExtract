@@ -88,15 +88,31 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="climateextract-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
+
+<div id="climateextract-" class="section level3">
+<h3 class="hasAnchor">
 <a href="#climateextract-" class="anchor"></a>climateExtract <img src="reference/figures/logo.png" align="right" alt="" width="120">
-</h1></div>
+</h3>
 <!-- badges: start -->
 
-<p>R functions to extract climate data from local NETCDF file that you can download from the ECAD at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
-<p>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a></p>
-<p><strong>NEWS (07/04/2021):</strong></p>
+</div>
+<div id="r-functions-to-extract-and-manipulate-ecad-climate-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#r-functions-to-extract-and-manipulate-ecad-climate-data" class="anchor"></a>R functions to extract and manipulate ECAD climate data</h3>
+<ul>
+<li>ECAD at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a>
+</li>
+<li>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a>
+</li>
+</ul>
+<blockquote>
+<p>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature). Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
+</blockquote>
+<div id="news" class="section level4">
+<h4 class="hasAnchor">
+<a href="#news" class="anchor"></a>News</h4>
+<ul>
+<li>07/04/2021 (“Wild-Rose”)
 <ul>
 <li>Updated to E-OBS v23.1 (March 2021)</li>
 <li>Optimized several functions</li>
@@ -105,39 +121,47 @@
 <li>Extract data within a bounding box of polygons or points</li>
 <li>Option to manually select the E-OBS version</li>
 </ul>
-<p><strong>NEWS (06/02/2021):</strong></p>
+</li>
+<li>06/02/2021
 <ul>
 <li>Updated to E-OBS v22 (December 2020)</li>
 <li>Added option for accessing smaller chunk (15 years) with the argument <code>sml_chunk</code> in the function <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code>
 </li>
 <li>Changing argument names to underscore format to avoid possible confusion with generic method functions</li>
 </ul>
-<div id="suggested-citation-for-the-climateextract-package" class="section level4">
-<h4 class="hasAnchor">
-<a href="#suggested-citation-for-the-climateextract-package" class="anchor"></a>Suggested citation for the climateExtract package</h4>
-<p>Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&amp;D. R package version 1.23.0. <a href="https://github.com/RetoSchmucki/climateExtract" class="uri">https://github.com/RetoSchmucki/climateExtract</a></p>
+</li>
+</ul>
 </div>
 <div id="installation" class="section level4">
 <h4 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h4>
-<p>You will need the package <code>devtools</code> (or <code>remotes</code>) and then use the function install_github()</p>
+<p>GitHub installation (CRAN not available)</p>
 <pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
-<p>climateExtract depends on <code>ncdf4</code> <code>data.table</code> <code>sf</code> <code>stars</code> <code>raster</code> <code>terra</code> <code>zoo</code> <code>methods</code></p>
+<p>Dependancies: <code>ncdf4</code>, <code>data.table</code>, <code>sf</code>, <code>stars</code>, <code>raster</code>, <code>terra</code>, <code>zoo</code>, <code>methods</code></p>
 </div>
 <div id="usage" class="section level4">
 <h4 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h4>
-<p>Load the library and check the version of the ECAD database</p>
+<p>Check default ECAD version (can be changed with <code>ecad_v = xx.x</code>)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span> 
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span>
 <span class="va">ecad_version</span></code></pre></div>
-<p>To limit the size of the object, we can limit the extract to a specific region of the data set. Here we will extract climate data for France and for 25 points (random) within the country. We use the package raster to retrieve a spatial object of France’s country borders and sf to generate 25 random point within the country. Because points are generated through a random number process, we set.seed for repeatability.</p>
+<p>Define specific regions and/or points. If not provided, data will be extracted from the entire ECAD extent.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># use set.seed() for reproducibility</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span> 
 <span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sf_point</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html">st_sf</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_sample.html">st_sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fr_border</span>, size <span class="op">=</span> <span class="fl">25</span>, type <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Use the function <code>extract_nc_value</code> to retrieve the climate data from the online E-OBS server and crop the data within the extent of the spatial object provided. We specify the first and last year of interest, use <code>sml_chunk</code> to reduce the size of the file to download, see details help(extract_nc_value). The argument <code>write_raster=TRUE</code> will write a raster brick object in your directory of the region defined by the spatial extent. The argument <code>return_data = TRUE</code> returns an R object (a list) with the climate values stored in a numeric array.</p>
+<p>Extract data</p>
+<ul>
+<li>Retrieve climate data from E-OBS server, or locally if available.</li>
+<li>Crop to the extent of the spatial object provided.</li>
+<li>Specify years and data of interest; see details help(extract_nc_value).</li>
+<li>Write output to local disk with <code>write_raster=TRUE</code>
+</li>
+<li>If <code>return_data = TRUE</code>, an R object (a list) with the climate values is created.</li>
+</ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">climate_data</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, 
                                 last_year <span class="op">=</span> <span class="fl">2015</span>,
@@ -152,13 +176,12 @@ devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
                                 write_raster <span class="op">=</span> <span class="cn">TRUE</span>,
                                 out <span class="op">=</span> <span class="st">"raster_mean_temp.grd"</span>,
                                 return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>From here, we can use the raster package to connect to the raster brick created. If this object is too big for being stored in Memory, raster will set pointer to the raster file on the disk.</p>
+<p>Connect to the raster brick created on local disk. If too big to be stored in Memory, raster will set pointer to the file.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rbk</span> <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"raster_mean_temp.grd"</span><span class="op">)</span>
-
 <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></code></pre></div>
-<p>We can now aggregate the data over time, “annual”, “monthly” or using a rolling “window”. Here we show a monthly average, using the function <code>mean</code>, this could be set to <code>sum</code>, <code>sd</code> or many others.</p>
+<p>Aggregate the data over time, “annual”, “monthly” or by using a rolling “window”. The function <code>mean</code> could be replaced by <code>sum</code>, <code>sd</code> or other functions the can be computed along a vector. If “daily” is selected as time_step, no aggregation is conducted as ECAD data are provided on daily scale.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># monthly mean</span>
 <span class="va">monthly_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
@@ -177,9 +200,9 @@ devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
                                           time_step <span class="op">=</span> <span class="st">"window"</span>,
                                           win_length <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></code></pre></div>
 <blockquote>
-<p>Note: the <code>x</code> object can be the climate_data object that resulted from the <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code> function.</p>
+<p>Note: Argument in <code>x</code> could also be the climate_data object that resulted from the <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code> function.</p>
 </blockquote>
-<p>Aggregation can also be computed for specific points, if a spatial point object is provided as <code>y</code> argument (e.g. <code>y = sf_point</code>). This will return a data.table object.</p>
+<p>Aggregation for points, if a spatial point object is provided in <code>y</code> argument (e.g. <code>y = sf_point</code>).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># annual mean per point</span>
 <span class="va">annual_avg_temp_pnts</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
@@ -188,37 +211,37 @@ devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
                                           variable_name <span class="op">=</span> <span class="st">"average temp"</span>,
                                           time_step <span class="op">=</span> <span class="st">"annual"</span><span class="op">)</span></code></pre></div>
 <blockquote>
-<p>Note: Because the point that is referring to <code>site_1</code> falls outside of the raster cell having a value, along the coast, the function extract the value of the nearest cell with a value. The distance_from_pnt indicate how far the centroid of this cell is from the point, when the point falls in a cell, the distance_from_pnt is NA.</p>
+<p>Note: Here, <code>site_1</code> is located along the coast and falls outside the raster grid cell with a value, the value returned correspond to the nearest cell with a value. Distance_from_pnt indicates distance to cell centroid, when within a cell with value, this is NA.</p>
 </blockquote>
-<p>We can produce a map of the averaged layer calculated. For example the average temperature for Sept 2012, <code>"2012.09"</code>.</p>
+<p>Map of the aggregated layer. Here the average temperature for Sept 2012, <code>"2012.09"</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<p>You can plot the points on this same map, with a circle around the point 1, falling in the see near the coast of Corse (bottom right corner). This is only true if the seed was set to <code><a href="https://rdrr.io/r/base/Random.html">set.seed(42876)</a></code> for the random sampling.</p>
+<p>Add points to the map, here with a circle around the point 1 to show the point near the coast of Corse (bottom right corner).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sf_point</span>, col <span class="op">=</span> <span class="st">'magenta'</span>, pch <span class="op">=</span> <span class="fl">17</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sf_point</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">'blue'</span>, border<span class="op">=</span> <span class="fl">1.5</span>, cex<span class="op">=</span> <span class="fl">2</span>, pch <span class="op">=</span> <span class="fl">1</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="citation-and-term-of-use-from-ecad-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#citation-and-term-of-use-from-ecad-data" class="anchor"></a>Citation and term of use from ECAD Data</h3>
-<p>See citation and ECA&amp;D/E-OBS data policy at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles</a> You can register as an E-OBS user at <a href="https://surfobs.climate.copernicus.eu/dataaccess/registration.php">https://surfobs.climate.copernicus.eu/dataaccess/registration.php</a></p>
-<p><strong>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature).</strong> <strong>Note</strong> that shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
-<p>** Data available at 0.1 deg regular grid are ca. 5GB and can be challenging to handle when extracting the entire continent, consider using specific areas defined by spatial object (e.g. set of points or polygons).**</p>
-<p><strong>You can download the high-resolution grid and subset the area of interest to build a manageable dataset as demonstrated above.</strong></p>
-<p><em>This is a work in progress that is good for some tasks, but this comes with no guarantee. Suggestions and contributions for improvement are welcome.</em></p>
-<p><strong>Raise issues <span class="emoji" data-emoji="raised_hand">✋</span>: </strong> <a href="https://github.com/RetoSchmucki/climateExtract/issues">https://github.com/RetoSchmucki/climateExtract/issues</a></p>
-<div id="to-do" class="section level4">
+<div id="meta" class="section level4">
 <h4 class="hasAnchor">
-<a href="#to-do" class="anchor"></a>TO DO</h4>
-<ul class="task-list">
+<a href="#meta" class="anchor"></a>Meta</h4>
+<ul>
+<li><p>See citation and ECA&amp;D/E-OBS data policy <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles</a></p></li>
+<li><p>Register as an E-OBS user at <a href="https://surfobs.climate.copernicus.eu/dataaccess/registration.php" class="uri">https://surfobs.climate.copernicus.eu/dataaccess/registration.php</a></p></li>
+<li><p>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a></p></li>
+<li><p>Raise issues: <a href="https://github.com/RetoSchmucki/climateExtract/issues">https://github.com/RetoSchmucki/climateExtract/issues</a></p></li>
+<li><p>Get citation information for <code>climateExtract</code> in R doing <code><a href="https://rdrr.io/r/utils/citation.html">citation(package = 'climateExtract')</a></code></p></li>
 <li>
-<input type="checkbox" disabled>
-update and improve documentation</li>
+<p>Suggested citation:</p>
+<ul>
+<li>Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&amp;D. R package version 1.23.0. <a href="https://github.com/RetoSchmucki/climateExtract" class="uri">https://github.com/RetoSchmucki/climateExtract</a>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
