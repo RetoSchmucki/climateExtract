@@ -369,6 +369,8 @@ write_to_brick <- function(x, out = out, ...) {
 #' computed over the temporal window defined by "wind_length". time_step = "daily" will
 #' return the daily value, per point if points are provided in y.
 #' @param win_length integer length of the temporal window to apply the rolling function
+#' @param site_col character string with the name of column containing site_id in object 
+#' "y". Default is "site_id"
 #' @details The output is either a multilayer raster if no points are supplied 
 #' in y or a data.table with aggregated statistic computed for each point 
 #' provided in y. If points provided fall in areas with no data (e.g. in the sea
@@ -386,7 +388,7 @@ write_to_brick <- function(x, out = out, ...) {
 temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                               variable_name = "average temp", 
                               time_step = c("annual", "monthly", "daily", "window"),
-                              win_length = NULL){
+                              win_length = NULL, site_col = "site_id"){
 
   year = NULL
   month = NULL
@@ -441,8 +443,8 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
     my_cell <- nona_cell_res$nona_cell
     val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
-    if("site_id" %in% names(y)){
-      site_id_ <- y$site_id
+    if(site_col %in% names(y)){
+      site_id_ <- as.data.frame(as(y,"Spatial"))[, site_col]
     }else{
       site_id_ <- paste0("site_", seq_len(dim(y)[1]))
     }
@@ -456,88 +458,79 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 
     dt_v <- cbind(date_dt, val)
 
-    if(time_step == "daily"){
-      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
-                   by = c("year", "month", "day"), .SDcols = site_id_]
-      v_col <- lapply("site_", grep, names(dt_agg))
-      dt_agg <- data.table::melt(dt_agg,
-                  id.vars = c("year", "month", "day"),
-                  measure.vars = v_col,
-                  variable.name = "site",
-                  value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
-    }
     if(time_step == "annual"){
       dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
                    by = c("year"), .SDcols = site_id_]
-      
-      v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year"),
-                  measure.vars = v_col,
+                  measure.vars = site_id_,
                   variable.name = "site",
                   value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
     }
     if(time_step == "monthly"){
       dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)), 
                   by = c("year", "month"), .SDcols = site_id_]
-      v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year", "month"),
-                  measure.vars = v_col,
+                  measure.vars = site_id_,
+                  variable.name = "site",
+                  value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
+    }
+    if(time_step == "daily"){
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+                   by = c("year", "month", "day"), .SDcols = site_id_]
+      #v_col <- lapply("site_", grep, names(dt_agg))
+      dt_agg <- data.table::melt(dt_agg,
+                  id.vars = c("year", "month", "day"),
+                  measure.vars = site_id_,
                   variable.name = "site",
                   value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name))))
     }
     if(time_step == "window"){
       if(agg_function == 'mean'){
-          v_col <- unlist(lapply("site_", grep, names(dt_v)))
-          dt_agg <- data.table::setDT(data.table::frollmean(dt_v[, v_col, with = FALSE],
+          dt_agg <- data.table::setDT(data.table::frollmean(dt_v[, site_id_, with = FALSE],
                                                             n = win_length,
                                                             fill = NA,
                                                             align = "right",
                                                             na.rm = TRUE))
-          names(dt_agg) <- names(dt_v)[v_col]
-          dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
-          v_col <- lapply("site_", grep, names(dt_agg))
+          names(dt_agg) <- site_id_
+          dt_agg <- cbind(dt_v[, -c(site_id_), with = FALSE], dt_agg)
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),
-                      measure.vars = v_col,
+                      measure.vars = site_id_,
                       variable.name = "site",
                       value.name = c(paste0("roll", agg_function, "_", 
                                             gsub(" ", "_", variable_name),
                                             win_length,"-d")))
       }
       if(agg_function == 'sum'){
-          v_col <- unlist(lapply("site_", grep, names(dt_v)))
-          dt_agg <- data.table::setDT(data.table::frollsum(dt_v[, v_col, with = FALSE],
+          dt_agg <- data.table::setDT(data.table::frollsum(dt_v[, site_id_, with = FALSE],
                                                             n = win_length,
                                                             fill = NA,
                                                             align = "right",
                                                             na.rm = TRUE))
-          names(dt_agg) <- names(dt_v)[v_col]
+          names(dt_agg) <- site_id_
           dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
-          v_col <- lapply("site_", grep, names(dt_agg))
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),
-                      measure.vars = v_col,
+                      measure.vars = site_id_,
                       variable.name = "site",
                       value.name = c(paste0("roll", agg_function, "_", 
                                             gsub(" ", "_", variable_name),
                                             win_length,"-d")))
       }
       if(!any(agg_function %in% c("mean", "sum"))){
-          v_col <- unlist(lapply("site_", grep, names(dt_v)))
-          dt_agg <- data.table::setDT(data.table::frollapply(dt_v[, v_col, with = FALSE],
+          dt_agg <- data.table::setDT(data.table::frollapply(dt_v[, site_id_, with = FALSE],
                                                             n = win_length,
                                                             FUN = get(agg_function),
                                                             fill = NA,
                                                             align = "right",
                                                             na.rm = TRUE))
-          names(dt_agg) <- names(dt_v)[v_col]
-          dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
-          v_col <- lapply("site_", grep, names(dt_agg))
+          names(dt_agg) <- site_id_
+          dt_agg <- cbind(dt_v[, -c(site_id_), with = FALSE], dt_agg)
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),
-                      measure.vars = v_col,
+                      measure.vars = site_id_,
                       variable.name = "site",
                       value.name = c(paste0("roll", agg_function, "_", 
                                             gsub(" ", "_", variable_name),
@@ -548,6 +541,8 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     dt_dist <- data.table::data.table(site = site_id_[nona_cell_res[[2]]$gid], 
                     distance_from_pnt = round(nona_cell_res$dist_nona_cell, 0))
     dt_agg <- merge(dt_agg, dt_dist, by = "site", all.x = TRUE)
+    s_ord <- data.table::data.table(site=site_id_, site_order= seq_along(site_id_))
+    dt_agg <- merge(dt_agg, s_ord, by = "site", all.x = TRUE)[order(site_order), ][, site_order := NULL]
     return(dt_agg)
   }else{
     if(time_step == "window"){
