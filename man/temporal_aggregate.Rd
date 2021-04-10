@@ -10,7 +10,8 @@ temporal_aggregate(
   agg_function = "mean",
   variable_name = "average temp",
   time_step = c("annual", "monthly", "daily", "window"),
-  win_length = NULL
+  win_length = NULL,
+  site_col = "site_id"
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ computed over the temporal window defined by "wind_length". time_step = "daily" 
 return the daily value, per point if points are provided in y.}
 
 \item{win_length}{integer length of the temporal window to apply the rolling function}
+
+\item{site_col}{character string with the name of column containing site_id in object 
+"y". Default is "site_id"}
 }
 \description{
 Compute mean climatic values for specific periods from an object obtained 

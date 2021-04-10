@@ -395,6 +395,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
   day = NULL
   .SD = NULL
   raw_datavals = FALSE
+  site_order = NULL
 
   if(time_step == "window" & is.null(win_length)){
     win_length <- 30
@@ -479,7 +480,6 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     if(time_step == "daily"){
       dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
                    by = c("year", "month", "day"), .SDcols = site_id_]
-      #v_col <- lapply("site_", grep, names(dt_agg))
       dt_agg <- data.table::melt(dt_agg,
                   id.vars = c("year", "month", "day"),
                   measure.vars = site_id_,
@@ -510,7 +510,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
                                                             align = "right",
                                                             na.rm = TRUE))
           names(dt_agg) <- site_id_
-          dt_agg <- cbind(dt_v[, -c(v_col), with = FALSE], dt_agg)
+          dt_agg <- cbind(dt_v[, -c(site_id_), with = FALSE], dt_agg)
           dt_agg <- data.table::melt(dt_agg,
                       id.vars = c("date", "year", "month", "day"),
                       measure.vars = site_id_,
