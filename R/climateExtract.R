@@ -815,7 +815,7 @@ point_grid_extract <- function(x, point_coord) {
                  ymn = min(x$latitude),
                  xmx = max(x$longitude),
                  ymx = max(x$latitude),
-                 crs = 4326
+                 crs = sp::CRS("+init=epsg:4326")
       )
   dim(a) <- dim(ap[nrow(ap):1, , ])
   a <- raster::setValues(a, ap[nrow(ap):1, , ])
