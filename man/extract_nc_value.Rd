@@ -47,7 +47,7 @@ defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
 
 \item{clim_variable}{a character string defining the daily climate variable to 
 retrieve and extract; "mean temp","max temp","min temp","precipitation", 
-default="mean temp"}
+"sea level pressure", "relative humidity", "global radiation", default="mean temp"}
 
 \item{statistic}{a character string defining the metric to retrieve, "mean" or
  "spread", where the mean is computed across 100 members of the ensemble and 

@@ -26,8 +26,8 @@ Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964"}
 
 \item{clim_variable}{a character string defining the daily climate variable to 
-retrieve and extract; "mean temp","max temp","min temp","precipitation", 
-default="mean temp"}
+retrieve and extract; "mean temp", "max temp", "min temp", "precipitation", 
+"sea level pressure", "relative humidity", "global radiation", default="mean temp"}
 
 \item{statistic}{a character string defining the metric to retrieve, "mean" or
  "spread", where the mean is computed across 100 members of the ensemble and 

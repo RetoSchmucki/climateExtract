@@ -32,7 +32,7 @@ utils::globalVariables(c("ecad_version"))
 #'  entire extent is extracted
 #' @param clim_variable a character string defining the daily climate variable to 
 #' retrieve and extract; "mean temp","max temp","min temp","precipitation", 
-#' default="mean temp"
+#' "sea level pressure", "relative humidity", "global radiation", default="mean temp"
 #' @param statistic a character string defining the metric to retrieve, "mean" or
 #'  "spread", where the mean is computed across 100 members of the ensemble and 
 #' is provided as the "best-guess" fields. The spread is calculated as the 

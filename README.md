@@ -12,7 +12,7 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
-* 14/04/2021 ("Wild-Rose")
+* 14/07/2021
   - added functionality for three new variables
     1. daily averaged sea level pressure PP
     2. daily averaged relative humidity HU 
@@ -40,7 +40,7 @@ install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")
 ```
 
-Dependancies: `ncdf4`, `data.table`, `sf`, `stars`, `raster`, `terra`, `zoo`, `methods`
+Dependancies: `ncdf4`, `data.table`, `sf`, `stars`, `sp`, `raster`, `terra`, `zoo`, `methods`
 
 #### Usage
 
