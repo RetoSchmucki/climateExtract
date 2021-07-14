@@ -12,6 +12,11 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
+* 14/04/2021 ("Wild-Rose")
+  - added functionality for three new variables
+    1. daily averaged sea level pressure PP
+    2. daily averaged relative humidity HU 
+    3. daily mean global radiation QQ
 
 * 07/04/2021 ("Wild-Rose")
   - Updated to E-OBS v23.1 (March 2021) 

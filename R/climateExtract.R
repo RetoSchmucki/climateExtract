@@ -214,8 +214,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
 #' Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
 #' and "1950-1964"
 #' @param clim_variable a character string defining the daily climate variable to 
-#' retrieve and extract; "mean temp","max temp","min temp","precipitation", 
-#' default="mean temp"
+#' retrieve and extract; "mean temp", "max temp", "min temp", "precipitation", 
+#' "sea level pressure", "relative humidity", "global radiation", default="mean temp"
 #' @param statistic a character string defining the metric to retrieve, "mean" or
 #'  "spread", where the mean is computed across 100 members of the ensemble and 
 #' is provided as the "best-guess" fields. The spread is calculated as the 
@@ -257,6 +257,9 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
     if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
     if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
+    if (clim_variable == "sea level pressure") {clim_var <- paste0("pp_ens_", statistic)}
+    if (clim_variable == "relative humidity") {clim_var <- paste0("hu_ens_", statistic)}
+    if (clim_variable == "global radiation") {clim_var <- paste0("qq_ens_", statistic)}
 
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
@@ -286,6 +289,9 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
     if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
     if (clim_variable == "precipitation") {clim_var <- paste0("rr_ens_", statistic)}
+    if (clim_variable == "sea level pressure") {clim_var <- paste0("pp_ens_", statistic)}
+    if (clim_variable == "relative humidity") {clim_var <- paste0("hu_ens_", statistic)}
+    if (clim_variable == "global radiation") {clim_var <- paste0("qq_ens_", statistic)}
 
     if (grid_size == 0.25) {grid_size <- "0.25deg"}
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
