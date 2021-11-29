@@ -1,3 +1,35 @@
+#' ggd_extract
+#' Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
+#' with base temperature.
+#' @param base_temp value for the base temperature to use for the growing degree day, default = 4°C
+#' @param min_tem raster, rasterbrick or vector of the minimum daily temperature
+#' @param max_temp raster, rasterbrick or vector of the maximum daily temperature
+#' @param avg_temp raster, rasterbrick or vector of the mean daily temperature
+#' @param gdd_method string defining the method to use, "avg" for mean daily temperature or "be" for
+#' the Baskerville-Emin method that fit a sine curve on the minimum and the maximum to account for daily
+#' variation in temperature
+#' @param top_temp value for the maximum temperature beyond growing degree day are not accumulating, default = NULL
+#' @details This function computes the Growing Degree Day on a specific base temperature and method (i.e., `avg` or `be`). The funciton
+#' is build on two internal functions, gdd_avg_r() and gdd_be_r() to apply the specific gdd calculation method. The function
+#' works on raster, rasterbrick (multiple layers), vector or matrix.
+#' @author Reto Schmucki
+#' @export
+#'
+
+gdd_extract <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_temp = NULL,
+                        gdd_method = "avg", top_temp = NULL) {
+    if(!is.null(top_temp)){
+        if(top_temp <= base_temp) stop("base_temp must be lower than top_temp")
+    }
+    if (gdd_method == "avg") {
+        GDD <- gdd_avg_r(base_temp, min_temp, max_temp, avg_temp, top_temp)
+    }
+    if (gdd_method == "be") {
+        GDD <- gdd_be_r(base_temp, min_temp, max_temp, avg_temp, top_temp)
+    }
+    return(GDD)
+}
+
 #' gdd_avg_r
 #'
 #' Compute the growing degree day (GDD) using a base temperature against the mean daily temperature.
@@ -5,16 +37,15 @@
 #' @param min_tem raster, rasterbrick or vector of the minimum daily temperature
 #' @param max_temp raster, rasterbrick or vector of the maximum daily temperature
 #' @param avg_temp raster, rasterbrick or vector of the mean daily temperature
-#' @details This function compute a rough estimate of GDD from the mean temperature without accounting from variation during the day.
-#' For a more refined method using a daily curve, use the BE method (Baskerville-Emin method) available with
-#' `gdd_be_r``
+#' @param top_temp value for the maximum temperature beyond growing degree day are not accumulating, default = NULL
+#' @details This function computes a rough estimate of GDD from the mean temperature without accounting from variation 
+#' during the day. For a more refined method using a daily curve, use the BE method (Baskerville-Emin method) available 
+#' with `gdd_be_r()`.
 #' @author Reto Schmucki
 #' @export
 #'
-# example
-# avg_ggd_france <- gdd_avg_r(base_temp = 7, avg_temp = rbk)
 
-gdd_avg_r <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_temp = NULL) {
+gdd_avg_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
     if (!is.null(base_temp)) {
         b.t <- base_temp
     } else {
@@ -32,6 +63,21 @@ gdd_avg_r <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_te
     }
     GDD <- avg.t - base_temp
     GDD[GDD < 0] = 0
+
+    if(is.null(top_temp)){
+        GDD <- GDD
+    }else{
+        GDD_top <- avg.t - top_temp
+        GDD_top[GDD_top < 0] = 0
+        GDD <- GDD - GDD_top    
+    }
+    
+    if (is.null(avg_temp)) {
+        names(GDD) <- names(mn.t)
+    } else {
+        names(GDD) <- names(avg_temp)
+    }
+    
     return(GDD)
 }
 
@@ -42,14 +88,14 @@ gdd_avg_r <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_te
 #' @param min_tem raster, rasterbrick or vector of the minimum daily temperature
 #' @param max_temp raster, rasterbrick or vector of the maximum daily temperature
 #' @param avg_temp raster, rasterbrick or vector of the mean daily temperature
-#' @details This function compute an estimate of GDD fitting a sine curve on the minimum and the maximum to account for
+#' @param top_temp value for the maximum temperature beyond growing degree day are not accumulating, default = NULL
+#' @details This function computes an estimate of GDD fitting a sine curve on the minimum and the maximum to account for
 #' daily variation in temperature.
 #' @author Reto Schmucki
 #' @export
 #'
 
-
-gdd_be_r <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_temp = NULL) {
+gdd_be_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
     if (!is.null(base_temp)) {
         b.t <- base_temp
     } else {
@@ -72,40 +118,37 @@ gdd_be_r <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_tem
     A[A > 1] = 1
     A = asin(A)
     GDD = round(((W*cos(A)) - ((b.t - avg.t) * (fv - A))) / 3.14, digits = 2)
-
     GDD[GDD < 0] <- 0
+
+    if (is.null(top_temp)) {
+        GDD <- GDD
+    } else {
+        At = (top_temp - avg.t) / W
+        At[At < -1] = -1
+        At[At > 1] = 1
+        At = asin(At)
+        GDD_top = round(((W * cos(At)) - ((top_temp - avg.t) * (fv - At))) / 3.14, digits = 2)
+        GDD_top[GDD_top < 0] <- 0
+        GDD <- GDD - GDD_top
+    }
+
     names(GDD) <- names(mn.t)
 
     return(GDD)
 }
 
-#' ggd_extract
-#' Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
-#' with base temperature.
-#' @param base_temp value for the base temperature to use for the growing degree day, default = 4⁰C
-#' @param min_tem raster, rasterbrick or vector of the minimum daily temperature
-#' @param max_temp raster, rasterbrick or vector of the maximum daily temperature
-#' @param avg_temp raster, rasterbrick or vector of the mean daily temperature
-#' @param gdd_method string defining the method to use, "avg" for mean daily temperature or "be" for
-#' the Baskerville-Emin method that fit a sine curve on the minimum and the maximum to account for daily 
-#' variation in temperature.
-#' @details This function is a wrapper around the internal functions gdd_avg_r and gdd_be_r where each method is coded.
+#' cumsum_rb
+#'
+#' Compute the cumulative sum on a multilayered raster (rasterbrick), using indices spaning over specific time periods.
+#' @param x rasterbrick object on which cummulative sum should be computed
+#' @param indices vector with indices over which the sum is to be cummulated.
+#' @details This function computes the cummulative sum over specific periods defined by the a vector of incides (e.g. two five-day cummulative sum c(1,1,1,1,1,2,2,2,2,2),
+#' restarting at zero on the first day of each series defined by the indices).
 #' @author Reto Schmucki
+#' @import stars
 #' @export
 #'
-
-gdd_extract <- function(base_temp = NULL, min_temp = NULL, max_temp = NULL, avg_temp = NULL,
-                         gdd_method = "avg"){
-    if(gdd_method == "avg"){
-        GDD <- gdd_avg_r(base_temp = base_temp, min_temp = min_temp, max_temp = max_temp, avg_temp = avg_temp)
-    }
-    if(gdd_method == "be"){
-        GDD <- gdd_be_r(base_temp = base_temp, min_temp = min_temp, max_temp = max_temp, avg_temp = avg_temp)
-    }
-    return(GDD)
-}
-
-
+ 
 cumsum_rb <- function(x, indices = NULL){
     
     if(is.null(indices)){
@@ -130,13 +173,44 @@ return(x_agg_cumsum_r)
 }
 
 
-get_date <- function(x=x, pattern = pattern, date_format = date_format){
-    date_vect <- as.Date(gsub(pattern, "", names(x), fixed= TRUE), date_format)
+#' get_date
+#'
+#' Extract a series of dates from the layers named in a rasterBrick or a vector of strings containing dates.
+#' @param x rasterBrick or a vector of dates, from which to extract the dates of the time-series.
+#' @param pattern string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15")
+#' @param data_format format of the date (e.g., %Y.%m.%d", "%Y-%m-%d". ...)
+#' @author Reto Schmucki
+#' @export
+#'
+
+get_date <- function(x, pattern, date_format){
+    if(class(x) == "RasterBrick" ){
+        xn <- names(x)
+    } else {
+        xn <- x
+    }
+    date_vect <- as.Date(gsub(pattern, "", xn, fixed= TRUE), date_format)
     return(date_vect)
 }
 
-get_layer_indice <- function(x=NULL, pattern = "X", date_format = "%Y.%m.%d", indice_level = "year"){
-    layer_indices <- as.numeric(factor(lubridate::floor_date(get_date(x=x, pattern=pattern, date_format = date_format), indice_level)))
+
+#' get_layer_indice
+#'
+#' Compute a vector of indices of "year" or "month" based on the date extracted from the rasterBrick or a vector of 
+#' strings over the time period.
+#' @param x rasterBrick or a vector of dates, from which to extract the dates of the time-series.
+#' @param pattern string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15")
+#' @param data_format format of the date (e.g., %Y.%m.%d", "%Y-%m-%d". ...)
+#' @indiceLevel string to define the time-period to use to define the indices, "year" or "month".
+#' @details This function generate a vector of indices dividing the time-series in years or months. This indices are use
+#' for the calculating the cummulative sum over years or month (see function cumsum_rb()).
+#' @author Reto Schmucki
+#' @import lubridate
+#' @export
+#'
+
+get_layer_indice <- function(x=NULL, pattern = "X", date_format = "%Y.%m.%d", indiceLevel = "year"){
+    layer_indices <- as.numeric(factor(lubridate::floor_date(get_date(x=x, pattern=pattern, date_format = date_format), indiceLevel)))
     return(layer_indices)
 }
 
