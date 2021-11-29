@@ -12,6 +12,12 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
+* 29/11/2021 ("Climbing-Rose")
+  - added Growing Degree Day functions
+    1. compute gdd from average temperature method
+    2. compute gdd using Baskerville-Emin method
+    3. compute cumulative sum over RasterBrick layers
+
 * 14/07/2021
   - added functionality for three new variables
     1. daily averaged sea level pressure PP
@@ -25,11 +31,6 @@
   - Better used of memory
   - Extract data within a bounding box of polygons or points
   - Option to manually select the E-OBS version
-
-* 06/02/2021
-  - Updated to E-OBS v22 (December 2020)
-  - Added option for accessing smaller chunk (15 years) with the argument `sml_chunk` in the function `extract_nc_value()`
-  - Changing argument names to underscore format to avoid possible confusion with generic method functions
 
 #### Installation
 

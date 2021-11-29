@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • climateExtract</title>
+<title>ggd_extract
+Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
+with base temperature. — gdd_extract • climateExtract</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +48,12 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="ggd_extract
+Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
+with base temperature. — gdd_extract" />
+<meta property="og:description" content="ggd_extract
+Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
+with base temperature." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -76,7 +83,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -138,128 +145,71 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>ggd_extract
+Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
+with base temperature.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/RetoSchmucki/climateExtract/blob/master/R/growingDegreeDay.R'><code>R/growingDegreeDay.R</code></a></small>
+    <div class="hidden name"><code>gdd_extract.Rd</code></div>
     </div>
 
-    <table class="ref-index">
-
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="get_near_nona.html">get_near_nona()</a></code> </p>
-        </td>
-        <td><p>get_near_nona</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="point_grid_extract.html">point_grid_extract()</a></code> </p>
-        </td>
-        <td><p>point_grid_extract</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="temporal_mean.html">temporal_mean()</a></code> </p>
-        </td>
-        <td><p>temporal_mean</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="temporal_sum.html">temporal_sum()</a></code> </p>
-        </td>
-        <td><p>temporal_sum</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="write_to_brick.html">write_to_brick()</a></code> </p>
-        </td>
-        <td><p>write_to_brick</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="temporal_aggregate.html">temporal_aggregate()</a></code> </p>
-        </td>
-        <td><p>temporal_aggregate</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ecad_version.html">ecad_version</a></code> </p>
-        </td>
-        <td><p>version of ECA&amp;D to use</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="extract_nc_value.html">extract_nc_value()</a></code> </p>
-        </td>
-        <td><p>extract_nc_value</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_nc_online.html">get_nc_online()</a></code> </p>
-        </td>
-        <td><p>get_nc_online</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gdd_extract.html">gdd_extract()</a></code> </p>
-        </td>
-        <td><p>ggd_extract
+    <div class="ref-description">
+    <p>ggd_extract
 Compute the growing degree day (GDD) using either the mean temperature or the Baskerville-Emin method,
-with base temperature.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gdd_avg_r.html">gdd_avg_r()</a></code> </p>
-        </td>
-        <td><p>gdd_avg_r</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gdd_be_r.html">gdd_be_r()</a></code> </p>
-        </td>
-        <td><p>gdd_be_r</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cumsum_rb.html">cumsum_rb()</a></code> </p>
-        </td>
-        <td><p>cumsum_rb</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_date.html">get_date()</a></code> </p>
-        </td>
-        <td><p>get_date</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_layer_indice.html">get_layer_indice()</a></code> </p>
-        </td>
-        <td><p>get_layer_indice</p></td>
-      </tr>
-    </tbody>
-    </table>
-  </div>
+with base temperature.</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>gdd_extract</span><span class='op'>(</span>
+  base_temp <span class='op'>=</span> <span class='cn'>NULL</span>,
+  min_temp <span class='op'>=</span> <span class='cn'>NULL</span>,
+  max_temp <span class='op'>=</span> <span class='cn'>NULL</span>,
+  avg_temp <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gdd_method <span class='op'>=</span> <span class='st'>"avg"</span>,
+  top_temp <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>base_temp</th>
+      <td><p>value for the base temperature to use for the growing degree day, default = 4°C</p></td>
+    </tr>
+    <tr>
+      <th>min_temp</th>
+      <td><p>raster, rasterbrick or vector of the minimum daily temperature</p></td>
+    </tr>
+    <tr>
+      <th>max_temp</th>
+      <td><p>raster, rasterbrick or vector of the maximum daily temperature</p></td>
+    </tr>
+    <tr>
+      <th>avg_temp</th>
+      <td><p>raster, rasterbrick or vector of the mean daily temperature</p></td>
+    </tr>
+    <tr>
+      <th>gdd_method</th>
+      <td><p>string defining the method to use, "avg" for mean daily temperature or "be" for
+the Baskerville-Emin method that fit a sine curve on the minimum and the maximum to account for daily
+variation in temperature</p></td>
+    </tr>
+    <tr>
+      <th>top_temp</th>
+      <td><p>value for the maximum temperature beyond growing degree day are not accumulating, default = NULL</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function computes the Growing Degree Day on a specific base temperature and method (i.e., `avg` or `be`). The funciton
+is build on two internal functions, gdd_avg_r() and gdd_be_r() to apply the specific gdd calculation method. The function
+works on raster, rasterbrick (multiple layers), vector or matrix.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Reto Schmucki</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

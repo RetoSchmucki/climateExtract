@@ -118,6 +118,17 @@
 <h4 class="hasAnchor">
 <a href="#news" class="anchor"></a>News</h4>
 <ul>
+<li>29/11/2021 (“Climbing-Rose”)
+<ul>
+<li>added Growing Degree Day functions
+<ol>
+<li>compute gdd from average temperature method</li>
+<li>compute gdd using Baskerville-Emin method</li>
+<li>compute cumulative sum over RasterBrick layers</li>
+</ol>
+</li>
+</ul>
+</li>
 <li>14/07/2021
 <ul>
 <li>added functionality for three new variables
@@ -139,22 +150,14 @@
 <li>Option to manually select the E-OBS version</li>
 </ul>
 </li>
-<li>06/02/2021
-<ul>
-<li>Updated to E-OBS v22 (December 2020)</li>
-<li>Added option for accessing smaller chunk (15 years) with the argument <code>sml_chunk</code> in the function <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code>
-</li>
-<li>Changing argument names to underscore format to avoid possible confusion with generic method functions</li>
-</ul>
-</li>
 </ul>
 </div>
 <div id="installation" class="section level4">
 <h4 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h4>
 <p>GitHub installation (CRAN not available)</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("devtools")
-devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
+<pre><code>install.packages("devtools")
+devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
 <p>Dependancies: <code>ncdf4</code>, <code>data.table</code>, <code>sf</code>, <code>stars</code>, <code>sp</code>, <code>raster</code>, <code>terra</code>, <code>zoo</code>, <code>methods</code></p>
 </div>
 <div id="usage" class="section level4">
@@ -247,7 +250,7 @@ devtools::install_github("RetoSchmucki/climateExtract")</a></code></pre>
 <li><p>Register as an E-OBS user at <a href="https://surfobs.climate.copernicus.eu/dataaccess/registration.php" class="uri">https://surfobs.climate.copernicus.eu/dataaccess/registration.php</a></p></li>
 <li><p>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a></p></li>
 <li><p>Raise issues: <a href="https://github.com/RetoSchmucki/climateExtract/issues">https://github.com/RetoSchmucki/climateExtract/issues</a></p></li>
-<li><p>Get citation information for <code>climateExtract</code> in R doing <code><a href="https://rdrr.io/r/utils/citation.html">citation(package = 'climateExtract')</a></code></p></li>
+<li><p>Get citation information for <code>climateExtract</code> in R doing <code>citation(package = 'climateExtract')</code></p></li>
 <li>
 <p>Suggested citation:</p>
 <ul>
