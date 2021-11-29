@@ -1,8 +1,10 @@
 ### climateExtract <img src="man/figures/logo.png" align="right" alt="" width="120" />
 
 <!-- badges: start -->
-[![Build Status](https://travis-ci.com/RetoSchmucki/climateExtract.png?branch=master)](https://travis-ci.com/RetoSchmucki/climateExtract)
+[![Build Status](https://app.travis-ci.com/RetoSchmucki/climateExtract.svg?branch=master)](https://app.travis-ci.com/RetoSchmucki/climateExtract)
 <!-- badges: end -->
+
+
 
 ### R functions to extract and manipulate ECAD climate data
 * ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
