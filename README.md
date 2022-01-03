@@ -14,6 +14,9 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
+* 03/02/2022
+- Updated to E-OBS v24.0 (November 2021)
+    1. extending data from January 1950 to June 2021 
 * 29/11/2021 ("Climbing-Rose")
   - added Growing Degree Day functions
     1. compute gdd from average temperature method
@@ -75,7 +78,7 @@ climate_data = extract_nc_value(first_year = 2012,
                                 last_year = 2015,
                                 local_file = FALSE,
                                 file_path = NULL,
-                                sml_chunk = "2011-2020",
+                                sml_chunk = "2011-2021",
                                 spatial_extent = fr_border,
                                 clim_variable = "mean temp",
                                 statistic = "mean",
@@ -151,5 +154,5 @@ plot(sf_point[1,], col = 'blue', border= 1.5, cex= 2, pch = 1, add = TRUE)
 * Get citation information for `climateExtract` in R doing `citation(package = 'climateExtract')`
 
 * Suggested citation:
-  * Schmucki R. (2021) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.23.0. https://github.com/RetoSchmucki/climateExtract
+  * Schmucki R. (2022) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.24.0. https://github.com/RetoSchmucki/climateExtract
  

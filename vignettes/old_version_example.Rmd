@@ -130,4 +130,4 @@ monthly_sum <- temporal_sum(climate_data,"monthly")
 ```
 
 
->Note: This workflow, although it is still working should not be used on new application as newer option have been optimized
+>Note: This workflow, although it is still working should not be used on new application as newer options have been optimized
