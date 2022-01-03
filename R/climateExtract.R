@@ -24,7 +24,7 @@ utils::globalVariables(c("ecad_version"))
 #' @param file_path character string with the path to the local ".nc" file. Works
 #'  only if local_file = TRUE), default=NULL
 #' @param sml_chunk a character string for specific time period to be downloaded. 
-#' Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+#' Chunk available are "2011-2021", "1995-2010", "1980-1994", "1965-1979",
 #' and "1950-1964"
 #' @param spatial_extent object to define the spatial extent for the data 
 #' extraction, can be an "sf" or an "sp" object or a vector with 4 values 
@@ -211,7 +211,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
 #' @param last_year a numeric value defining the last year of the time period to
 #'  extract, 2014 if NULL, default=NULL
 #' @param sml_chunk a character string for specific time period to be downloaded. 
-#' Chunk available are "2011-2020", "1995-2010", "1980-1994", "1965-1979",
+#' Chunk available are "2011-2021", "1995-2010", "1980-1994", "1965-1979",
 #' and "1950-1964"
 #' @param clim_variable a character string defining the daily climate variable to 
 #' retrieve and extract; "mean temp", "max temp", "min temp", "precipitation", 
@@ -232,7 +232,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
 #'  extract the full data set. Smaller chunks of about 15 years of the most
 #'  recent version of the E-OBS dataset can be specified for download 
 #' can be specified directly with the argument "sm_chunk" (period available are
-#'  2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+#'  2011-2021, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
 #' about the mean and the spread metric see Cornes et al. (2018) and the 
 #' guidance on how to use ensemble datasets available from 
 #' \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
@@ -246,7 +246,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
                           statistic = statistic, grid_size = grid_size, 
                           ecad_v = ecad_v){
 
-  smc <- c("2011-2020", "1995-2010", "1980-1994", "1965-1979", "1950-1964")
+  smc <- c("2011-2021", "1995-2010", "1980-1994", "1965-1979", "1950-1964")
 
   if(is.null(sml_chunk)){
   
@@ -265,7 +265,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
     if (first_year >= 2011) {
-         year_toget <- "2011-2020_"
+         year_toget <- "2011-2021_"
          urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
                              grid_size, "_reg_ensemble/", clim_var, "_",
                              grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
