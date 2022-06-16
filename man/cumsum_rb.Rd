@@ -16,7 +16,7 @@ Compute the cumulative sum on a multilayered raster (rasterbrick), using indices
 }
 \details{
 This function computes the cumulative sum over specific periods defined by the a vector of incides (e.g. 
-two five-day cummulative sum c(1,1,1,1,1,2,2,2,2,2), restarting at zero on the first day of each series defined by
+two five-day cumulative sum c(1,1,1,1,1,2,2,2,2,2), restarting at zero on the first day of each series defined by
 the indices).
 }
 \author{

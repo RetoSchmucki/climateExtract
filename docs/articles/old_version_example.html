@@ -32,6 +32,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -44,18 +46,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.24.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -77,7 +73,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/RetoSchmucki/climateExtract/">
+  <a href="https://github.com/RetoSchmucki/climateExtract/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -92,16 +88,16 @@
 
       
 
-      </header><script src="old_version_example_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Example for older versions of ClimateExtract</h1>
-            <h3 class="subtitle">pre Wild-Rose release 07-04-2012</h3>
-                        <h4 class="author">Reto Schmucki (UKCEH)</h4>
+            <h3 data-toc-skip class="subtitle">pre Wild-Rose release 07-04-2012</h3>
+                        <h4 data-toc-skip class="author">Reto Schmucki (UKCEH)</h4>
             
-            <h4 class="date">07 April 2021</h4>
+            <h4 data-toc-skip class="date">07 April 2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/RetoSchmucki/climateExtract/blob/master/vignettes/old_version_example.Rmd"><code>vignettes/old_version_example.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/RetoSchmucki/climateExtract/blob/HEAD/vignettes/old_version_example.Rmd" class="external-link"><code>vignettes/old_version_example.Rmd</code></a></small>
       <div class="hidden name"><code>old_version_example.Rmd</code></div>
 
     </div>
@@ -110,14 +106,14 @@
     
 <hr>
 <p>In this tutorial refers to the method used in climateExtract before April 2021. While the workflow presented below is still working, it is not optimized and more flexible and optimized approaches have been implemented in climateExtract and should be preferred. Nevertheless, the original method will be kept for backward compatibility.</p>
-<div id="pre-wild-rose" class="section level3">
-<h3 class="hasAnchor">
-<a href="#pre-wild-rose" class="anchor"></a>Pre Wild-Rose!</h3>
-<p>You can get your climate data from the web repository <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php%5C#datafiles" class="uri">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php\#datafiles</a> and decompress the data to extract the <code>.nc</code> file.</p>
+<div class="section level3">
+<h3 id="pre-wild-rose">Pre Wild-Rose!<a class="anchor" aria-label="anchor" href="#pre-wild-rose"></a>
+</h3>
+<p>You can get your climate data from the web repository <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php%5C#datafiles" class="external-link uri">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php\#datafiles</a> and decompress the data to extract the <code>.nc</code> file.</p>
 <p>Or you can use the function <code><a href="../reference/extract_nc_value.html">extract_nc_value()</a></code> to download the Data directly by setting the parameter local_file to FALSE and adding the details of the Data you want to be extracted.</p>
 <p><strong>1.</strong> To extract climate values for a specific time period, use the function <code><a href="../reference/extract_nc_value.html">extract_nc_value()</a></code>. By default, this function will open an interactive window asking you to select a local <code>.nc</code> file from which you want the data to extract; you need to specify the first and the last years of the period you are interested.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract" class="external-link">climateExtract</a></span><span class="op">)</span>
 <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>,
                                  last_year <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></code></pre></div>
 <p><strong>2.</strong> If you don’t have a local .nc file, you can ask the function to download the desired Data directly from the web repository. To reduce the size of the data to download and manipulate, you can select a specific period available as “chunks” of 15 years (see help(etract_nc_value)).</p>
@@ -138,73 +134,73 @@
 <span class="va">monthly_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_sum.html">temporal_sum</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"monthly"</span><span class="op">)</span></code></pre></div>
 <p><strong>4.</strong> To extract the weather data for a set of specific locations (points), use the function <code><a href="../reference/point_grid_extract.html">point_grid_extract()</a></code>. With this function, you can extract either the original or the summary values corresponding to the points, depending on the data object provided in the first argument. The second argument is a <code>data.frame</code> with the coordinates of the points in a degree decimal format and using the EPSG projection 4326 - <strong>wgs 84</strong></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R">    <span class="va">point_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>site_id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"site1"</span>,<span class="st">"site2"</span>,<span class="st">"site3"</span>,<span class="st">"site4"</span>,<span class="st">"site5"</span><span class="op">)</span>, longitude<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">28.620000</span>,<span class="fl">6.401499</span>,<span class="fl">4.359062</span>,<span class="op">-</span><span class="fl">3.579906</span>,<span class="op">-</span><span class="fl">2.590392</span><span class="op">)</span>, latitude<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">61.29000</span>,<span class="fl">52.73953</span>,<span class="fl">52.06530</span>,<span class="fl">50.43031</span>,<span class="fl">52.02951</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R">    <span class="va">point_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>site_id<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"site1"</span>,<span class="st">"site2"</span>,<span class="st">"site3"</span>,<span class="st">"site4"</span>,<span class="st">"site5"</span><span class="op">)</span>, longitude<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28.620000</span>,<span class="fl">6.401499</span>,<span class="fl">4.359062</span>,<span class="op">-</span><span class="fl">3.579906</span>,<span class="op">-</span><span class="fl">2.590392</span><span class="op">)</span>, latitude<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">61.29000</span>,<span class="fl">52.73953</span>,<span class="fl">52.06530</span>,<span class="fl">50.43031</span>,<span class="fl">52.02951</span><span class="op">)</span><span class="op">)</span>
     <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>,<span class="va">point_coord</span><span class="op">)</span>
     <span class="va">point.month_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">monthly_sum</span>,<span class="va">point_coord</span><span class="op">)</span></code></pre></div>
 <p><strong>5.</strong> To extract long series, one chunk at a time (A quick and dirty workaround memory limit under Windows).</p>
-<pre><code># This is a workaround when facing memory issues under Windows while extracting a long series on a computer
-# with limited RAM.</code></pre>
+<pre><code><span class="co"># This is a workaround when facing memory issues under Windows while extracting a long series on a computer</span>
+<span class="co"># with limited RAM.</span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R">    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span>
+<code class="sourceCode R">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract" class="external-link">climateExtract</a></span><span class="op">)</span>
 
     <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span><span class="fl">1950</span>, <span class="fl">1960</span>, local_file<span class="op">=</span><span class="cn">FALSE</span>, clim_variable<span class="op">=</span><span class="st">'mean temp'</span>, grid_size<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span>
-    <span class="va">point_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>site_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"site1"</span><span class="op">)</span>, longitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.3177988</span><span class="op">)</span>, latitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">51.7503954</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">point_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>site_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"site1"</span><span class="op">)</span>, longitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.3177988</span><span class="op">)</span>, latitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.7503954</span><span class="op">)</span><span class="op">)</span>
 
     <span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>, <span class="st">"annual"</span><span class="op">)</span>
     <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span>
 
     <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span><span class="fl">1961</span>, <span class="fl">1970</span><span class="op">)</span>
     <span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>, <span class="st">"annual"</span><span class="op">)</span>
-    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
 
     <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span><span class="fl">1971</span>,<span class="fl">1980</span><span class="op">)</span>
     <span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>,<span class="st">"annual"</span><span class="op">)</span>
-    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>,<span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>,<span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>,<span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>,<span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
 
     <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span><span class="fl">1981</span>, <span class="fl">1990</span><span class="op">)</span>
     <span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>, <span class="st">"annual"</span><span class="op">)</span>
-    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
 
     <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span><span class="fl">1991</span>, <span class="fl">2000</span><span class="op">)</span>
     <span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>, <span class="st">"annual"</span><span class="op">)</span>
-    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
 
     <span class="va">climate_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span><span class="fl">2001</span>, <span class="fl">2012</span><span class="op">)</span>
     <span class="va">annual_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_mean.html">temporal_mean</a></span><span class="op">(</span><span class="va">climate_data</span>, <span class="st">"annual"</span><span class="op">)</span>
-    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">point.ann_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">point.ann_mean</span>, <span class="fu"><a href="../reference/point_grid_extract.html">point_grid_extract</a></span><span class="op">(</span><span class="va">annual_mean</span>, <span class="va">point_coord</span><span class="op">)</span><span class="op">)</span>
 
 
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">point.ann_mean</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"mean_temp"</span><span class="op">)</span> <span class="co"># I really need to fix this</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">point.ann_mean</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"year"</span>, <span class="st">"mean_temp"</span><span class="op">)</span> <span class="co"># I really need to fix this</span>
 
-    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">point.ann_mean</span><span class="op">$</span><span class="va">year</span>, <span class="va">point.ann_mean</span><span class="op">$</span><span class="va">mean_temp</span>, type <span class="op">=</span> <span class="st">'l'</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">point.ann_mean</span><span class="op">$</span><span class="va">mean_temp</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span></code></pre></div>
+    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">point.ann_mean</span><span class="op">$</span><span class="va">year</span>, <span class="va">point.ann_mean</span><span class="op">$</span><span class="va">mean_temp</span>, type <span class="op">=</span> <span class="st">'l'</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">point.ann_mean</span><span class="op">$</span><span class="va">mean_temp</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span></code></pre></div>
 <p><strong>6.</strong> If you want a raster of the mean temperature across Europe for a specific year (e.g. 1988).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get a raster</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(climateExtract)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(raster)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    climate_data <span class="ot">&lt;-</span> <span class="fu">extract_nc_value</span>(<span class="dv">1988</span>, <span class="dv">1988</span>, <span class="at">local_file =</span> <span class="cn">FALSE</span>, <span class="at">clim_variable =</span> <span class="st">'mean temp'</span>, <span class="at">grid_size =</span> <span class="fl">0.25</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the annual mean temperature</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    annual_mean <span class="ot">&lt;-</span> <span class="fu">temporal_mean</span>(climate_data, <span class="st">"annual"</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get a XY data.frame for the 0.25deg grid</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    grid.e <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(annual_mean<span class="sc">$</span>longitude, annual_mean<span class="sc">$</span>latitude)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract the value for 1988 in one vector</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    y1988 <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(annual_mean<span class="sc">$</span>value_array[ , , <span class="dv">1</span>])</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># build a XYZ object</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    xyz_value <span class="ot">&lt;-</span> <span class="fu">cbind</span>(grid.e, y1988)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># build a raster from the XYZ object with the library raster</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">rasterFromXYZ</span>(xyz_value, <span class="at">crs =</span> <span class="fu">CRS</span>(<span class="st">"+init=epsg:4326"</span>))</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(r) <span class="ot">&lt;-</span> annual_mean<span class="sc">$</span>date_extract[<span class="dv">1</span>]</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># voila!</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot</span>(r, <span class="fu">main</span>(<span class="st">"Mean temperature in 1988"</span>)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># you could use the stack() function to build a raster stack (multiple bands) with multiple years, months or days</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>    <span class="co"># get a raster</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>    <span class="kw">library</span>(climateExtract)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>    <span class="kw">library</span>(raster)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>    climate_data &lt;-<span class="st"> </span><span class="kw">extract_nc_value</span>(<span class="dv">1988</span>, <span class="dv">1988</span>, <span class="dt">local_file =</span> <span class="ot">FALSE</span>, <span class="dt">clim_variable =</span> <span class="st">'mean temp'</span>, <span class="dt">grid_size =</span> <span class="fl">0.25</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>    <span class="co"># compute the annual mean temperature</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>    annual_mean &lt;-<span class="st"> </span><span class="kw">temporal_mean</span>(climate_data, <span class="st">"annual"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>    <span class="co"># get a XY data.frame for the 0.25deg grid</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>    grid.e &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(annual_mean<span class="op">$</span>longitude, annual_mean<span class="op">$</span>latitude)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a>    <span class="co"># extract the value for 1988 in one vector</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a>    y1988 &lt;-<span class="st"> </span><span class="kw">as.vector</span>(annual_mean<span class="op">$</span>value_array[ , , <span class="dv">1</span>])</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a>    <span class="co"># build a XYZ object</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a>    xyz_value &lt;-<span class="st"> </span><span class="kw">cbind</span>(grid.e, y1988)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a>    <span class="co"># build a raster from the XYZ object with the library raster</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a>    r &lt;-<span class="st"> </span><span class="kw">rasterFromXYZ</span>(xyz_value, <span class="dt">crs =</span> <span class="kw">CRS</span>(<span class="st">"+init=epsg:4326"</span>))</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a>    <span class="kw">names</span>(r) &lt;-<span class="st"> </span>annual_mean<span class="op">$</span>date_extract[<span class="dv">1</span>]</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a>    <span class="co"># voila!</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a>    <span class="kw">plot</span>(r, <span class="kw">main</span>(<span class="st">"Mean temperature in 1988"</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true"></a>    <span class="co"># you could use the stack() function to build a raster stack (multiple bands) with multiple years, months or days</span></span></code></pre></div>
 <blockquote>
 <p>Note: This workflow, although it is still working should not be used on new application as newer options have been optimized</p>
 </blockquote>
@@ -220,11 +216,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Reto Schmucki.</p>
+  <p></p>
+<p>Developed by Reto Schmucki.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -232,6 +230,8 @@
 
   
 
+
+  
 
   </body>
 </html>

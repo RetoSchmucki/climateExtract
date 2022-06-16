@@ -32,6 +32,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -44,18 +46,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.24.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -77,7 +73,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/RetoSchmucki/climateExtract/">
+  <a href="https://github.com/RetoSchmucki/climateExtract/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -95,42 +91,48 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="climateextract-" class="section level3">
-<h3 class="hasAnchor">
-<a href="#climateextract-" class="anchor"></a>climateExtract <img src="reference/figures/logo.png" align="right" alt="" width="120">
+<div class="section level3">
+<h3 id="climateextract-">climateExtract <img src="reference/figures/logo.png" align="right" alt="" width="120"><a class="anchor" aria-label="anchor" href="#climateextract-"></a>
 </h3>
 <!-- badges: start -->
 
 </div>
-<div id="r-functions-to-extract-and-manipulate-ecad-climate-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#r-functions-to-extract-and-manipulate-ecad-climate-data" class="anchor"></a>R functions to extract and manipulate ECAD climate data</h3>
+<div class="section level3">
+<h3 id="r-functions-to-extract-and-manipulate-ecad-climate-data">R functions to extract and manipulate ECAD climate data<a class="anchor" aria-label="anchor" href="#r-functions-to-extract-and-manipulate-ecad-climate-data"></a>
+</h3>
 <ul>
-<li>ECAD at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a>
+<li>ECAD at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a>
 </li>
-<li>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a>
+<li>Package URL: <a href="https://retoschmucki.github.io/climateExtract" class="external-link">https://retoschmucki.github.io/climateExtract/</a>
 </li>
 </ul>
 <blockquote>
-<p>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature). Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">Copernicus Climate</a></p>
+<p>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature). Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a></p>
 </blockquote>
-<div id="news" class="section level4">
-<h4 class="hasAnchor">
-<a href="#news" class="anchor"></a>News</h4>
+<div class="section level4">
+<h4 id="news">News<a class="anchor" aria-label="anchor" href="#news"></a>
+</h4>
 <ul>
+<li>16/06/2022 (“Curious-Rose”)</li>
+<li>Updated to E-OBS v25.0 (June 2022)
+<ol style="list-style-type: decimal">
+<li>extending data from January 1950 to December 2021</li>
+<li>Fixed a bug in GDD producing NA when minimum and maximum temperatures were the same.</li>
+</ol>
+</li>
 <li>03/02/2022</li>
 <li>Updated to E-OBS v24.0 (November 2021)
-<ol>
+<ol style="list-style-type: decimal">
 <li>extending data from January 1950 to June 2021</li>
 </ol>
 </li>
 <li>29/11/2021 (“Climbing-Rose”)
 <ul>
 <li>added Growing Degree Day functions
-<ol>
-<li>compute gdd from average temperature method</li>
+<ol style="list-style-type: decimal">
+<li>compute gdd with the average temperature method</li>
 <li>compute gdd using Baskerville-Emin method</li>
-<li>compute cumulative sum over RasterBrick layers</li>
+<li>compute the cumulative sum over RasterBrick layers</li>
 </ol>
 </li>
 </ul>
@@ -138,7 +140,7 @@
 <li>14/07/2021
 <ul>
 <li>added functionality for three new variables
-<ol>
+<ol style="list-style-type: decimal">
 <li>daily averaged sea level pressure PP</li>
 <li>daily averaged relative humidity HU</li>
 <li>daily mean global radiation QQ</li>
@@ -158,36 +160,28 @@
 </li>
 </ul>
 </div>
-<div id="installation" class="section level4">
-<h4 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h4>
+<div class="section level4">
+<h4 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h4>
 <p>GitHub installation (CRAN not available)</p>
-<pre><code>install.packages("devtools")
-devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
+<pre><code><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"RetoSchmucki/climateExtract"</span><span class="op">)</span></code></pre>
 <p>Dependancies: <code>ncdf4</code>, <code>data.table</code>, <code>sf</code>, <code>stars</code>, <code>sp</code>, <code>raster</code>, <code>terra</code>, <code>zoo</code>, <code>methods</code></p>
 </div>
-<div id="usage" class="section level4">
-<h4 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h4>
+<div class="section level4">
+<h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h4>
 <p>Check default ECAD version (can be changed with <code>ecad_v = xx.x</code>)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract">climateExtract</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract" class="external-link">climateExtract</a></span><span class="op">)</span>
 <span class="va">ecad_version</span></code></pre></div>
 <p>Define specific regions and/or points. If not provided, data will be extracted from the entire ECAD extent.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># use set.seed() for reproducibility</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span> 
-<span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html">getData</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
-<span class="va">sf_point</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html">st_sf</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_sample.html">st_sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fr_border</span>, size <span class="op">=</span> <span class="fl">25</span>, type <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Extract data</p>
-<ul>
-<li>Retrieve climate data from E-OBS server, or locally if available.</li>
-<li>Crop to the extent of the spatial object provided.</li>
-<li>Specify years and data of interest; see details help(extract_nc_value).</li>
-<li>Write output to local disk with <code>write_raster=TRUE</code>
-</li>
-<li>If <code>return_data = TRUE</code>, an R object (a list) with the climate values is created.</li>
-</ul>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span> 
+<span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getData.html" class="external-link">getData</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<span class="va">sf_point</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_sample.html" class="external-link">st_sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fr_border</span>, size <span class="op">=</span> <span class="fl">25</span>, type <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Extract data - Retrieve climate data from E-OBS server or a local file if available. - Crop to the extent of the spatial object provided. - Specify years and data of interest; see details help(extract_nc_value). - Write output to local disk with <code>write_raster=TRUE</code> - If <code>return_data = TRUE</code>, an R object (a list) with the climate values is created.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">climate_data</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, 
                                 last_year <span class="op">=</span> <span class="fl">2015</span>,
@@ -202,12 +196,12 @@ devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
                                 write_raster <span class="op">=</span> <span class="cn">TRUE</span>,
                                 out <span class="op">=</span> <span class="st">"raster_mean_temp.grd"</span>,
                                 return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>Connect to the raster brick created on local disk. If too big to be stored in Memory, raster will set pointer to the file.</p>
+<p>Connect to the raster brick created on the local disk. If too big to be stored in Memory, the raster package will set a pointer to the file.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rbk</span> <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html">brick</a></span><span class="op">(</span><span class="st">"raster_mean_temp.grd"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></code></pre></div>
-<p>Aggregate the data over time, “annual”, “monthly” or by using a rolling “window”. The function <code>mean</code> could be replaced by <code>sum</code>, <code>sd</code> or other functions the can be computed along a vector. If “daily” is selected as time_step, no aggregation is conducted as ECAD data are provided on daily scale.</p>
+<code class="sourceCode R"><span class="va">rbk</span> <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="st">"raster_mean_temp.grd"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></code></pre></div>
+<p>Aggregate the data over time, “annual”, “monthly” or by using a rolling “window”. The function <code>mean</code> could be replaced by <code>sum,</code>sd`, or other functions that can be computed along a vector. If “daily” is selected as time_step, no aggregation is conducted as ECAD data are provided on a daily scale.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># monthly mean</span>
 <span class="va">monthly_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
@@ -228,7 +222,7 @@ devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
 <blockquote>
 <p>Note: Argument in <code>x</code> could also be the climate_data object that resulted from the <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code> function.</p>
 </blockquote>
-<p>Aggregation for points, if a spatial point object is provided in <code>y</code> argument (e.g. <code>y = sf_point</code>).</p>
+<p>Aggregation for points if a spatial point object is provided in <code>y</code> argument (e.g., <code>y =</code> sf_point`).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># annual mean per point</span>
 <span class="va">annual_avg_temp_pnts</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,
@@ -239,28 +233,100 @@ devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
 <blockquote>
 <p>Note: Here, <code>site_1</code> is located along the coast and falls outside the raster grid cell with a value, the value returned correspond to the nearest cell with a value. Distance_from_pnt indicates distance to cell centroid, when within a cell with value, this is NA.</p>
 </blockquote>
-<p>Map of the aggregated layer. Here the average temperature for Sept 2012, <code>"2012.09"</code>.</p>
+<p>Map of the aggregated layer. For a map of the average temperature for Sept 2012, use layer <code>"2012.09"</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<p>Add points to the map, here with a circle around the point 1 to show the point near the coast of Corse (bottom right corner).</p>
+<code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p>Add points to the map, here with a circle around point 1 to show a point near the coast of Corse (bottom right corner).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sf_point</span>, col <span class="op">=</span> <span class="st">'magenta'</span>, pch <span class="op">=</span> <span class="fl">17</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sf_point</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">'blue'</span>, border<span class="op">=</span> <span class="fl">1.5</span>, cex<span class="op">=</span> <span class="fl">2</span>, pch <span class="op">=</span> <span class="fl">1</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012.09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sf_point</span>, col <span class="op">=</span> <span class="st">'magenta'</span>, pch <span class="op">=</span> <span class="fl">17</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sf_point</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">'blue'</span>, border<span class="op">=</span> <span class="fl">1.5</span>, cex<span class="op">=</span> <span class="fl">2</span>, pch <span class="op">=</span> <span class="fl">1</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="meta" class="section level4">
-<h4 class="hasAnchor">
-<a href="#meta" class="anchor"></a>Meta</h4>
+<div class="section level4">
+<h4 id="gdd">GDD<a class="anchor" aria-label="anchor" href="#gdd"></a>
+</h4>
+<p>Calculate growing degree day values using your preferred base temperature and method. There are a number of new functions for calculating GDD values and cumulative sum (accumulated) GDD over user-defined periods. First, you need to get the daily average temperature or the minimum and maximum if you want to use the Baskerville-Emin method (method = ‘be’), which fits a sine curve to the minimum and maximum to account for daily temperature fluctuations.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># get minimum temperature </span>
+
+<span class="va">climate_data_min</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, 
+                                    last_year <span class="op">=</span> <span class="fl">2015</span>,
+                                    local_file <span class="op">=</span> <span class="cn">FALSE</span>,
+                                    file_path <span class="op">=</span> <span class="cn">NULL</span>,
+                                    sml_chunk <span class="op">=</span> <span class="st">"2011-2021"</span>,
+                                    spatial_extent <span class="op">=</span> <span class="va">fr_border</span>,
+                                    clim_variable <span class="op">=</span> <span class="st">"min temp"</span>,
+                                    statistic <span class="op">=</span> <span class="st">"mean"</span>,
+                                    grid_size <span class="op">=</span> <span class="fl">0.25</span>,
+                                    ecad_v <span class="op">=</span> <span class="cn">NULL</span>,
+                                    write_raster <span class="op">=</span> <span class="cn">TRUE</span>,
+                                    out <span class="op">=</span> <span class="st">"raster_min_temp.grd"</span>,
+                                    return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="va">rbk_min</span> <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="st">"raster_min_temp.grd"</span><span class="op">)</span>
+
+<span class="va">climate_data_max</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>,
+                                    last_year <span class="op">=</span> <span class="fl">2015</span>,
+                                    local_file <span class="op">=</span> <span class="cn">FALSE</span>,
+                                    file_path <span class="op">=</span> <span class="cn">NULL</span>,
+                                    sml_chunk <span class="op">=</span> <span class="st">"2011-2021"</span>,
+                                    spatial_extent <span class="op">=</span> <span class="va">fr_border</span>,
+                                    clim_variable <span class="op">=</span> <span class="st">"max temp"</span>,
+                                    statistic <span class="op">=</span> <span class="st">"mean"</span>,
+                                    grid_size <span class="op">=</span> <span class="fl">0.25</span>,
+                                    ecad_v <span class="op">=</span> <span class="cn">NULL</span>,
+                                    write_raster <span class="op">=</span> <span class="cn">TRUE</span>,
+                                    out <span class="op">=</span> <span class="st">"raster_max_temp.grd"</span>,
+                                    return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="va">rbk_max</span> <span class="op">=</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="st">"raster_max_temp.grd"</span><span class="op">)</span></code></pre></div>
+<p>Using the function <code><a href="reference/gdd_extract.html">gdd_extract()</a></code> we can calculate the GDD, specifying the base temperature and the preferred method, Baskerville-Emin method (method = ‘be’) or simply the average daily temperature (method = ‘avg’). For the average method you can specify either the mean_temp or the min_temp and max_temp. For the ‘be’ method, both min_temp and max_temp are needed.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">be_gdd_france</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdd_extract.html">gdd_extract</a></span><span class="op">(</span>base_temp <span class="op">=</span> <span class="fl">7</span>,
+                            min_temp <span class="op">=</span> <span class="va">rbk_min</span>,
+                            max_temp <span class="op">=</span> <span class="va">rbk_max</span>,
+                            gdd_method <span class="op">=</span> <span class="st">'be'</span><span class="op">)</span>
+
+<span class="co"># visualise the GDD-base7, for June 16th 2012</span>
+<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">be_gdd_france</span><span class="op">[[</span><span class="st">"X2012.06.16"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p>The output is a RasterBrick (multilayer raster) that you can use with the function <code><a href="reference/temporal_aggregate.html">temporal_aggregate()</a></code> to calculate the sum, mean or rolling window mean. In general, however, we need the cumulative sum, i.e. the accumulation of GDD over a certain period of time. For this task, you can use the function <code><a href="reference/cumsum_rb.html">cumsum_rb()</a></code> (cumulative sum on RasterBrick). This function uses the GDD RasterBrick and a vector that indexes the layers within the Brick and defines the specific time period (e.g. monthly, yearly). These indices are derived with the function <code><a href="reference/get_layer_indice.html">get_layer_indice()</a></code> (see below). On the other hand, you can also specify your own index vector.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tp_index</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_layer_indice.html">get_layer_indice</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">be_gdd_france</span>,
+                             pattern <span class="op">=</span> <span class="st">"X"</span>,
+                             date_format <span class="op">=</span> <span class="st">"%Y.%m.%d"</span>,
+                             indice_level <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>
+
+<span class="va">year_cumsum_gdd_france</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cumsum_rb.html">cumsum_rb</a></span><span class="op">(</span><span class="va">be_gdd_france</span>, indices <span class="op">=</span> <span class="va">tp_index</span><span class="op">)</span>
+
+<span class="co"># visualise the GDD base7 accumulated between January 1st until June 16th 2012.</span>
+<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">year_cumsum_gdd_france</span><span class="op">[[</span><span class="st">"X2012.06.16"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p>To get the cumulative GDD at the end of each month, you can calculate the cumulative total monthly and then extract the last day of each month. The following script generates a RasterBrick of the total GDD accumulated at the end of each month.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tp_index</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_layer_indice.html">get_layer_indice</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">be_gdd_france</span>,
+                             pattern <span class="op">=</span> <span class="st">"X"</span>,
+                             date_format <span class="op">=</span> <span class="st">"%Y.%m.%d"</span>,
+                             indice_level <span class="op">=</span> <span class="st">"month"</span><span class="op">)</span>
+
+<span class="va">month_cumsum_gdd_france</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cumsum_rb.html">cumsum_rb</a></span><span class="op">(</span><span class="va">be_gdd_france</span>, indices <span class="op">=</span> <span class="va">tp_index</span><span class="op">)</span>
+
+<span class="co"># get the indices for the last day of each month</span>
+<span class="va">last_day_index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/round_date.html" class="external-link">floor_date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">month_cumsum_gdd_france</span><span class="op">)</span><span class="op">)</span>, <span class="st">"%Y.%m.%d"</span><span class="op">)</span>, <span class="st">"month"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">month_cumsum_gdd_france</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">last_day_index</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="meta">Meta<a class="anchor" aria-label="anchor" href="#meta"></a>
+</h4>
 <ul>
-<li><p>See citation and ECA&amp;D/E-OBS data policy <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles</a></p></li>
-<li><p>Register as an E-OBS user at <a href="https://surfobs.climate.copernicus.eu/dataaccess/registration.php" class="uri">https://surfobs.climate.copernicus.eu/dataaccess/registration.php</a></p></li>
-<li><p>Package URL: <a href="https://retoschmucki.github.io/climateExtract">https://retoschmucki.github.io/climateExtract/</a></p></li>
-<li><p>Raise issues: <a href="https://github.com/RetoSchmucki/climateExtract/issues">https://github.com/RetoSchmucki/climateExtract/issues</a></p></li>
+<li><p>See citation and ECA&amp;D/E-OBS data policy <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles</a></p></li>
+<li><p>Register as an E-OBS user at <a href="https://surfobs.climate.copernicus.eu/dataaccess/registration.php" class="external-link uri">https://surfobs.climate.copernicus.eu/dataaccess/registration.php</a></p></li>
+<li><p>Package URL: <a href="https://retoschmucki.github.io/climateExtract" class="external-link">https://retoschmucki.github.io/climateExtract/</a></p></li>
+<li><p>Raise issues: <a href="https://github.com/RetoSchmucki/climateExtract/issues" class="external-link">https://github.com/RetoSchmucki/climateExtract/issues</a></p></li>
 <li><p>Get citation information for <code>climateExtract</code> in R doing <code>citation(package = 'climateExtract')</code></p></li>
 <li>
 <p>Suggested citation:</p>
 <ul>
-<li>Schmucki R. (2022) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&amp;D. R package version 1.24.0. <a href="https://github.com/RetoSchmucki/climateExtract" class="uri">https://github.com/RetoSchmucki/climateExtract</a>
+<li>Schmucki R. (2022) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&amp;D. R package version 1.25. <a href="https://github.com/RetoSchmucki/climateExtract" class="external-link uri">https://github.com/RetoSchmucki/climateExtract</a>
 </li>
 </ul>
 </li>
@@ -272,52 +338,57 @@ devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/RetoSchmucki/climateExtract/">https://​github.com/​RetoSchmucki/​climateExtract/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/RetoSchmucki/climateExtract/issues">https://​github.com/​RetoSchmucki/​climateExtract/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
-</li>
-</ul>
-</div>
-<div class="citation">
-<h2>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html">Citing climateExtract</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Reto Schmucki <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3064-7553" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="https://github.com/RetoSchmucki/climateExtract/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/RetoSchmucki/climateExtract/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://app.travis-ci.com/RetoSchmucki/climateExtract"><img src="https://app.travis-ci.com/RetoSchmucki/climateExtract.svg?branch=master" alt="Build Status"></a></li>
+<li>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+</li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing climateExtract</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Reto Schmucki <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3064-7553" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://app.travis-ci.com/RetoSchmucki/climateExtract" class="external-link"><img src="https://app.travis-ci.com/RetoSchmucki/climateExtract.svg?branch=master" alt="Build Status"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Reto Schmucki.</p>
+  <p></p>
+<p>Developed by Reto Schmucki.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -325,6 +396,8 @@ devtools::install_github("RetoSchmucki/climateExtract")</code></pre>
 
   
 
+
+  
 
   </body>
 </html>

@@ -89,7 +89,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
 
   if (local_file == TRUE) {
       if(is.null(file_path)) {
-          print("select your climate file [.nc] or use \"local_file=FALSE\" to 
+          message("select your climate file [.nc] or use \"local_file=FALSE\" to 
                  access online data")
           nc.ncdf <- ncdf4::nc_open(file.choose())
       } else {
@@ -131,14 +131,14 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
   time_toget <- which(date_seq >= start_date & date_seq <= end_date)
   ext_ <- c()
   if(!is.null(spatial_extent)){
-    if(class(spatial_extent)[1] == "bbox"){
+    if(inherits(spatial_extent, "bbox")){
       ext_ <- spatial_extent
     }else{
-      if (class(spatial_extent)[1] %in% c("sf", "SpatialPolygonsDataFrame", 
-                                          "SpatialPointsDataFrame")){
+      if (inherits(spatial_extent, what=c("sf", "SpatialPolygonsDataFrame", 
+                                          "SpatialPointsDataFrame"))){
         ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
       }else{
-        if(class(spatial_extent)[1] == "numeric" & length(spatial_extent) == 4){
+        if(inherits(spatial_extent, "numeric") & length(spatial_extent) == 4){
           if(all(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent))){
             ext_ <- sf::st_bbox(c(xmin = spatial_extent$xmin,
                                   ymin = spatial_extent$ymin,
@@ -152,7 +152,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
           }
         }
       }
-      if(class(ext_)[1] != "bbox"){
+      if(!inherits(ext_, "bbox")){
         stop("spatial_extent must be an sf, a spatial or a vector with four 
               values c(xmin, ymin, xmax, ymax)")
       }
@@ -241,6 +241,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
 #' @author Reto Schmucki
 #' @export
 #'
+
 get_nc_online <- function(first_year = first_year, last_year = last_year, 
                           sml_chunk = sml_chunk, clim_variable = clim_variable, 
                           statistic = statistic, grid_size = grid_size, 
@@ -249,8 +250,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
   smc <- c("2011-2021", "1995-2010", "1980-1994", "1965-1979", "1950-1964")
 
   if(is.null(sml_chunk)){
-  
-    message(paste0("Try to get the ",clim_variable," from ",first_year," at ",
+      message(paste0("Try to get the ",clim_variable," from ",first_year," at ",
                 grid_size," degree resolution \n"))
 
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
@@ -281,10 +281,8 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
       stop(paste0("sml_chunk must be one of the following period:\n",smc))
     }else{
       year_toget <- paste0(sml_chunk, "_")
-
-      message(paste0("Try to get the ", clim_variable, " from ", first_year, 
+        message(paste0("Try to get the ", clim_variable, " from ", first_year, 
                 " at ", grid_size, " degree resolution from sml_chunk data \n"))
-
     if (clim_variable == "mean temp") {clim_var <- paste0("tg_ens_", statistic)}
     if (clim_variable == "min temp") {clim_var <- paste0("tn_ens_", statistic)}
     if (clim_variable == "max temp") {clim_var <- paste0("tx_ens_", statistic)}
@@ -312,10 +310,8 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     if(!file.exists(dest_file) | x %in% c('Y','y','yes')){
        utils::download.file(urltoget, dest_file, mode = "wb")
     }
-
-    message(paste0("your data (.nc file) is located in ", getwd(), "/",
+      message(paste0("your data (.nc file) is located in ", getwd(), "/",
                dest_file, "\n"))
-
     nc.ncdf <- ncdf4::nc_open(dest_file)
 
   return(nc.ncdf)
@@ -405,11 +401,11 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 
   if(time_step == "window" & is.null(win_length)){
     win_length <- 30
-    message("rolling function will be computed over 30-days window, set win_length
-     to change the extent of the window")
+      message("rolling function will be computed over 30-days window, set win_length
+            to change the extent of the window")
   }
 
-  if(!any(class(x) == "RasterBrick")){
+  if(!inherits(x, "RasterBrick")){
     if(length(dim(x$value_array)) != 3){
       stop("x must be a rasterBrick object or an output from the 
         extrat_nc_value() function")
@@ -444,8 +440,8 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     }
   
    if(!is.null(y)){
-    if(!any(class(y) %in% c("sf", "SpatialPointsDataFrame"))) {stop("y must be a 
-        sf or a SpatialPointsDataFrame object")}
+    if(!inherits(y, c("sf", "SpatialPointsDataFrame"))) {stop("y must be of class 
+        'sf' or 'SpatialPointsDataFrame'")}
     my_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
     nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
     my_cell <- nona_cell_res$nona_cell
@@ -828,7 +824,7 @@ point_grid_extract <- function(x, point_coord) {
   names(a) <- as.character(x$date_extract)
   x_r <- a
  
-  if(!any(class(point_coord) %in% c("sf", "SpatialPointsDataFrame"))) {
+  if(!inherits(point_coord, c("sf", "SpatialPointsDataFrame"))) {
     if(all(c("longitude", "latitude") %in% names(point_coord))){
       y <- sf::st_as_sf(point_coord, coords = c("longitude", "latitude"), crs = 4326)
     }else{ stop("point_coord must either be a spatial object (sf or sp) or a data.frame with a longitude and a latitude column")}
