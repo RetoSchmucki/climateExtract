@@ -629,8 +629,12 @@ get_near_nona <- function(x = x, y = y, x_cell = NULL){
     x_cell[wna] <- near_cell   
     }
     points_nacell <- y[wna,]
-    points_nacell$gid <- wna 
- return(list(nona_cell = x_cell, points_nacell, dist_nona_cell = dist_cell))
+    points_nacell$gid <- wna
+  if(length(mc_na) > 0){
+    return(list(nona_cell = x_cell, points_nacell, dist_nona_cell = dist_cell))
+  }else{
+    return(list(nona_cell = x_cell, points_nacell, dist_nona_cell = c(rep(NA, length(mc_na)))))
+  }
 }
 
 #' temporal_mean

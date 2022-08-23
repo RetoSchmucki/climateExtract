@@ -6,7 +6,7 @@
 #' @param max_temp raster, rasterbrick or vector of the maximum daily temperature
 #' @param avg_temp raster, rasterbrick or vector of the mean daily temperature
 #' @param gdd_method string defining the method to use, "avg" for mean daily temperature or "be" for
-#' the Baskerville-Emin method that fit a sine curve on the minimum and the maximum to account for daily
+#' the Baskerville-Emin method that fits a sine curve on the minimum and the maximum to account for daily
 #' variation in temperature
 #' @param top_temp value for the maximum temperature beyond growing degree day are not accumulating, default = NULL
 #' @details This function computes the Growing Degree Day on a specific base temperature and method (i.e., `avg` or `be`). The funciton
