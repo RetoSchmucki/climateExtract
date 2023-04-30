@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.27</span>
       </span>
     </div>
 
@@ -32,16 +32,16 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
     </li>
     <li>
-      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
+      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -69,7 +69,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">write_to_brick</span><span class="op">(</span><span class="va">x</span>, out <span class="op">=</span> <span class="va">out</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_to_brick</span><span class="op">(</span><span class="va">x</span>, out <span class="op">=</span> <span class="va">out</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -77,11 +77,16 @@
     <dl><dt>x</dt>
 <dd><p>object obtained from the extrat_nc_value function corresponding 
 to the specific period of interest</p></dd>
+
+
 <dt>out</dt>
 <dd><p>character string defining the filename to save (default extension 
 is GeoTiff, ".tiff")</p></dd>
+
+
 <dt>...</dt>
-<dd><p>additional arguments for for writing files, see <a href="https://rdrr.io/pkg/raster/man/writeRaster.html" class="external-link">writeRaster</a></p></dd>
+<dd><p>additional arguments for for writing files, see <a href="https://rdrr.io/pkg/terra/man/writeRaster.html" class="external-link">writeRaster</a></p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -101,7 +106,7 @@ existing. Layers' names are Date starting with X (e.g. "X2010.01.27")</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

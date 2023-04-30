@@ -24,7 +24,7 @@ https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php"><meta property
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.27</span>
       </span>
     </div>
 
@@ -33,16 +33,16 @@ https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php"><meta property
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
     </li>
     <li>
-      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
+      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -71,15 +71,15 @@ https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php"><meta property
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_nc_online</span><span class="op">(</span>
-  first_year <span class="op">=</span> <span class="va">first_year</span>,
-  last_year <span class="op">=</span> <span class="va">last_year</span>,
-  sml_chunk <span class="op">=</span> <span class="va">sml_chunk</span>,
-  clim_variable <span class="op">=</span> <span class="va">clim_variable</span>,
-  statistic <span class="op">=</span> <span class="va">statistic</span>,
-  grid_size <span class="op">=</span> <span class="va">grid_size</span>,
-  ecad_v <span class="op">=</span> <span class="va">ecad_v</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_nc_online</span><span class="op">(</span></span>
+<span>  first_year <span class="op">=</span> <span class="va">first_year</span>,</span>
+<span>  last_year <span class="op">=</span> <span class="va">last_year</span>,</span>
+<span>  sml_chunk <span class="op">=</span> <span class="va">sml_chunk</span>,</span>
+<span>  clim_variable <span class="op">=</span> <span class="va">clim_variable</span>,</span>
+<span>  statistic <span class="op">=</span> <span class="va">statistic</span>,</span>
+<span>  grid_size <span class="op">=</span> <span class="va">grid_size</span>,</span>
+<span>  ecad_v <span class="op">=</span> <span class="va">ecad_v</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -87,33 +87,48 @@ https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php"><meta property
     <dl><dt>first_year</dt>
 <dd><p>a numeric value defining the first year of the time period 
 to extract, 1950 if NULL, default=NULL</p></dd>
+
+
 <dt>last_year</dt>
 <dd><p>a numeric value defining the last year of the time period to
 extract, 2014 if NULL, default=NULL</p></dd>
+
+
 <dt>sml_chunk</dt>
 <dd><p>a character string for specific time period to be downloaded. 
-Chunk available are "2011-2021", "1995-2010", "1980-1994", "1965-1979",
+Chunk available are "2011-2022", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964"</p></dd>
+
+
 <dt>clim_variable</dt>
 <dd><p>a character string defining the daily climate variable to 
 retrieve and extract; "mean temp", "max temp", "min temp", "precipitation", 
 "sea level pressure", "relative humidity", "global radiation", default="mean temp"</p></dd>
+
+
 <dt>statistic</dt>
 <dd><p>a character string defining the metric to retrieve, "mean" or
  "spread", where the mean is computed across 100 members of the ensemble and 
 is provided as the "best-guess" fields. The spread is calculated as the 
 difference between the 5th and 95th percentiles over the ensemble to provide
  a measure indicative of the 90% uncertainty range (see details)</p></dd>
+
+
 <dt>grid_size</dt>
 <dd><p>numeric, measured in degree defining the resolution of the 
 grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
 latitude), default=0.25</p></dd>
+
+
 <dt>ecad_v</dt>
 <dd><p>ECA&amp;D data version, default = package version.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A connection via the ncdf4 package to a ".nc" file 
+    
+
+<p>A connection via the ncdf4 package to a ".nc" file 
 downloaded to the local disk</p>
     </div>
     <div id="details">
@@ -125,7 +140,7 @@ If first_year and last_year are not provided, the function
  extract the full data set. Smaller chunks of about 15 years of the most
  recent version of the E-OBS dataset can be specified for download 
 can be specified directly with the argument "sm_chunk" (period available are
- 2011-2021, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+ 2011-2022, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
 about the mean and the spread metric see Cornes et al. (2018) and the 
 guidance on how to use ensemble datasets available from 
 <a href="http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php" class="external-link">http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php</a></p>
@@ -147,7 +162,7 @@ guidance on how to use ensemble datasets available from
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -25,7 +25,7 @@ available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php"><
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.27</span>
       </span>
     </div>
 
@@ -34,16 +34,16 @@ available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php"><
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
     </li>
     <li>
-      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
+      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -73,23 +73,23 @@ available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</p
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">extract_nc_value</span><span class="op">(</span>
-  first_year <span class="op">=</span> <span class="cn">NULL</span>,
-  last_year <span class="op">=</span> <span class="cn">NULL</span>,
-  local_file <span class="op">=</span> <span class="cn">TRUE</span>,
-  file_path <span class="op">=</span> <span class="cn">NULL</span>,
-  sml_chunk <span class="op">=</span> <span class="cn">NULL</span>,
-  spatial_extent <span class="op">=</span> <span class="cn">NULL</span>,
-  clim_variable <span class="op">=</span> <span class="st">"mean temp"</span>,
-  statistic <span class="op">=</span> <span class="st">"mean"</span>,
-  grid_size <span class="op">=</span> <span class="fl">0.25</span>,
-  ecad_v <span class="op">=</span> <span class="cn">NULL</span>,
-  write_raster <span class="op">=</span> <span class="cn">FALSE</span>,
-  out <span class="op">=</span> <span class="cn">NULL</span>,
-  return_data <span class="op">=</span> <span class="cn">TRUE</span>,
-  raw_datavals <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_nc_value</span><span class="op">(</span></span>
+<span>  first_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  last_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  local_file <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sml_chunk <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  spatial_extent <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clim_variable <span class="op">=</span> <span class="st">"mean temp"</span>,</span>
+<span>  statistic <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>  grid_size <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  ecad_v <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  write_raster <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  out <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  raw_datavals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -97,62 +97,93 @@ available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php</p
     <dl><dt>first_year</dt>
 <dd><p>a numeric value defining the first year of the time period 
 to extract, 1950 if NULL, default=NULL</p></dd>
+
+
 <dt>last_year</dt>
 <dd><p>a numeric value defining the last year of the time period to
 extract, 2014 if NULL, default=NULL</p></dd>
+
+
 <dt>local_file</dt>
 <dd><p>logical if the ".nc" data are available on your local disc, 
 if FALSE, the function will download the data from ECAD data portal,
  default=TRUE</p></dd>
+
+
 <dt>file_path</dt>
 <dd><p>character string with the path to the local ".nc" file. Works
 only if local_file = TRUE), default=NULL</p></dd>
+
+
 <dt>sml_chunk</dt>
 <dd><p>a character string for specific time period to be downloaded. 
-Chunk available are "2011-2021", "1995-2010", "1980-1994", "1965-1979",
+Chunk available are "2011-2022", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964"</p></dd>
+
+
 <dt>spatial_extent</dt>
 <dd><p>object to define the spatial extent for the data 
 extraction, can be an "sf" or an "sp" object or a vector with 4 values 
 defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
  entire extent is extracted</p></dd>
+
+
 <dt>clim_variable</dt>
 <dd><p>a character string defining the daily climate variable to 
 retrieve and extract; "mean temp","max temp","min temp","precipitation", 
 "sea level pressure", "relative humidity", "global radiation", default="mean temp"</p></dd>
+
+
 <dt>statistic</dt>
 <dd><p>a character string defining the metric to retrieve, "mean" or
  "spread", where the mean is computed across 100 members of the ensemble and 
 is provided as the "best-guess" fields. The spread is calculated as the 
 difference between the 5th and 95th percentiles over the ensemble to provide
  a measure indicative of the 90% uncertainty range (see details)</p></dd>
+
+
 <dt>grid_size</dt>
 <dd><p>numeric, measured in degree defining the resolution of the 
 grid, 0.25 (ca. 27 kilometres in latitude) or 0.1 (ca. 11 kilometres in 
 latitude), default=0.25</p></dd>
+
+
 <dt>ecad_v</dt>
 <dd><p>ECA&amp;D data version, default = package version.</p></dd>
+
+
 <dt>write_raster</dt>
 <dd><p>logical, if TRUE the output will be written in a
 multilayer raster file</p></dd>
+
+
 <dt>out</dt>
 <dd><p>character string with the filename for the output raster, if null
 data will be written in climateExtract_raster.grd</p></dd>
+
+
 <dt>return_data</dt>
 <dd><p>logical, if TRUE the data resulting from the extract will
 be stored in the object, if false, only the filename of the raster and the
 name of the layers are returned in a list, only if write_out is TRUE.</p></dd>
+
+
 <dt>raw_datavals</dt>
 <dd><p>If TRUE, then the actual raw data values from the file are 
 returned with no conversion to NA (if equal to the missing value/fill value) 
 or scale/offset applied. Default is TRUE. This reduce the size of the object to 
 manipulate.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>additional arguments for for writing files, see <a href="https://rdrr.io/pkg/raster/man/writeRaster.html" class="external-link">writeRaster</a></p></dd>
+<dd><p>additional arguments for for writing files, see <a href="https://rdrr.io/pkg/terra/man/writeRaster.html" class="external-link">writeRaster</a></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If 'write_raster' is TRUE, return a list with the path to raster 
+    
+
+<p>If 'write_raster' is TRUE, return a list with the path to raster 
 Brick written to the disk and the name of the layers in the object (date). If
 'return_data' = TRUE, a list of object is returned, with the variable_name,
 an 3D array with the value extracted, a vector with the longitude, a vector with
@@ -189,7 +220,7 @@ guidance on how to use ensemble datasets available from
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -46,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.27</span>
       </span>
     </div>
 
@@ -56,17 +56,17 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
     </li>
     <li>
-      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
+      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
     </li>
   </ul>
 </li>
@@ -92,7 +92,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Installation note for older systems</h1>
-                        <h4 data-toc-skip class="author">Reto Schmucki (UKCEH)</h4>
+                        <h4 data-toc-skip class="author">Reto Schmucki
+(UKCEH)</h4>
             
             <h4 data-toc-skip class="date">07 April 2021</h4>
       
@@ -104,8 +105,28 @@
     
     
 <hr>
-<p>This package depends on the <code>ncdf4</code> package. For <em>Linux</em> or <em>MacOS</em> users, the <code>ncdf4</code> can be installed directly from CRAN. For <em>Windows</em> users, if CRAN installation does not work, refer to the instructions available at <a href="http://cirrus.ucsd.edu/%5C~pierce/ncdf/" class="external-link uri">http://cirrus.ucsd.edu/\~pierce/ncdf/</a> and install the <code>ncdf4</code> package manually from the appropriate <code>.zip</code> file, note the latest version (v1.17) is available on CRAN <a href="https://cran.r-project.org/web/packages/ncdf4/index.html" class="external-link uri">https://cran.r-project.org/web/packages/ncdf4/index.html</a>.</p>
-<p><strong>Windows users</strong> also need to install a tool to unzip the file from your command prompt. To make it easy and cross-platform, I rely on Rtools that is available for download from <a href="https://cran.r-project.org/bin/windows/Rtools/index.html" class="external-link">here</a>. The Rtools installer should install it in “C:”. This need to be added to your PATH environment variable (if you forgot how to do this, follow the <a href="http://www.computerhope.com/issues/ch000549.htm" class="external-link">instruction here</a>). Once you installed and set the PATH in your environment variable, relaunch your R instance and test it with this function system(“gzip -h”). This should print the help documentation for the gzip function. Now with Rtools on board, you are ready to go and extract some climate data! Well, almost as you might encounter some issues related to R’s memory limit under Windows. I am slowly working on this issue (among others) by revisiting and restructuring the source code. Anyway, there is a workaround memory issue under Windows, and this is by extracting a smaller chunk of data at the time (see point no.5 below).</p>
+<p>This package depends on the <code>ncdf4</code> package. For
+<em>Linux</em> or <em>MacOS</em> users, the <code>ncdf4</code> can be
+installed directly from CRAN. For <em>Windows</em> users, if CRAN
+installation does not work, refer to the instructions available at <a href="http://cirrus.ucsd.edu/%5C~pierce/ncdf/" class="external-link uri">http://cirrus.ucsd.edu/\~pierce/ncdf/</a> and install the
+<code>ncdf4</code> package manually from the appropriate
+<code>.zip</code> file, note the latest version (v1.17) is available on
+CRAN <a href="https://cran.r-project.org/web/packages/ncdf4/index.html" class="external-link uri">https://cran.r-project.org/web/packages/ncdf4/index.html</a>.</p>
+<p><strong>Windows users</strong> also need to install a tool to unzip
+the file from your command prompt. To make it easy and cross-platform, I
+rely on Rtools that is available for download from <a href="https://cran.r-project.org/bin/windows/Rtools/index.html" class="external-link">here</a>.
+The Rtools installer should install it in “C:”. This need to be added to
+your PATH environment variable (if you forgot how to do this, follow the
+<a href="http://www.computerhope.com/issues/ch000549.htm" class="external-link">instruction
+here</a>). Once you installed and set the PATH in your environment
+variable, relaunch your R instance and test it with this function
+system(“gzip -h”). This should print the help documentation for the gzip
+function. Now with Rtools on board, you are ready to go and extract some
+climate data! Well, almost as you might encounter some issues related to
+R’s memory limit under Windows. I am slowly working on this issue (among
+others) by revisiting and restructuring the source code. Anyway, there
+is a workaround memory issue under Windows, and this is by extracting a
+smaller chunk of data at the time (see point no.5 below).</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -123,7 +144,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

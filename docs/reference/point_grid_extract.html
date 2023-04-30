@@ -24,7 +24,7 @@ mean) for each geographic points"><meta property="og:image" content="/logo.png">
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.27</span>
       </span>
     </div>
 
@@ -33,16 +33,16 @@ mean) for each geographic points"><meta property="og:image" content="/logo.png">
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
     </li>
     <li>
-      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
+      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -71,16 +71,19 @@ mean) for each geographic points</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">point_grid_extract</span><span class="op">(</span><span class="va">x</span>, <span class="va">point_coord</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">point_grid_extract</span><span class="op">(</span><span class="va">x</span>, <span class="va">point_coord</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>object obtained from the temporal_mean()  or temporal_sum()</p></dd>
+
+
 <dt>point_coord</dt>
 <dd><p>sf object or a data.frame with coordinates in degree decimal
 in two columns named "longitude" and "latitude" (epsg projection 4326 - wgs 84)</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -99,7 +102,7 @@ in two columns named "longitude" and "latitude" (epsg projection 4326 - wgs 84)<
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

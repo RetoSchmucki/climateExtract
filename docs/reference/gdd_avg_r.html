@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.27</span>
       </span>
     </div>
 
@@ -32,16 +32,16 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
+      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
     </li>
     <li>
-      <a href="../articles/old_installation_note.html">Installation note for older systems</a>
+      <a href="../articles/old_version_example.html">Example for older versions of ClimateExtract</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -69,21 +69,30 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gdd_avg_r</span><span class="op">(</span><span class="va">base_temp</span>, <span class="va">min_temp</span>, <span class="va">max_temp</span>, <span class="va">avg_temp</span>, <span class="va">top_temp</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gdd_avg_r</span><span class="op">(</span><span class="va">base_temp</span>, <span class="va">min_temp</span>, <span class="va">max_temp</span>, <span class="va">avg_temp</span>, <span class="va">top_temp</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>base_temp</dt>
 <dd><p>value for the base temperature to use for the growing degree day, default = 4°C</p></dd>
+
+
 <dt>min_temp</dt>
 <dd><p>raster, rasterbrick or vector of the minimum daily temperature</p></dd>
+
+
 <dt>max_temp</dt>
 <dd><p>raster, rasterbrick or vector of the maximum daily temperature</p></dd>
+
+
 <dt>avg_temp</dt>
 <dd><p>raster, rasterbrick or vector of the mean daily temperature</p></dd>
+
+
 <dt>top_temp</dt>
 <dd><p>value for the maximum temperature beyond growing degree day are not accumulating, default = NULL</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -108,7 +117,7 @@ with `gdd_be_r()`.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
