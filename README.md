@@ -15,16 +15,16 @@
 
 #### News
 * 30/04/2023 ("Witty-Rose")
-- Updated to E-OBS v27.0 (April 2023)
-  1. extending data from January 1950 to December 2022
+  - Updated to E-OBS v27.0 (April 2023)
+    1. extending data from January 1950 to December 2022
    
 * 16/06/2022 ("Curious-Rose")
-- Updated to E-OBS v25.0 (June 2022)
+  - Updated to E-OBS v25.0 (June 2022)
     1. extending data from January 1950 to December 2021
     2. Fixed a bug in GDD producing NA when minimum and maximum temperatures were the same. 
 
 * 03/02/2022
-- Updated to E-OBS v24.0 (November 2021)
+  - Updated to E-OBS v24.0 (November 2021)
     1. extending data from January 1950 to June 2021 
 
 * 29/11/2021 ("Climbing-Rose")
@@ -88,7 +88,7 @@ climate_data = extract_nc_value(first_year = 2012,
                                 last_year = 2015,
                                 local_file = FALSE,
                                 file_path = NULL,
-                                sml_chunk = "2011-2021",
+                                sml_chunk = "2011-2022",
                                 spatial_extent = fr_border,
                                 clim_variable = "mean temp",
                                 statistic = "mean",
@@ -167,7 +167,7 @@ climate_data_min = extract_nc_value(first_year = 2012,
                                     last_year = 2015,
                                     local_file = FALSE,
                                     file_path = NULL,
-                                    sml_chunk = "2011-2021",
+                                    sml_chunk = "2011-2022",
                                     spatial_extent = fr_border,
                                     clim_variable = "min temp",
                                     statistic = "mean",
@@ -183,7 +183,7 @@ climate_data_max = extract_nc_value(first_year = 2012,
                                     last_year = 2015,
                                     local_file = FALSE,
                                     file_path = NULL,
-                                    sml_chunk = "2011-2021",
+                                    sml_chunk = "2011-2022",
                                     spatial_extent = fr_border,
                                     clim_variable = "max temp",
                                     statistic = "mean",
