@@ -14,13 +14,19 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
+* 30/04/2023 ("Witty-Rose")
+- Updated to E-OBS v27.0 (April 2023)
+  1. extending data from January 1950 to December 2022
+   
 * 16/06/2022 ("Curious-Rose")
 - Updated to E-OBS v25.0 (June 2022)
     1. extending data from January 1950 to December 2021
     2. Fixed a bug in GDD producing NA when minimum and maximum temperatures were the same. 
+
 * 03/02/2022
 - Updated to E-OBS v24.0 (November 2021)
     1. extending data from January 1950 to June 2021 
+
 * 29/11/2021 ("Climbing-Rose")
   - added Growing Degree Day functions
     1. compute gdd with the average temperature method

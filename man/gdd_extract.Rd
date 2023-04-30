@@ -25,7 +25,7 @@ gdd_extract(
 \item{avg_temp}{raster, rasterbrick or vector of the mean daily temperature}
 
 \item{gdd_method}{string defining the method to use, "avg" for mean daily temperature or "be" for
-the Baskerville-Emin method that fit a sine curve on the minimum and the maximum to account for daily
+the Baskerville-Emin method that fits a sine curve on the minimum and the maximum to account for daily
 variation in temperature}
 
 \item{top_temp}{value for the maximum temperature beyond growing degree day are not accumulating, default = NULL}

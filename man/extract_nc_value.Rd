@@ -37,7 +37,7 @@ if FALSE, the function will download the data from ECAD data portal,
 only if local_file = TRUE), default=NULL}
 
 \item{sml_chunk}{a character string for specific time period to be downloaded. 
-Chunk available are "2011-2021", "1995-2010", "1980-1994", "1965-1979",
+Chunk available are "2011-2022", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964"}
 
 \item{spatial_extent}{object to define the spatial extent for the data 
