@@ -135,7 +135,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
       ext_ <- spatial_extent
     }else{
       if (inherits(spatial_extent, what=c("sf", "SpatialPolygonsDataFrame", 
-                                          "SpatialPointsDataFrame"))){
+                                          "SpatialPointsDataFrame", "SpatVect"))){
         ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
       }else{
         if(inherits(spatial_extent, "numeric") & length(spatial_extent) == 4){
@@ -356,13 +356,41 @@ write_to_brick <- function(x, out = out, ...) {
    raster::writeRaster(b, filename = out, overwrite = overwrite, ...)
 }
 
+write_to_brick2 <- function(x, out = out, ...) {
+  a <- x$value_array
+  if(isTRUE(x$raw_datavals)){
+  a <- (a * x$scale_factorvalue) + x$offsetvalue
+  }
+  ap <- rast(aperm(a, c(2, 1, 3), resize = TRUE), extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+  names(ap) <- as.character(x$date_extract)
+
+  # b <- raster::brick(
+  #               xmn = min(x$longitude),
+  #               ymn = min(x$latitude),
+  #               xmx = max(x$longitude),
+  #               ymx = max(x$latitude),
+  #               crs = 4326
+  # )
+  # dim(b) <- dim(ap[nrow(ap):1, , ])
+  # b <- raster::setValues(b, ap[nrow(ap):1, , ])
+  # names(b) <- as.character(x$date_extract)
+
+  if(!exists("overwrite")){
+    overwrite = TRUE
+  }
+  if(is.null(out)){
+    out = "climateExtract_raster.grd"
+  }
+   terra::writeRaster(ap, filename = out, overwrite = overwrite, ...)
+}
+
 #' temporal_aggregate
 #'
 #' Compute mean climatic values for specific periods from an object obtained 
 #' from the extrat_nc_value function
 #' @param x object obtained from the extrat_nc_value function or a 
 #' rasterBrick with dates as layers
-#' @param y point to extract values, must be an sf or spatialPointDataFrame 
+#' @param y point to extract values, must be an sf (sf), a SpatVect (terra) or spatialPointDataFrame 
 #' object (sp)
 #' @param agg_function function used to aggregate data, "mean" or "sum"
 #' @param variable_name character string to identify the resulting variable
@@ -575,6 +603,228 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       x_agg <- (x_agg * scale_factorvalue) + offsetvalue
     }
   return(x_agg) 
+  }
+}
+
+temporal_aggregate2 <- function(x, y = NULL, agg_function = "mean",
+                               variable_name = "average temp",
+                               time_step = c("annual", "monthly", "daily", "window"),
+                               win_length = NULL, site_col = "site_id") {
+  year <- NULL
+  month <- NULL
+  day <- NULL
+  .SD <- NULL
+  raw_datavals <- FALSE
+  site_order <- NULL
+
+  if (time_step == "window" & is.null(win_length)) {
+    win_length <- 30
+    message("rolling function will be computed over 30-days window, set win_length
+            to change the extent of the window")
+  }
+  if (!inherits(x, "SpatRaster")) {
+    if (length(dim(x$value_array)) != 3) {
+      stop("x must be a SpatRaster object or an output from the
+        extrat_nc_value() function")
+    }
+    raw_datavals <- x$raw_datavals
+    scale_factorvalue <- x$scale_factorvalue
+    offsetvalue <- x$offsetvalue
+    a <- x$value_array
+    ap <- rast(aperm(a, c(2, 1, 3), resize = TRUE), 
+              extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), 
+              crs = "epsg:4326")
+    ap <- ap[nrow(ap):1, , ]
+    names(ap) <- as.character(x$date_extract)
+    x <- ap
+    # ap <- aperm(a, c(2, 1, 3), resize = TRUE)
+    # a <- raster::brick(
+    #   xmn = min(x$longitude),
+    #   ymn = min(x$latitude),
+    #   xmx = max(x$longitude),
+    #   ymx = max(x$latitude),
+    #   crs = 4326
+    # )
+    # dim(a) <- dim(ap[nrow(ap):1, , ])
+    # a <- raster::setValues(a, ap[nrow(ap):1, , ])
+    # names(a) <- as.character(x$date_extract)
+    # x <- a
+  }
+  Date_seq <- as.Date(gsub("X", "", names(x)), "%Y.%m.%d")
+  date_dt <- data.table::data.table(
+    date = Date_seq,
+    year = format(Date_seq, "%Y"),
+    month = format(Date_seq, "%m"),
+    day = format(Date_seq, "%d")
+  )
+  if (time_step == "annual") {
+    indices <- as.numeric(as.factor(date_dt$year))
+  }
+  if (time_step == "monthly") {
+    indices <- as.numeric(as.factor(paste0(date_dt$year, ".", date_dt$month)))
+  }
+
+  if (!is.null(y)) {
+    if (!inherits(y, c("sf", "SpatialPointsDataFrame", "SpatVector"))) {
+      stop("y must be of class
+        'sf', 'SpatVect' or 'SpatialPointsDataFrame'")
+    }
+    my_cell <- terra::cellFromXY(terra::rast(x[[1]]), as(y, "Spatial"))
+    nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
+    my_cell <- nona_cell_res$nona_cell
+    val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
+    if (site_col %in% names(y)) {
+      site_id_ <- as.data.frame(as(y, "Spatial"))[, site_col]
+    } else {
+      site_id_ <- paste0("site_", seq_len(dim(y)[1]))
+    }
+    dimnames(val)[[1]] <- site_id_
+
+    if (isTRUE(raw_datavals)) {
+      val <- (t(as.matrix(val)) * scale_factorvalue) + offsetvalue
+    } else {
+      val <- t(as.matrix(val))
+    }
+
+    dt_v <- cbind(date_dt, val)
+
+    if (time_step == "annual") {
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+        by = c("year"), .SDcols = site_id_
+      ]
+      dt_agg <- data.table::melt(dt_agg,
+        id.vars = c("year"),
+        measure.vars = site_id_,
+        variable.name = "site",
+        value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name)))
+      )
+    }
+    if (time_step == "monthly") {
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+        by = c("year", "month"), .SDcols = site_id_
+      ]
+      dt_agg <- data.table::melt(dt_agg,
+        id.vars = c("year", "month"),
+        measure.vars = site_id_,
+        variable.name = "site",
+        value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name)))
+      )
+    }
+    if (time_step == "daily") {
+      dt_agg <- dt_v[, lapply(.SD, function(x) get(agg_function)(x, na.rm = TRUE)),
+        by = c("year", "month", "day"), .SDcols = site_id_
+      ]
+      dt_agg <- data.table::melt(dt_agg,
+        id.vars = c("year", "month", "day"),
+        measure.vars = site_id_,
+        variable.name = "site",
+        value.name = c(paste0(agg_function, "_", gsub(" ", "_", variable_name)))
+      )
+    }
+    if (time_step == "window") {
+      if (agg_function == "mean") {
+        dt_agg <- data.table::setDT(data.table::frollmean(dt_v[, site_id_, with = FALSE],
+          n = win_length,
+          fill = NA,
+          align = "right",
+          na.rm = TRUE
+        ))
+        names(dt_agg) <- site_id_
+        dt_agg <- cbind(dt_v[, -c(site_id_), with = FALSE], dt_agg)
+        dt_agg <- data.table::melt(dt_agg,
+          id.vars = c("date", "year", "month", "day"),
+          measure.vars = site_id_,
+          variable.name = "site",
+          value.name = c(paste0(
+            "roll", agg_function, "_",
+            gsub(" ", "_", variable_name),
+            win_length, "-d"
+          ))
+        )
+      }
+      if (agg_function == "sum") {
+        dt_agg <- data.table::setDT(data.table::frollsum(dt_v[, site_id_, with = FALSE],
+          n = win_length,
+          fill = NA,
+          align = "right",
+          na.rm = TRUE
+        ))
+        names(dt_agg) <- site_id_
+        dt_agg <- cbind(dt_v[, -c(site_id_), with = FALSE], dt_agg)
+        dt_agg <- data.table::melt(dt_agg,
+          id.vars = c("date", "year", "month", "day"),
+          measure.vars = site_id_,
+          variable.name = "site",
+          value.name = c(paste0(
+            "roll", agg_function, "_",
+            gsub(" ", "_", variable_name),
+            win_length, "-d"
+          ))
+        )
+      }
+      if (!any(agg_function %in% c("mean", "sum"))) {
+        dt_agg <- data.table::setDT(data.table::frollapply(dt_v[, site_id_, with = FALSE],
+          n = win_length,
+          FUN = get(agg_function),
+          fill = NA,
+          align = "right",
+          na.rm = TRUE
+        ))
+        names(dt_agg) <- site_id_
+        dt_agg <- cbind(dt_v[, -c(site_id_), with = FALSE], dt_agg)
+        dt_agg <- data.table::melt(dt_agg,
+          id.vars = c("date", "year", "month", "day"),
+          measure.vars = site_id_,
+          variable.name = "site",
+          value.name = c(paste0(
+            "roll", agg_function, "_",
+            gsub(" ", "_", variable_name),
+            win_length, "-d"
+          ))
+        )
+      }
+    }
+
+    dt_dist <- data.table::data.table(
+      site = site_id_[nona_cell_res[[2]]$gid],
+      distance_from_pnt = round(nona_cell_res$dist_nona_cell, 0)
+    )
+    dt_agg <- merge(dt_agg, dt_dist, by = "site", all.x = TRUE)
+    s_ord <- data.table::data.table(site = site_id_, site_order = seq_along(site_id_))
+    dt_agg <- merge(dt_agg, s_ord, by = "site", all.x = TRUE)[order(site_order), ][, site_order := NULL]
+    return(dt_agg)
+  } else {
+    if (time_step == "window") {
+      x_agg <- stars::st_as_stars(x)
+      x_agg <- stars::st_apply(x_agg, c(1, 2), function(x) {
+        raster::movingFun(x,
+          n = win_length,
+          fun = get(agg_function),
+          type = "to",
+          circular = FALSE,
+          na.rm = FALSE
+        )
+      })
+      x_agg <- as(x_agg, "SpatRaster")
+      names(x_agg) <- unique(date_dt$date)
+    }
+    if (any(time_step %in% c("annual", "monthly"))) {
+      x_agg <- terra::tapp(terra::rast(x), index = indices, fun = agg_function)
+      if (time_step == "annual") {
+        names(x_agg) <- unique(date_dt$year)
+      }
+      if (time_step == "monthly") {
+        names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
+      }
+    }
+    if (time_step == "daily") {
+      x_agg <- x
+      names(x_agg) <- unique(date_dt$date)
+    }
+    if (isTRUE(raw_datavals)) {
+      x_agg <- (x_agg * scale_factorvalue) + offsetvalue
+    }
+    return(x_agg)
   }
 }
 
@@ -877,6 +1127,95 @@ point_grid_extract <- function(x, point_coord) {
     names(result) <- site_id_
     result$date_extract <- x$date_extract
     result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
+
+  return(result)
+}
+
+point_grid_extract2 <- function(x, point_coord) {
+  lyr_extent <- rev(order(apply(x$value_array, 3, function(x) sum(!is.na(x)))))[1]
+
+    a <- x$value_array
+    ap <- rast(aperm(a, c(2, 1, 3), resize = TRUE),
+      extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)),
+      crs = "epsg:4326"
+    )
+    ap <- ap[nrow(ap):1, , ]
+    names(ap) <- as.character(x$date_extract)
+    x_r <- ap
+
+  # a <- x$value_array
+  # ap <- aperm(a, c(2, 1, 3), resize = TRUE)
+  # a <- raster::brick(
+  #   xmn = min(x$longitude),
+  #   ymn = min(x$latitude),
+  #   xmx = max(x$longitude),
+  #   ymx = max(x$latitude),
+  #   crs = sp::CRS("+init=epsg:4326")
+  # )
+  # dim(a) <- dim(ap[nrow(ap):1, , ])
+  # a <- raster::setValues(a, ap[nrow(ap):1, , ])
+  # names(a) <- as.character(x$date_extract)
+  # x_r <- a
+
+  if (!inherits(point_coord, c("sf", "SpatialPointsDataFrame", "SpatVector"))) {
+    if (all(c("longitude", "latitude") %in% names(point_coord))) {
+      y <- sf::st_as_sf(point_coord, coords = c("longitude", "latitude"), crs = 4326)
+    } else {
+      stop("point_coord must either be a spatial object (sf, terra or sp) or a data.frame with a longitude and a latitude column")
+    }
+  } else {
+    y <- as(point_coord, "sf")
+  }
+
+  y_cell <- terra::cellFromXY(terra::rast(x_r[[lyr_extent]]), as(y, "Spatial"))
+
+  wna <- which(is.na(terra::extract(x_r[[lyr_extent]], y_cell)))
+  mc_na <- y_cell[wna]
+  if (length(mc_na) > 0) {
+    near_cell <- c(rep(NA, length(mc_na)))
+    for (i in seq_along(mc_na)) {
+      a <- mc_na[i]
+      row_fact <- c(ncol(x_r), 2 * ncol(x_r), 3 * ncol(x_r))
+
+      ms1 <- c(
+        a + c(-3:3) - row_fact[3],
+        a + c(-3:3) - row_fact[2],
+        a + c(-3:3) - row_fact[1],
+        a + c(-3:3),
+        a + c(-3:3) + row_fact[1],
+        a + c(-3:3) + row_fact[2],
+        a + c(-3:3) + row_fact[3]
+      )
+
+      ms2 <- ms1[which(!is.na(terra::extract(x_r[[lyr_extent]], c(ms1))))]
+      dist_nonan_cell <- sf::st_distance(
+        y[wna[i], ],
+        sf::st_as_sf(
+          data.frame(terra::xyFromCell(
+            x_r[[1]],
+            c(ms2)
+          )),
+          coords = c("x", "y"),
+          crs = 4326
+        )
+      )
+      near_cell[i] <- ms2[order(dist_nonan_cell)[1]]
+    }
+
+    y_cell[wna] <- near_cell
+  }
+
+  val <- terra::extract(x_r, y_cell)
+  if ("site_id" %in% names(y)) {
+    site_id_ <- y$site_id
+  } else {
+    site_id_ <- paste0("site_", seq_len(dim(y)[1]))
+  }
+
+  result <- as.data.frame(t(val))
+  names(result) <- site_id_
+  result$date_extract <- x$date_extract
+  result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
 
   return(result)
 }

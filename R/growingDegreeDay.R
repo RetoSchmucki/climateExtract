@@ -185,7 +185,7 @@ cumsum_rb <- function(x, indices = NULL) {
 #'
 
 get_date <- function(x, pattern, date_format) {
-    if (inherits(x, "RasterBrick")) {
+    if (inherits(x, c("SpatRaster", "RasterBrick"))) {
         xn <- names(x)
     } else {
         xn <- x
