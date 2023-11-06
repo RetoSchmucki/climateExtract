@@ -191,7 +191,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
     if(is.null(out)){
       out = "climateExtract_raster.grd"
     }
-    write_to_brick2(result, out = out, ...)
+    write_to_brick(result, out = out, ...)
     message(paste0("writing our output file: ", out))
   }
   if(return_data == FALSE & write_raster == TRUE){
@@ -336,51 +336,14 @@ write_to_brick <- function(x, out = out, ...) {
   if(isTRUE(x$raw_datavals)){
   a <- (a * x$scale_factorvalue) + x$offsetvalue
   }
-  ap <- aperm(a, c(2, 1, 3), resize = TRUE)
-  b <- raster::brick(
-                xmn = min(x$longitude),
-                ymn = min(x$latitude),
-                xmx = max(x$longitude),
-                ymx = max(x$latitude),
-                crs = 4326
-  )
-  dim(b) <- dim(ap[nrow(ap):1, , ])
-  b <- raster::setValues(b, ap[nrow(ap):1, , ])
-  names(b) <- as.character(x$date_extract)
-
-  if(!exists("overwrite")){
-    overwrite = TRUE
-  }
-  if(is.null(out)){
-    out = "climateExtract_raster.grd"
-  }
-   raster::writeRaster(b, filename = out, overwrite = overwrite, ...)
-}
-
-write_to_brick2 <- function(x, out = out, ...) {
-  a <- x$value_array
-  if(isTRUE(x$raw_datavals)){
-  a <- (a * x$scale_factorvalue) + x$offsetvalue
-  }
   b <- rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
   names(b) <- as.character(x$date_extract)
 
-  # b <- raster::brick(
-  #               xmn = min(x$longitude),
-  #               ymn = min(x$latitude),
-  #               xmx = max(x$longitude),
-  #               ymx = max(x$latitude),
-  #               crs = 4326
-  # )
-  # dim(b) <- dim(ap[nrow(ap):1, , ])
-  # b <- raster::setValues(b, ap[nrow(ap):1, , ])
-  # names(b) <- as.character(x$date_extract)
-
   if(!exists("overwrite")){
     overwrite = TRUE
   }
   if(is.null(out)){
-    out = "climateExtract_raster.grd"
+    out = "climateExtract_raster.tiff"
   }
    terra::writeRaster(b, filename = out, overwrite = overwrite, ...)
 }
