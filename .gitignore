@@ -6,5 +6,6 @@
 *.grd
 *.gri
 *.tif
+*.aux.xml
 temp/*
 dev/*

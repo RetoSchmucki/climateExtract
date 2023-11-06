@@ -136,7 +136,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
     }else{
       if (inherits(spatial_extent, what=c("sf", "SpatialPolygonsDataFrame", 
                                           "SpatialPointsDataFrame", "SpatVect"))){
-        ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
+        ext_ <- sf::st_bbox(terra::vect(spatial_extent))
       }else{
         if(inherits(spatial_extent, "numeric") & length(spatial_extent) == 4){
           if(all(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent))){
@@ -188,10 +188,10 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                 )
 
   if(write_raster == TRUE){
-    write_to_brick(result, out = out, ...)
     if(is.null(out)){
       out = "climateExtract_raster.grd"
     }
+    write_to_brick2(result, out = out, ...)
     message(paste0("writing our output file: ", out))
   }
   if(return_data == FALSE & write_raster == TRUE){
@@ -202,6 +202,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
   }
 }
 
+## => no change needed for terra
 #' get_nc_online
 #'
 #' Download and connect climate data from NetCDF file (.nc) retrieved from
@@ -361,8 +362,8 @@ write_to_brick2 <- function(x, out = out, ...) {
   if(isTRUE(x$raw_datavals)){
   a <- (a * x$scale_factorvalue) + x$offsetvalue
   }
-  ap <- rast(aperm(a, c(2, 1, 3), resize = TRUE), extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
-  names(ap) <- as.character(x$date_extract)
+  b <- rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+  names(b) <- as.character(x$date_extract)
 
   # b <- raster::brick(
   #               xmn = min(x$longitude),
@@ -381,7 +382,7 @@ write_to_brick2 <- function(x, out = out, ...) {
   if(is.null(out)){
     out = "climateExtract_raster.grd"
   }
-   terra::writeRaster(ap, filename = out, overwrite = overwrite, ...)
+   terra::writeRaster(b, filename = out, overwrite = overwrite, ...)
 }
 
 #' temporal_aggregate
