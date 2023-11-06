@@ -114,7 +114,7 @@ gdd_be_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
     fv <- 3.14 / 2
     W <- (mx.t - mn.t) / 2
     W[W == 0] <- 0.001 # prevents error when min and max temperature are the same, resulting in W = 0.
-    A <- (b.t - avg.t) / W 
+    A <- (b.t - avg.t) / W
     A[A < -1] <- -1
     A[A > 1] <- 1
     A <- asin(A)
@@ -143,7 +143,7 @@ gdd_be_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
 #' Compute the cumulative sum on a multilayered raster (rasterbrick), using indices spaning over specific time periods.
 #' @param x rasterbrick object on which cumulative sum should be computed
 #' @param indices vector with indices over which the sum is to be cumulated.
-#' @details This function computes the cumulative sum over specific periods defined by the a vector of incides (e.g. 
+#' @details This function computes the cumulative sum over specific periods defined by the a vector of incides (e.g.
 #' two five-day cumulative sum c(1,1,1,1,1,2,2,2,2,2), restarting at zero on the first day of each series defined by
 #' the indices).
 #' @author Reto Schmucki
