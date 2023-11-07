@@ -154,20 +154,17 @@ cumsum_rb <- function(x, indices = NULL) {
     if (is.null(indices)) {
         indices <- rep(1, dim(x)[3])
     }
-    x_agg <- stars::st_as_stars(x)
-
-    x_agg[[1]] <- as.integer(x_agg[[1]] * 100)
+        values(x) <- as.integer(values(x * 100))
     for (i in seq_along(unique(indices))) {
         j <- unique(indices)[i]
         if (i == 1) {
-            x_agg_cumsum_r <- stars::st_apply(x_agg[, , , which(indices == j)], c(1, 2), cumsum)
+            x_agg_cumsum_r <- cumsum(x[[which(indices == j)]])
         } else {
-            x_agg_cumsum_i <- stars::st_apply(x_agg[, , , which(indices == j)], c(1, 2), cumsum)
-            x_agg_cumsum_r <- c(x_agg_cumsum_r, x_agg_cumsum_i, along = 1)
+            x_agg_cumsum_i <- cumsum(x[[which(indices == j)]])
+            x_agg_cumsum_r <- c(x_agg_cumsum_r, x_agg_cumsum_i)
         }
     }
-    x_agg_cumsum_r[[1]] <- x_agg_cumsum_r[[1]] / 100
-    x_agg_cumsum_r <- as(x_agg_cumsum_r, "Raster")
+    x_agg_cumsum_r <- x_agg_cumsum_r * 0.01
     names(x_agg_cumsum_r) <- names(x)
     return(x_agg_cumsum_r)
 }
@@ -185,22 +182,26 @@ cumsum_rb <- function(x, indices = NULL) {
 #'
 
 get_date <- function(x, pattern, date_format) {
-    if (inherits(x, c("SpatRaster", "RasterBrick"))) {
+    if (inherits(x, what = c("SpatRaster", "RasterBrick", "SpatRaster"))) {
         xn <- names(x)
     } else {
         xn <- x
     }
-    date_vect <- as.Date(gsub(pattern, "", xn, fixed = TRUE), date_format)
+    if(!is.null(pattern)){
+      date_vect <- as.Date(gsub(pattern, "", xn, fixed = TRUE), date_format)
+    }else{
+      date_vect <- as.Date(xn, date_format)
+    }
     return(date_vect)
 }
 
 
 #' get_layer_indice
 #'
-#' Compute a vector of indices of "year" or "month" based on the date extracted from the rasterBrick or a vector of
+#' Compute a vector of indices of "year" or "month" based on the date extracted from the SpatRaster or a vector of
 #' strings over the time period.
-#' @param x rasterBrick or a vector of dates, from which to extract the dates of the time-series.
-#' @param pattern string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15")
+#' @param x SpatRaster or a vector of dates, from which to extract the dates of the time-series.
+#' @param pattern string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15"), default is null.
 #' @param date_format format of the date
 #' @param indice_level string to define the time-period to use to define the indices, "year" or "month".
 #' @details This function generate a vector of indices dividing the time-series in years or months. This indices are use
@@ -209,7 +210,7 @@ get_date <- function(x, pattern, date_format) {
 #' @export
 #'
 
-get_layer_indice <- function(x = NULL, pattern = "X", date_format = "%Y.%m.%d", indice_level = "year") {
-    layer_indices <- as.numeric(factor(lubridate::floor_date(get_date(x = x, pattern = pattern, date_format = date_format), indice_level)))
+get_layer_indice <- function(x = NULL, pattern = NULL, date_format = "%Y-%m-%d", indice_level = "year", week_start = getOption("lubridate.week.start", 1)) {
+    layer_indices <- as.numeric(factor(lubridate::floor_date(get_date(x = x, pattern = pattern, date_format = date_format), unit = indice_level, week_start = week_start)))
     return(layer_indices)
 }
