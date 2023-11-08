@@ -61,7 +61,7 @@ install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")
 ```
 
-Dependencies: `ncdf4`, `data.table`, `sf`, `sp`, `raster`, `geodata`, `terra`, `zoo`, `methods`
+Dependencies: `ncdf4`, `data.table`, `sf`, `geodata`, `terra`,`lubridate`, and `methods`
 
 #### Usage
 
@@ -251,5 +251,5 @@ plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
 * Get citation information for `climateExtract` in R doing `citation(package = 'climateExtract')`
 
 * Suggested citation:
-  * Schmucki R. (2023) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.27. https://github.com/RetoSchmucki/climateExtract
+  * Schmucki R. (2023) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.28. https://github.com/RetoSchmucki/climateExtract
  

@@ -22,7 +22,7 @@ utils::globalVariables(c("ecad_version"))
 #' if FALSE, the function will download the data from ECAD data portal,
 #'  default=TRUE
 #' @param file_path character string with the path to the local ".nc" file. Works
-#'  only if local_file = TRUE), default=NULL
+#'  only if local_file = TRUE, default=NULL
 #' @param sml_chunk a character string for specific time period to be downloaded. 
 #' Chunk available are "2011-2023", "1995-2010", "1980-1994", "1965-1979",
 #' and "1950-1964", but check what's available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_chunks.php
@@ -56,7 +56,7 @@ utils::globalVariables(c("ecad_version"))
 #' returned with no conversion to NA (if equal to the missing value/fill value) 
 #' or scale/offset applied. Default is TRUE. This reduce the size of the object to 
 #' manipulate.
-#' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
+#' @param ... additional arguments for for writing files, see \link[terra]{writeRaster}
 #' @details By default, this function asks to select the ".nc" file from your
 #'  local disc, but this can be changed by setting the argument 'local_file' to
 #'  FALSE. When local_file is false, the nc file with data will be downloaded
@@ -330,9 +330,11 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
 #' @param outformat character string with the format for the output raster,
 #' using GDAL shortname. You can use gdal(drivers=TRUE) to see what drivers are
 #' available in your installation; default is set to GEOTiff.
-#' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
+#' @param ... additional arguments for for writing files, see \link[terra]{writeRaster}
 #' @details By default, this function overwrites file with the same name if 
 #' existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
+#' @author Reto Schmucki
+#' @import terra
 #' @export
 #'
  
@@ -341,7 +343,7 @@ write_to_brick <- function(x, out = out, outformat = outformat, ...) {
   if(isTRUE(x$raw_datavals)){
   a <- (a * x$scale_factorvalue) + x$offsetvalue
   }
-  b <- rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+  b <- terra::rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
   names(b) <- as.character(x$date_extract)
 
   if(!exists("overwrite")){
@@ -378,8 +380,10 @@ write_to_brick <- function(x, out = out, outformat = outformat, ...) {
 #' cell used to retrieve the climate metric is calculated and documented in the 
 #' data output. If the point is within a cell with value, the distance is set to
 #' NA.
+#' @author Reto Schmucki
 #' @importFrom methods as
 #' @import data.table
+#' @import terra
 #' @author Reto Schmucki
 #' @export
 #'
@@ -414,7 +418,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     if(isTRUE(x$raw_datavals)){
     a <- (a * x$scale_factorvalue) + x$offsetvalue
     }
-    a <- rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+    a <- terra::rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
     names(a) <- as.character(x$date_extract)
     x <- a
   }
@@ -433,7 +437,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
    if(!is.null(y)){
     if(!inherits(y, what = c("sf", "SpatialPointsDataFrame", "SpatVector"))) {stop("y must be of class 
         'sf', 'SpatialPointsDataFrame' or 'SpatVector'")}
-    my_cell <- terra::cellFromXY(x[[1]], crds(terra::vect(y)))
+    my_cell <- terra::cellFromXY(x[[1]], terra::crds(terra::vect(y)))
     nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
     my_cell <- nona_cell_res$nona_cell
     val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
@@ -580,15 +584,16 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 #' to the nearest with a value within a range of 3 cell around the points. The 
 #' sf of points with NA is provided and the distance to the nearest cell with 
 #' a non NA value.
-#' @importFrom methods as
 #' @author Reto Schmucki
+#' @importFrom methods as
+#' @import terra
 #' @export
 #'
 
 get_near_nona <- function(x = x, y = y, x_cell = NULL){
     
     if(is.null(x_cell)){
-      x_cell <- terra::cellFromXY(x[[1]], crds(terra::vect(y)))
+      x_cell <- terra::cellFromXY(x[[1]], terra::crds(terra::vect(y)))
     }
     wna <- which(is.na(terra::extract(x[[1]], x_cell)))
     mc_na <- x_cell[wna]

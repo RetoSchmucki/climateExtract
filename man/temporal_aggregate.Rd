@@ -18,7 +18,7 @@ temporal_aggregate(
 \item{x}{object obtained from the extrat_nc_value function or a 
 rasterBrick with dates as layers}
 
-\item{y}{point to extract values, must be an sf or spatialPointDataFrame 
+\item{y}{point to extract values, must be an sf (sf), a SpatVect (terra) or spatialPointDataFrame 
 object (sp)}
 
 \item{agg_function}{function used to aggregate data, "mean" or "sum"}

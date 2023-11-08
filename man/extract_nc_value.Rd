@@ -17,6 +17,7 @@ extract_nc_value(
   ecad_v = NULL,
   write_raster = FALSE,
   out = NULL,
+  outformat = "GTiff",
   return_data = TRUE,
   raw_datavals = TRUE,
   ...
@@ -34,14 +35,14 @@ if FALSE, the function will download the data from ECAD data portal,
  default=TRUE}
 
 \item{file_path}{character string with the path to the local ".nc" file. Works
-only if local_file = TRUE), default=NULL}
+only if local_file = TRUE, default=NULL}
 
 \item{sml_chunk}{a character string for specific time period to be downloaded. 
-Chunk available are "2011-2022", "1995-2010", "1980-1994", "1965-1979",
-and "1950-1964"}
+Chunk available are "2011-2023", "1995-2010", "1980-1994", "1965-1979",
+and "1950-1964", but check what's available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_chunks.php}
 
 \item{spatial_extent}{object to define the spatial extent for the data 
-extraction, can be an "sf" or an "sp" object or a vector with 4 values 
+extraction, can be an "sf", "sp" or "SpatialVector" object or a vector with 4 values 
 defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
  entire extent is extracted}
 
@@ -65,7 +66,11 @@ latitude), default=0.25}
 multilayer raster file}
 
 \item{out}{character string with the filename for the output raster, if null
-data will be written in climateExtract_raster.grd}
+data will be written in "climateExtract_raster.tiff".}
+
+\item{outformat}{character string with the format for the output raster, 
+using GDAL shortname. You can use gdal(drivers=TRUE) to see what drivers are 
+available in your installation; default is set to GEOTiff.}
 
 \item{return_data}{logical, if TRUE the data resulting from the extract will
 be stored in the object, if false, only the filename of the raster and the
@@ -76,7 +81,7 @@ returned with no conversion to NA (if equal to the missing value/fill value)
 or scale/offset applied. Default is TRUE. This reduce the size of the object to 
 manipulate.}
 
-\item{...}{additional arguments for for writing files, see \link[raster]{writeRaster}}
+\item{...}{additional arguments for for writing files, see \link[terra]{writeRaster}}
 }
 \value{
 If 'write_raster' is TRUE, return a list with the path to raster 

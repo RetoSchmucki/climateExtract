@@ -4,16 +4,20 @@
 \alias{write_to_brick}
 \title{write_to_brick}
 \usage{
-write_to_brick(x, out = out, ...)
+write_to_brick(x, out = out, outformat = outformat, ...)
 }
 \arguments{
 \item{x}{object obtained from the extrat_nc_value function corresponding 
 to the specific period of interest}
 
-\item{out}{character string defining the filename to save (default extension 
-is GeoTiff, ".tiff")}
+\item{out}{character string defining the filename to save; default extension 
+is "climateExtract_raster.tiff".}
 
-\item{...}{additional arguments for for writing files, see \link[raster]{writeRaster}}
+\item{outformat}{character string with the format for the output raster,
+using GDAL shortname. You can use gdal(drivers=TRUE) to see what drivers are
+available in your installation; default is set to GEOTiff.}
+
+\item{...}{additional arguments for for writing files, see \link[terra]{writeRaster}}
 }
 \description{
 Write the output in a multilayer raster
@@ -21,4 +25,7 @@ Write the output in a multilayer raster
 \details{
 By default, this function overwrites file with the same name if 
 existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
+}
+\author{
+Reto Schmucki
 }

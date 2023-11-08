@@ -1,8 +1,13 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .travis.yml
+._pkgdown.yml
 /develop/
+/dev/
+/docs/
+/pkgdown/
 ^.*\.rds$
 ^.*\.nc$
 ^.*\.grd$
 ^.*\.gri$
+^.*\.tiff$

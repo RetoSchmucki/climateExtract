@@ -147,6 +147,7 @@ gdd_be_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
 #' two five-day cumulative sum c(1,1,1,1,1,2,2,2,2,2), restarting at zero on the first day of each series defined by
 #' the indices).
 #' @author Reto Schmucki
+#' @import terra
 #' @export
 #'
 
@@ -154,7 +155,7 @@ cumsum_rb <- function(x, indices = NULL) {
     if (is.null(indices)) {
         indices <- rep(1, dim(x)[3])
     }
-        values(x) <- as.integer(values(x * 100))
+        terra::values(x) <- as.integer(terra::values(x * 100))
     for (i in seq_along(unique(indices))) {
         j <- unique(indices)[i]
         if (i == 1) {
@@ -204,6 +205,7 @@ get_date <- function(x, pattern, date_format) {
 #' @param pattern string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15"), default is null.
 #' @param date_format format of the date
 #' @param indice_level string to define the time-period to use to define the indices, "year" or "month".
+#' @param week_start option of lubridate starting day of the week, where 1 is Monday and 7 is Sunday.
 #' @details This function generate a vector of indices dividing the time-series in years or months. This indices are use
 #' for the calculating the cummulative sum over years or month (see function cumsum_rb()).
 #' @author Reto Schmucki
