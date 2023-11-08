@@ -427,7 +427,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       indices <- as.numeric(as.factor(date_dt$year))
     }
     if(time_step == "monthly"){
-      indices <- as.numeric(as.factor(paste0(date_dt$year, ".", date_dt$month)))
+      indices <- as.numeric(as.factor(paste0(date_dt$year, "-", date_dt$month)))
     }
   
    if(!is.null(y)){
@@ -554,7 +554,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
         names(x_agg) <- unique(date_dt$year)
       }
       if(time_step == "monthly"){
-        names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
+        names(x_agg) <- unique(paste0(date_dt$year, "-", date_dt$month))
       }
     }
     if(time_step == "daily"){
