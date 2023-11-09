@@ -147,7 +147,6 @@ gdd_be_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
 #' two five-day cumulative sum c(1,1,1,1,1,2,2,2,2,2), restarting at zero on the first day of each series defined by
 #' the indices).
 #' @author Reto Schmucki
-#' @import terra
 #' @export
 #'
 

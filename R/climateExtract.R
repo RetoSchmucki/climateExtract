@@ -1,14 +1,3 @@
-utils::globalVariables(c("ecad_version"))
-
-#' version of ECA&D to use
-#' @format character string (e.g. "22.0")
-#' \describe{
-#'   \item{ecad_version}{version number used to gather ECAD data}
-#' }
-"ecad_version"
-
-
-
 #' extract_nc_value
 #'
 #' Extract climate data from a NETCDF file produced and made available by the 
@@ -74,7 +63,6 @@ utils::globalVariables(c("ecad_version"))
 #' an 3D array with the value extracted, a vector with the longitude, a vector with
 #' latitude and a vector with date extracted.
 #' @author Reto Schmucki
-#' @importFrom methods as
 #' @export
 #'
 
@@ -334,7 +322,6 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
 #' @details By default, this function overwrites file with the same name if 
 #' existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
 #' @author Reto Schmucki
-#' @import terra
 #' @export
 #'
  
@@ -380,10 +367,6 @@ write_to_brick <- function(x, out = out, outformat = outformat, ...) {
 #' cell used to retrieve the climate metric is calculated and documented in the 
 #' data output. If the point is within a cell with value, the distance is set to
 #' NA.
-#' @author Reto Schmucki
-#' @importFrom methods as
-#' @import data.table
-#' @import terra
 #' @author Reto Schmucki
 #' @export
 #'
@@ -585,8 +568,6 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 #' sf of points with NA is provided and the distance to the nearest cell with 
 #' a non NA value.
 #' @author Reto Schmucki
-#' @importFrom methods as
-#' @import terra
 #' @export
 #'
 

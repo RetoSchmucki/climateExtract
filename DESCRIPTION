@@ -20,7 +20,6 @@ LazyData: true
 Imports: ncdf4,
          sf,
          terra,         
-         geodata,
          data.table,
          lubridate,
          methods

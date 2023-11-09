@@ -61,7 +61,7 @@ install.packages("devtools")
 devtools::install_github("RetoSchmucki/climateExtract")
 ```
 
-Dependencies: `ncdf4`, `data.table`, `sf`, `geodata`, `terra`,`lubridate`, and `methods`
+Dependencies: `ncdf4`, `data.table`, `sf`, `terra`,`lubridate`, and `methods`
 
 #### Usage
 
@@ -72,7 +72,7 @@ library(climateExtract)
 ecad_version
 ```
 
-Define specific regions and points. If not provided,  data will be extracted for the entire ECAD extent.
+Define specific regions and points. If not provided,  data will be extracted for the entire ECAD extent. Note that we need to install the package `geodata` to retrieve the border of France.
 
 ```R
 # use set.seed() for reproducibility
