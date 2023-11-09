@@ -327,12 +327,11 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
  
 write_to_brick <- function(x, out = out, outformat = outformat, ...) {
   a <- x$value_array
-  if(isTRUE(x$raw_datavals)){
-  a <- (a * x$scale_factorvalue) + x$offsetvalue
-  }
-  b <- terra::rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+  b <- terra::rast(aperm(a[, ncol(a):1, ], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
   names(b) <- as.character(x$date_extract)
-
+  if(isTRUE(x$raw_datavals)){
+    b <- (b * x$scale_factorvalue) + x$offsetvalue
+  }
   if(!exists("overwrite")){
     overwrite = TRUE
   }
