@@ -15,7 +15,7 @@ cumsum_rb(x, indices = NULL)
 Compute the cumulative sum on a multilayered raster (rasterbrick), using indices spaning over specific time periods.
 }
 \details{
-This function computes the cumulative sum over specific periods defined by the a vector of incides (e.g. 
+This function computes the cumulative sum over specific periods defined by the a vector of incides (e.g.
 two five-day cumulative sum c(1,1,1,1,1,2,2,2,2,2), restarting at zero on the first day of each series defined by
 the indices).
 }

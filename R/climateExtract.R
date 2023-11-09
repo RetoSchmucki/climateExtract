@@ -1,14 +1,3 @@
-utils::globalVariables(c("ecad_version"))
-
-#' version of ECA&D to use
-#' @format character string (e.g. "22.0")
-#' \describe{
-#'   \item{ecad_version}{version number used to gather ECAD data}
-#' }
-"ecad_version"
-
-
-
 #' extract_nc_value
 #'
 #' Extract climate data from a NETCDF file produced and made available by the 
@@ -22,12 +11,12 @@ utils::globalVariables(c("ecad_version"))
 #' if FALSE, the function will download the data from ECAD data portal,
 #'  default=TRUE
 #' @param file_path character string with the path to the local ".nc" file. Works
-#'  only if local_file = TRUE), default=NULL
+#'  only if local_file = TRUE, default=NULL
 #' @param sml_chunk a character string for specific time period to be downloaded. 
-#' Chunk available are "2011-2022", "1995-2010", "1980-1994", "1965-1979",
-#' and "1950-1964"
+#' Chunk available are "2011-2023", "1995-2010", "1980-1994", "1965-1979",
+#' and "1950-1964", but check what's available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_chunks.php
 #' @param spatial_extent object to define the spatial extent for the data 
-#' extraction, can be an "sf" or an "sp" object or a vector with 4 values 
+#' extraction, can be an "sf", "sp" or "SpatialVector" object or a vector with 4 values 
 #' defining the bounding box c(xmin, ymax, xmax, ymax). If NULL (default), the
 #'  entire extent is extracted
 #' @param clim_variable a character string defining the daily climate variable to 
@@ -45,7 +34,10 @@ utils::globalVariables(c("ecad_version"))
 #' @param write_raster logical, if TRUE the output will be written in a
 #'  multilayer raster file
 #' @param out character string with the filename for the output raster, if null
-#'  data will be written in climateExtract_raster.grd 
+#' data will be written in "climateExtract_raster.tiff". 
+#' @param outformat character string with the format for the output raster, 
+#' using GDAL shortname. You can use gdal(drivers=TRUE) to see what drivers are 
+#' available in your installation; default is set to GEOTiff.
 #' @param return_data logical, if TRUE the data resulting from the extract will
 #'  be stored in the object, if false, only the filename of the raster and the
 #'  name of the layers are returned in a list, only if write_out is TRUE.
@@ -53,7 +45,7 @@ utils::globalVariables(c("ecad_version"))
 #' returned with no conversion to NA (if equal to the missing value/fill value) 
 #' or scale/offset applied. Default is TRUE. This reduce the size of the object to 
 #' manipulate.
-#' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
+#' @param ... additional arguments for for writing files, see \link[terra]{writeRaster}
 #' @details By default, this function asks to select the ".nc" file from your
 #'  local disc, but this can be changed by setting the argument 'local_file' to
 #'  FALSE. When local_file is false, the nc file with data will be downloaded
@@ -71,7 +63,6 @@ utils::globalVariables(c("ecad_version"))
 #' an 3D array with the value extracted, a vector with the longitude, a vector with
 #' latitude and a vector with date extracted.
 #' @author Reto Schmucki
-#' @importFrom methods as
 #' @export
 #'
 
@@ -79,7 +70,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                              file_path=NULL, sml_chunk=NULL, 
                              spatial_extent=NULL, clim_variable="mean temp",
                              statistic="mean", grid_size=0.25, ecad_v = NULL, 
-                             write_raster = FALSE, out = NULL,
+                             write_raster = FALSE, out = NULL, outformat = "GTiff",
                              return_data = TRUE, raw_datavals = TRUE, 
                              ...){
 
@@ -135,8 +126,8 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
       ext_ <- spatial_extent
     }else{
       if (inherits(spatial_extent, what=c("sf", "SpatialPolygonsDataFrame", 
-                                          "SpatialPointsDataFrame"))){
-        ext_ <- sf::st_bbox(as(spatial_extent, "sf"))
+                                          "SpatialPointsDataFrame", "SpatVect"))){
+        ext_ <- sf::st_bbox(terra::vect(spatial_extent))
       }else{
         if(inherits(spatial_extent, "numeric") & length(spatial_extent) == 4){
           if(all(c("xmin", "ymin", "xmax", "ymax") %in% names(spatial_extent))){
@@ -188,10 +179,10 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
                 )
 
   if(write_raster == TRUE){
-    write_to_brick(result, out = out, ...)
     if(is.null(out)){
-      out = "climateExtract_raster.grd"
+      out = "climateExtract_raster.tiff"
     }
+    write_to_brick(result, out = out, outformat = outformat, ...)
     message(paste0("writing our output file: ", out))
   }
   if(return_data == FALSE & write_raster == TRUE){
@@ -247,7 +238,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
                           statistic = statistic, grid_size = grid_size, 
                           ecad_v = ecad_v){
 
-  smc <- c("2011-2022", "1995-2010", "1980-1994", "1965-1979", "1950-1964")
+  smc <- c("2011-2023", "1995-2010", "1980-1994", "1965-1979", "1950-1964")
 
   if(is.null(sml_chunk)){
       message(paste0("Try to get the ",clim_variable," from ",first_year," at ",
@@ -265,7 +256,7 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
     if (grid_size == 0.1) {grid_size <- "0.1deg"}
 
     if (first_year >= 2011) {
-         year_toget <- "2011-2022_"
+         year_toget <- "2011-2023_"
          urltoget <- paste0("https://knmi-ecad-assets-prd.s3.amazonaws.com/ensembles/data/Grid_",
                              grid_size, "_reg_ensemble/", clim_var, "_",
                              grid_size, "_reg_", year_toget, "v", ecad_v, "e.nc")
@@ -322,38 +313,32 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
 #' Write the output in a multilayer raster
 #' @param x object obtained from the extrat_nc_value function corresponding 
 #' to the specific period of interest
-#' @param out character string defining the filename to save (default extension 
-#' is GeoTiff, ".tiff")
-#' @param ... additional arguments for for writing files, see \link[raster]{writeRaster}
+#' @param out character string defining the filename to save; default extension 
+#' is "climateExtract_raster.tiff".
+#' @param outformat character string with the format for the output raster,
+#' using GDAL shortname. You can use gdal(drivers=TRUE) to see what drivers are
+#' available in your installation; default is set to GEOTiff.
+#' @param ... additional arguments for for writing files, see \link[terra]{writeRaster}
 #' @details By default, this function overwrites file with the same name if 
 #' existing. Layers' names are Date starting with X (e.g. "X2010.01.27")
+#' @author Reto Schmucki
 #' @export
 #'
  
-write_to_brick <- function(x, out = out, ...) {
+write_to_brick <- function(x, out = out, outformat = outformat, ...) {
   a <- x$value_array
-  if(isTRUE(x$raw_datavals)){
-  a <- (a * x$scale_factorvalue) + x$offsetvalue
-  }
-  ap <- aperm(a, c(2, 1, 3), resize = TRUE)
-  b <- raster::brick(
-                xmn = min(x$longitude),
-                ymn = min(x$latitude),
-                xmx = max(x$longitude),
-                ymx = max(x$latitude),
-                crs = 4326
-  )
-  dim(b) <- dim(ap[nrow(ap):1, , ])
-  b <- raster::setValues(b, ap[nrow(ap):1, , ])
+  b <- terra::rast(aperm(a[, ncol(a):1, ], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
   names(b) <- as.character(x$date_extract)
-
+  if(isTRUE(x$raw_datavals)){
+    b <- (b * x$scale_factorvalue) + x$offsetvalue
+  }
   if(!exists("overwrite")){
     overwrite = TRUE
   }
   if(is.null(out)){
-    out = "climateExtract_raster.grd"
+    out = "climateExtract_raster.tiff"
   }
-   raster::writeRaster(b, filename = out, overwrite = overwrite, ...)
+   terra::writeRaster(b, filename = out, filetype = ifelse(is.null(outformat), "GTiff", outformat), overwrite = overwrite, ...)
 }
 
 #' temporal_aggregate
@@ -362,7 +347,7 @@ write_to_brick <- function(x, out = out, ...) {
 #' from the extrat_nc_value function
 #' @param x object obtained from the extrat_nc_value function or a 
 #' rasterBrick with dates as layers
-#' @param y point to extract values, must be an sf or spatialPointDataFrame 
+#' @param y point to extract values, must be an sf (sf), a SpatVect (terra) or spatialPointDataFrame 
 #' object (sp)
 #' @param agg_function function used to aggregate data, "mean" or "sum"
 #' @param variable_name character string to identify the resulting variable
@@ -381,8 +366,6 @@ write_to_brick <- function(x, out = out, ...) {
 #' cell used to retrieve the climate metric is calculated and documented in the 
 #' data output. If the point is within a cell with value, the distance is set to
 #' NA.
-#' @importFrom methods as
-#' @import data.table
 #' @author Reto Schmucki
 #' @export
 #'
@@ -405,29 +388,23 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
             to change the extent of the window")
   }
 
-  if(!inherits(x, "RasterBrick")){
+  if(!inherits(x, what = c("RasterBrick", "SpatRaster"))){
     if(length(dim(x$value_array)) != 3){
-      stop("x must be a rasterBrick object or an output from the 
+      stop("x must be a rasterBrick, a SpatRaster object or an output from the 
         extrat_nc_value() function")
     }
     raw_datavals <- x$raw_datavals
     scale_factorvalue <- x$scale_factorvalue
     offsetvalue <- x$offsetvalue
     a <- x$value_array
-    ap <- aperm(a, c(2, 1, 3), resize = TRUE)
-    a <- raster::brick(
-                  xmn = min(x$longitude),
-                  ymn = min(x$latitude),
-                  xmx = max(x$longitude),
-                  ymx = max(x$latitude),
-                  crs = 4326
-    )
-    dim(a) <- dim(ap[nrow(ap):1, , ])
-    a <- raster::setValues(a, ap[nrow(ap):1, , ])
-    names(a) <- as.character(x$date_extract)
-    x <- a
+    b <- terra::rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+    names(b) <- as.character(x$date_extract)
+    if(isTRUE(x$raw_datavals)){
+      b <- (b * x$scale_factorvalue) + x$offsetvalue
+    }
+    x <- b
   }
-  Date_seq <- as.Date(gsub("X", "", names(x)), "%Y.%m.%d")
+  Date_seq <- as.Date(gsub("X", "", names(x)))
   date_dt <- data.table::data.table(date = Date_seq, 
                                     year = format(Date_seq, "%Y"),
                                     month = format(Date_seq, "%m"),
@@ -436,18 +413,18 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
       indices <- as.numeric(as.factor(date_dt$year))
     }
     if(time_step == "monthly"){
-      indices <- as.numeric(as.factor(paste0(date_dt$year, ".", date_dt$month)))
+      indices <- as.numeric(as.factor(paste0(date_dt$year, "-", date_dt$month)))
     }
   
    if(!is.null(y)){
-    if(!inherits(y, c("sf", "SpatialPointsDataFrame"))) {stop("y must be of class 
-        'sf' or 'SpatialPointsDataFrame'")}
-    my_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
+    if(!inherits(y, what = c("sf", "SpatialPointsDataFrame", "SpatVector"))) {stop("y must be of class 
+        'sf', 'SpatialPointsDataFrame' or 'SpatVector'")}
+    my_cell <- terra::cellFromXY(x[[1]], terra::crds(terra::vect(y)))
     nona_cell_res <- get_near_nona(x = x, y = y, x_cell = my_cell)
     my_cell <- nona_cell_res$nona_cell
     val <- terra::extract(x[[seq_along(Date_seq)]], my_cell)
     if(site_col %in% names(y)){
-      site_id_ <- as.data.frame(as(y,"Spatial"))[, site_col]
+      site_id_ <- as.data.frame(y)[, site_col]
     }else{
       site_id_ <- paste0("site_", seq_len(dim(y)[1]))
     }
@@ -548,23 +525,22 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     return(dt_agg)
   }else{
     if(time_step == "window"){
-      x_agg <- stars::st_as_stars(x)
-      x_agg <- stars::st_apply(x_agg, c(1, 2), function(x) raster::movingFun(x, 
-                                                            n = win_length,
-                                                            fun = get(agg_function),
-                                                            type = "to",
-                                                            circular = FALSE,
-                                                            na.rm = FALSE))
-      x_agg <- as(x_agg, "Raster")
+      x_agg <- terra::roll(x, 
+                  n = win_length,
+                  fun = get(agg_function),
+                  type = "to",
+                  circular = FALSE,
+                  na.rm = FALSE)
+
       names(x_agg) <- unique(date_dt$date)
     }
     if(any(time_step %in% c("annual", "monthly"))){  
-      x_agg <- terra::tapp(terra::rast(x), index = indices, fun = agg_function)
+        x_agg <- terra::tapp(as(x, "SpatRaster"), index = indices, fun = agg_function)
       if(time_step == "annual"){
         names(x_agg) <- unique(date_dt$year)
       }
       if(time_step == "monthly"){
-        names(x_agg) <- unique(paste0(date_dt$year, ".", date_dt$month))
+        names(x_agg) <- unique(paste0(date_dt$year, "-", date_dt$month))
       }
     }
     if(time_step == "daily"){
@@ -581,8 +557,8 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 #' get_near_nona
 #'
 #' Return cell number of the nearest data point available in the the raster layer
-#' @param x raster object (raster, rasterStack or rasterBrick)
-#' @param y point as an sf or spatial object
+#' @param x raster object (raster, rasterStack, rasterBrick or SpatRaster)
+#' @param y point as an sf, sp or SpatVector object
 #' @param x_cell cell id if already extracted, if not provide this will be computed
 #' @details This function links a raster cell id to each points and search for 
 #' the nearest cell with data (not NA) if the points fall within a cell with NA.
@@ -590,7 +566,6 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 #' to the nearest with a value within a range of 3 cell around the points. The 
 #' sf of points with NA is provided and the distance to the nearest cell with 
 #' a non NA value.
-#' @importFrom methods as
 #' @author Reto Schmucki
 #' @export
 #'
@@ -598,7 +573,7 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
 get_near_nona <- function(x = x, y = y, x_cell = NULL){
     
     if(is.null(x_cell)){
-      x_cell <- terra::cellFromXY(raster::raster(x[[1]]), as(y,"Spatial"))
+      x_cell <- terra::cellFromXY(x[[1]], terra::crds(terra::vect(y)))
     }
     wna <- which(is.na(terra::extract(x[[1]], x_cell)))
     mc_na <- x_cell[wna]
@@ -635,248 +610,4 @@ get_near_nona <- function(x = x, y = y, x_cell = NULL){
   }else{
     return(list(nona_cell = x_cell, points_nacell, dist_nona_cell = c(rep(NA, length(mc_na)))))
   }
-}
-
-#' temporal_mean
-#'
-#' Compute mean climatic value for specific periods "annual", "monthly", or 
-#' using a sliding "window" of specific length, from an object obtained from 
-#' the extrat_nc_value() function
-#' @param data_nc object obtained from the extrat_nc_value() function 
-#' corresponding to the time-period of interest
-#' @param time_avg character string defining the level of averaging, "annual", 
-#' "monthly", "window"
-#' @param win_length the number of days defining the span of the sliding window,
-#'  default set to 30 days
-#' @details Note that this function can be relatively slow if you compute 
-#' sliding window average over a long period
-#' @author Reto Schmucki
-#' @export
-#'
-
-temporal_mean <- function(data_nc, time_avg=c("annual", "monthly", "window"),
-                          win_length = 30) {
-
-  result <- list(longitude = data_nc$longitude, 
-                 latitude = data_nc$latitude)
-  first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-  last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-  if ("annual" %in% time_avg){
-    annual.mean <- array(NA, c(length(data_nc$longitude), length(data_nc$latitude),
-                    (last_year-first_year) + 1))
-    year_list <- c()
-    for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
-      annual.mean[, , y - (first_year-1)] <- apply(data_nc$value_array[, , 
-                                              as.numeric(format(data_nc$date_extract,
-                                                               "%Y")) == y],
-                                              c(1,2), mean, na.rm = TRUE)
-      year_list <- c(year_list,y)
-    }
-    if(isTRUE(data_nc$raw_datavals)){
-      annual.mean <- (annual.mean * data_nc$scale_factorvalue) + data_nc$offsetvalue
-    }
-    annual.mean <- list(value_array = annual.mean, date_extract = year_list,
-                        variable_name = data_nc$variable_name)
-    result <- c(result,annual.mean)
-  }
-  if ("monthly" %in% time_avg) {
-    year_month <- unique(as.numeric(format(data_nc$date_extract, "%Y%m")))
-    monthly.mean <- array(NA, c(length(data_nc$longitude),
-                        length(data_nc$latitude), length(year_month)))
-
-    for (ym in year_month) {
-      monthly.mean[,, which(year_month == ym)] <- apply(data_nc$value_array[, ,
-                                                    as.numeric(format(data_nc$date_extract,
-                                                                      "%Y%m")) == ym],
-                                                    c(1, 2), mean, na.rm = TRUE)
-    }
-    if(isTRUE(data_nc$raw_datavals)){
-      monthly.mean <- (monthly.mean * data_nc$scale_factorvalue) + data_nc$offsetvalue
-    }
-    monthly.mean <- list(value_array = monthly.mean,
-                         date_extract = year_month,
-                         year_month = data.frame(year = substr(year_month, 1, 4),
-                                                 month = substr(year_month, 5, 6)),
-                         variable_name = data_nc$variable_name)
-
-    result <- c(result, monthly.mean)
-  }
-
-  if ("window" %in% time_avg) {
-    if(isTRUE(data_nc$raw_datavals)){
-      data_nc$value_array <- (data_nc$value_array * data_nc$scale_factorvalue) + data_nc$offsetvalue
-    }
-    roll.mean <- apply(data_nc$value_array[, , ], c(1, 2), 
-                            zoo::rollmean, k = win_length, na.rm = TRUE)
-    roll.mean <- aperm(roll.mean, c(2,3,1))
-    roll.mean <- list(value_array = roll.mean,
-                      date_extract = data_nc$date_extract[-c(seq_len(win_length - 1))],
-                      variable_name = data_nc$variable_name)
-    result <- c(result, roll.mean)
-    }
-  return(result)
-}
-
-#' temporal_sum
-#'
-#' Compute sum of climatic value for specific periods "annual", "monthly", or 
-#' using a sliding "window" of specific length, from and object obtained from 
-#' the extrat_nc_value() function
-#' @param data_nc object obtained from the extrat_nc_value() function 
-#' corresponding to the period of interest
-#' @param time_sum character string defining the level of summation, "annual", 
-#' "monthly", "window"
-#' @param win_length the number of days defining the span of the sliding window,
-#'  default set to 30 days
-#' @details This function can be relatively slow if you compute sliding window 
-#' total over a long period
-#' @author Reto Schmucki
-#' @export
-#'
-
-temporal_sum <- function(data_nc, time_sum = c("annual", "monthly", "window"),
-                        win_length = 30) {
-
-  result <- list(longitude = data_nc$longitude, latitude = data_nc$latitude)
-  first_year <- min(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-  last_year <- max(unique(as.numeric(format(data_nc$date_extract, "%Y"))))
-  if ("annual" %in% time_sum){
-    annual.sum <- array(NA,
-                        c(length(data_nc$longitude),
-                          length(data_nc$latitude),
-                          (last_year-first_year) + 1))
-    year_list <- c()
-    for( y in unique(as.numeric(format(data_nc$date_extract, "%Y")))) {
-      annual.sum[, , y - (first_year - 1)] <- apply(data_nc$value_array[, , 
-                                              as.numeric(format(data_nc$date_extract,
-                                                                "%Y")) == y],
-                                              c(1,2), sum, na.rm = FALSE)
-      year_list <- c(year_list,y)
-    }
-    if(isTRUE(data_nc$raw_datavals)){
-      annual.sum <- (annual.sum * data_nc$scale_factorvalue) + data_nc$offsetvalue
-    }
-    annual.sum <- list(value_array = annual.sum,
-                       date_extract = year_list,
-                       variable_name = data_nc$variable_name)
-    result <- c(result, annual.sum)
-  }
-  if ("monthly" %in% time_sum) {
-    year_month <- unique(as.numeric(format(data_nc$date_extract, "%Y%m")))
-    monthly.sum <- array(NA,
-                        c(length(data_nc$longitude),
-                          length(data_nc$latitude),
-                          length(year_month)))
-
-    for (ym in year_month) {
-      monthly.sum[, , which(year_month == ym)] <- apply(data_nc$value_array[, , 
-                                                  as.numeric(format(data_nc$date_extract, 
-                                                            "%Y%m"))==ym],
-                                                  c(1,2), sum, na.rm = FALSE)
-    }
-    if(isTRUE(data_nc$raw_datavals)){
-      monthly.sum <- (monthly.sum * data_nc$scale_factorvalue) + data_nc$offsetvalue
-    }
-    monthly.sum <- list(value_array = monthly.sum,
-                        date_extract = year_month,
-                        year_month = data.frame(year = substr(year_month, 1, 4),
-                                                month = substr(year_month, 5, 6)),
-                        variable_name = data_nc$variable_name)
-    result <- c(result,monthly.sum)
-  }
-  if ("window" %in% time_sum) {
-    if(isTRUE(data_nc$raw_datavals)){
-      mdata_nc$value_array <- (data_nc$value_array * data_nc$scale_factorvalue) + data_nc$offsetvalue
-    }
-    roll.sum <- apply(data_nc$value_array[,,], c(1, 2), 
-                        zoo::rollsum, k = win_length, na.rm = FALSE)
-    roll.sum <- aperm(roll.sum, c(2, 3, 1))
-    roll.sum <- list(value_array = roll.sum,
-                    date_extract = data_nc$date_extract[-c(seq_len(win_length-1))],
-                    variable_name = data_nc$variable_name)
-    result <- c(result,roll.sum)
-  }
-  return(result)
-}
-
-#' point_grid_extract
-#'
-#' Extract the mean climatic value (annual mean, monthly mean, sliding window 
-#' mean) for each geographic points
-#' @param x object obtained from the temporal_mean()  or temporal_sum()
-#' @param point_coord sf object or a data.frame with coordinates in degree decimal
-#' in two columns named "longitude" and "latitude" (epsg projection 4326 - wgs 84)
-#' @author Reto Schmucki
-#' @export
-#'
-
-point_grid_extract <- function(x, point_coord) {
-
-  lyr_extent <- rev(order(apply(x$value_array, 3, function(x) sum(!is.na(x)))))[1]
-
-  a <- x$value_array
-  ap <- aperm(a, c(2, 1, 3), resize = TRUE)
-  a <- raster::brick(
-                 xmn = min(x$longitude),
-                 ymn = min(x$latitude),
-                 xmx = max(x$longitude),
-                 ymx = max(x$latitude),
-                 crs = sp::CRS("+init=epsg:4326")
-      )
-  dim(a) <- dim(ap[nrow(ap):1, , ])
-  a <- raster::setValues(a, ap[nrow(ap):1, , ])
-  names(a) <- as.character(x$date_extract)
-  x_r <- a
- 
-  if(!inherits(point_coord, c("sf", "SpatialPointsDataFrame"))) {
-    if(all(c("longitude", "latitude") %in% names(point_coord))){
-      y <- sf::st_as_sf(point_coord, coords = c("longitude", "latitude"), crs = 4326)
-    }else{ stop("point_coord must either be a spatial object (sf or sp) or a data.frame with a longitude and a latitude column")}
-  }else{
-    y <- as(point_coord, "sf")
-  }
-
-  y_cell <- terra::cellFromXY(raster::raster(x_r[[lyr_extent]]), as(y,"Spatial"))
-
-    wna <- which(is.na(terra::extract(x_r[[lyr_extent]], y_cell)))
-    mc_na <- y_cell[wna]
-    if(length(mc_na) > 0){
-      near_cell <- c(rep(NA, length(mc_na)))
-      for(i in seq_along(mc_na)){
-        a <- mc_na[i]
-        row_fact <- c(ncol(x_r), 2*ncol(x_r), 3*ncol(x_r))
-        
-        ms1 <- c(a + c(-3:3) - row_fact[3],
-                a + c(-3:3) - row_fact[2],
-                a + c(-3:3) - row_fact[1],
-                a + c(-3:3),
-                a + c(-3:3) + row_fact[1],
-                a + c(-3:3) + row_fact[2],
-                a + c(-3:3) + row_fact[3])
-
-        ms2 <- ms1[which(!is.na(terra::extract(x_r[[lyr_extent]], c(ms1))))]
-        dist_nonan_cell <- sf::st_distance(y[wna[i],], 
-                           sf::st_as_sf(data.frame(terra::xyFromCell(x_r[[1]], 
-                                        c(ms2))), 
-                                        coords = c("x", "y"), 
-                                        crs = 4326))
-        near_cell[i] <- ms2[order(dist_nonan_cell)[1]]
-      }
-
-    y_cell[wna] <- near_cell   
-    }
-
-    val <- terra::extract(x_r, y_cell)
-    if("site_id" %in% names(y)){
-      site_id_ <- y$site_id
-    }else{
-      site_id_ <- paste0("site_", seq_len(dim(y)[1]))
-    }
-
-    result <- as.data.frame(t(val))
-    names(result) <- site_id_
-    result$date_extract <- x$date_extract
-    result <- result[, c(dim(result)[2], c(1:(dim(result)[2] - 1)))]
-
-  return(result)
 }

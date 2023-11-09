@@ -6,22 +6,25 @@
 \usage{
 get_layer_indice(
   x = NULL,
-  pattern = "X",
-  date_format = "\%Y.\%m.\%d",
-  indice_level = "year"
+  pattern = NULL,
+  date_format = "\%Y-\%m-\%d",
+  indice_level = "year",
+  week_start = getOption("lubridate.week.start", 1)
 )
 }
 \arguments{
-\item{x}{rasterBrick or a vector of dates, from which to extract the dates of the time-series.}
+\item{x}{SpatRaster or a vector of dates, from which to extract the dates of the time-series.}
 
-\item{pattern}{string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15")}
+\item{pattern}{string or characters to remove from the date name (e.g. remove the character "X" from "X2001.07.15"), default is null.}
 
 \item{date_format}{format of the date}
 
 \item{indice_level}{string to define the time-period to use to define the indices, "year" or "month".}
+
+\item{week_start}{option of lubridate starting day of the week, where 1 is Monday and 7 is Sunday.}
 }
 \description{
-Compute a vector of indices of "year" or "month" based on the date extracted from the rasterBrick or a vector of
+Compute a vector of indices of "year" or "month" based on the date extracted from the SpatRaster or a vector of
 strings over the time period.
 }
 \details{
