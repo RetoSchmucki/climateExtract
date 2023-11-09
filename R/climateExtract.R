@@ -397,12 +397,12 @@ temporal_aggregate <- function(x, y = NULL, agg_function = 'mean',
     scale_factorvalue <- x$scale_factorvalue
     offsetvalue <- x$offsetvalue
     a <- x$value_array
+    b <- terra::rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+    names(b) <- as.character(x$date_extract)
     if(isTRUE(x$raw_datavals)){
-    a <- (a * x$scale_factorvalue) + x$offsetvalue
+      b <- (b * x$scale_factorvalue) + x$offsetvalue
     }
-    a <- terra::rast(aperm(a[, ncol(a):1,], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
-    names(a) <- as.character(x$date_extract)
-    x <- a
+    x <- b
   }
   Date_seq <- as.Date(gsub("X", "", names(x)))
   date_dt <- data.table::data.table(date = Date_seq, 
