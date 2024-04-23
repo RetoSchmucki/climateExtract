@@ -131,6 +131,7 @@ gdd_be_r <- function(base_temp, min_temp, max_temp, avg_temp, top_temp) {
         GDD_top <- round(((W * cos(At)) - ((top_temp - avg.t) * (fv - At))) / 3.14, digits = 2)
         GDD_top[GDD_top < 0] <- 0
         GDD <- GDD - GDD_top
+        GDD[GDD < 0] <- 0
     }
 
     names(GDD) <- names(mn.t)
