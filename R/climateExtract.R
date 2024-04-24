@@ -53,7 +53,7 @@
 #'  extract the full data set. Smaller chunks of about 15 years of the most
 #'  recent version of the E-OBS dataset can be specified for download 
 #' can be specified directly with the argument "sm_chunk" (period available are
-#'  2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+#'  2011-2023, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
 #' about the mean and the spread metric see Cornes et al. (2018) and the 
 #' guidance on how to use ensemble datasets available from 
 #' \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
@@ -202,7 +202,7 @@ extract_nc_value <- function(first_year=NULL, last_year=NULL, local_file=TRUE,
 #' @param last_year a numeric value defining the last year of the time period to
 #'  extract, 2014 if NULL, default=NULL
 #' @param sml_chunk a character string for specific time period to be downloaded. 
-#' Chunk available are "2011-2022", "1995-2010", "1980-1994", "1965-1979",
+#' Chunk available are "2011-2023", "1995-2010", "1980-1994", "1965-1979",
 #' and "1950-1964"
 #' @param clim_variable a character string defining the daily climate variable to 
 #' retrieve and extract; "mean temp", "max temp", "min temp", "precipitation", 

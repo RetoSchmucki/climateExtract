@@ -12,6 +12,10 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
+* 24/04/2024 ("Roman-Rose")
+  - Updated to E-OBS v29.0 (March 2024)
+    1. extending data from January 1950 to December 2023
+    2. fixed bug small negative values in ggd "be" method 
 * 07/11/2023 ("Mountain-Rose")
   - Updated to E-OBS v28.0 (Oct 2023)
     1. extending data from January 1950 to June 2023
@@ -28,29 +32,6 @@
     1. extending data from January 1950 to December 2021
     2. Fixed a bug in GDD producing NA when minimum and maximum temperatures were the same. 
 
-* 03/02/2022
-  - Updated to E-OBS v24.0 (November 2021)
-    1. extending data from January 1950 to June 2021 
-
-* 29/11/2021 ("Climbing-Rose")
-  - added Growing Degree Day functions
-    1. compute gdd with the average temperature method
-    2. compute gdd using Baskerville-Emin method
-    3. compute the cumulative sum over RasterBrick layers
-
-* 14/07/2021
-  - added functionality for three new variables
-    1. daily averaged sea level pressure PP
-    2. daily averaged relative humidity HU 
-    3. daily mean global radiation QQ
-
-* 07/04/2021 ("Wild-Rose")
-  - Updated to E-OBS v23.1 (March 2021) 
-  - Optimized several functions
-  - Added option to write data to a raster brick
-  - Better used of memory
-  - Extract data within a bounding box of polygons or points
-  - Option to manually select the E-OBS version
 
 #### Installation
 
@@ -72,7 +53,7 @@ library(climateExtract)
 ecad_version
 ```
 
-Define specific regions and points. If not provided,  data will be extracted for the entire ECAD extent. Note that we need to install the package `geodata` to retrieve the border of France.
+Define specific regions and points. If not provided,  the function will extract the data for the entire extent of ECAD. Note that we need to install the package `geodata` to retrieve the border of France.
 
 ```R
 # use set.seed() for reproducibility
@@ -104,7 +85,7 @@ climate_data = extract_nc_value(first_year = 2012,
                                 return_data = TRUE)
 ```
 
-Connect to the raster brick created on the local disk. If it is too big to be stored in Memory, the raster package will set a pointer to the file.
+Connect to the raster brick created on the local disk. If it is too big to be stored in Memory, the terra package will set a pointer to the file.
 
 ```R
 rbk = terra::rast("raster_mean_temp.tiff")
@@ -251,5 +232,5 @@ plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
 * Get citation information for `climateExtract` in R doing `citation(package = 'climateExtract')`
 
 * Suggested citation:
-  * Schmucki R. (2023) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.28. https://github.com/RetoSchmucki/climateExtract
+  * Schmucki R. (2024) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.29. https://github.com/RetoSchmucki/climateExtract
  

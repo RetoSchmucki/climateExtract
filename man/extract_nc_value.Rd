@@ -103,7 +103,7 @@ By default, this function asks to select the ".nc" file from your
  extract the full data set. Smaller chunks of about 15 years of the most
  recent version of the E-OBS dataset can be specified for download 
 can be specified directly with the argument "sm_chunk" (period available are
- 2011-2020, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+ 2011-2023, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
 about the mean and the spread metric see Cornes et al. (2018) and the 
 guidance on how to use ensemble datasets available from 
 \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}

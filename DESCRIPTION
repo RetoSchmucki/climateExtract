@@ -1,18 +1,19 @@
 Package: climateExtract
+Type: Package
 Title: Extract Climate Data From a Local or online NETCDF  
-Version: 1.28
-Date: 07-11-2023
+Version: 1.29
+Date: 24-04-2024
 Authors@R:
 	c(person(given = "Reto",
 			family ="Schmucki",
-			email = "reto.schmucki@mail.mcgill.ca",
+			email = "retoschm@ceh.ac.uk",
 			role = c("aut", "cre"),
 			comment = c(ORCID = "0000-0003-3064-7553")),
     person(given = "Romain",
       family = "Lorrilliere",
       role = c("ctb")))
-Description: A toolbox to ease the extraction and manipulaton of daily gridded climate data from a NETCDF object available from the European Climate Assessement & Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.
-Depends: R (>= 3.5.0)
+Description: A toolbox to extract and wrangle daily gridded climate data from NETCDF objects available from the European Climate Assessement & Datasets (ECAD) for specific time period, compute summarized values and link them to set of spatial points.
+Depends: R (>= 4.0.0)
 License: MIT + file LICENSE
 URL: https://retoschmucki.github.io/climateExtract
 BugReports: https://github.com/RetoSchmucki/climateExtract/issues
@@ -23,5 +24,5 @@ Imports: ncdf4,
          data.table,
          lubridate,
          methods
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Encoding: UTF-8
