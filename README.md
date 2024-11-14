@@ -1,12 +1,11 @@
 ### climateExtract 
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/RetoSchmucki/climateExtract/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/RetoSchmucki/climateExtract/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 <img style="float: right;" src="man/figures/logo.png" hspace="20" width="120" />
 
-<!-- badges: start -->
-
-[![Build Status](https://app.travis-ci.com/RetoSchmucki/climateExtract.svg?branch=master)](https://app.travis-ci.com/RetoSchmucki/climateExtract)
-
-<!-- badges: end -->
 
 ### R functions to extract and manipulate ECAD climate data
 
