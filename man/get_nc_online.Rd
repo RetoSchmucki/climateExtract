@@ -22,7 +22,7 @@ to extract, 1950 if NULL, default=NULL}
 extract, 2014 if NULL, default=NULL}
 
 \item{sml_chunk}{a character string for specific time period to be downloaded. 
-Chunk available are "2011-2023", "1995-2010", "1980-1994", "1965-1979",
+Chunk available are "2011-2024", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964"}
 
 \item{clim_variable}{a character string defining the daily climate variable to 

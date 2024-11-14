@@ -38,7 +38,7 @@ if FALSE, the function will download the data from ECAD data portal,
 only if local_file = TRUE, default=NULL}
 
 \item{sml_chunk}{a character string for specific time period to be downloaded. 
-Chunk available are "2011-2023", "1995-2010", "1980-1994", "1965-1979",
+Chunk available are "2011-2024", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964", but check what's available at https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_chunks.php}
 
 \item{spatial_extent}{object to define the spatial extent for the data 
@@ -103,7 +103,7 @@ By default, this function asks to select the ".nc" file from your
  extract the full data set. Smaller chunks of about 15 years of the most
  recent version of the E-OBS dataset can be specified for download 
 can be specified directly with the argument "sm_chunk" (period available are
- 2011-2023, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+ 2011-2024, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
 about the mean and the spread metric see Cornes et al. (2018) and the 
 guidance on how to use ensemble datasets available from 
 \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
