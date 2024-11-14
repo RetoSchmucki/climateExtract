@@ -1,4 +1,6 @@
-### climateExtract `<img src="man/figures/logo.png" align="right" alt="" width="120" />`
+### climateExtract 
+
+<img style="float: right;" src="man/figures/logo.png" hspace="20" width="120" />
 
 <!-- badges: start -->
 
@@ -11,12 +13,12 @@
 * ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 * Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
-> Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, "TG" average temperature).
+> Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, "TG" average temperature).
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
 
-* 14/04/2024 ("Caostal-Rose")
+* 14/04/2024 ("Coastal-Rose")
 
   - Updated to E-OBS v30.0 (September 2024)
     1. extending data from January 1950 to June 2024
@@ -32,7 +34,7 @@
     1. extending data from January 1950 to June 2023
     2. fully update to the `terra` package
     3. included the `geodata` package
-    4. removed former dependency to the `zoo` package
+    4. removed former dependency on the `zoo` package
 
 #### Installation
 
@@ -95,7 +97,7 @@ format(object.size(climate_data), "MB")
 format(object.size(rbk), "MB")
 ```
 
-Aggregate the data over time; `annual`, `monthly`, or by using a rolling `window`. The function `mean` could be replaced by `sum`, `sd`, or other functions that can be computed along a vector. If you select "daily" for the time_step, the function will return the daily ECAD data without aggregation. Note that when computing rolling
+Aggregate the data over time; `annual`, `monthly`, or by using a rolling `window`. The function `mean` could be replaced by `sum`, `sd`, or other functions that can be computed along a vector. If you select "daily" for the time_step, the function will return the daily ECAD data without aggregation.
 
 ```R
 # monthly mean

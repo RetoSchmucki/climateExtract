@@ -77,9 +77,9 @@
   <div class="contents col-md-9">
 
 <div class="section level3">
-<h3 id="climateextract-img-srcmanfigureslogopng-alignright-alt-width120-">climateExtract <code>&lt;img src="man/figures/logo.png" align="right" alt="" width="120" /&gt;</code>
-<a class="anchor" aria-label="anchor" href="#climateextract-img-srcmanfigureslogopng-alignright-alt-width120-"></a>
+<h3 id="climateextract">climateExtract<a class="anchor" aria-label="anchor" href="#climateextract"></a>
 </h3>
+<p><img style="float: right;" src="reference/figures/logo.png" hspace="20" width="120"></p>
 <!-- badges: start -->
 
 <!-- badges: end -->
@@ -94,14 +94,14 @@
 </li>
 </ul>
 <blockquote>
-<p>Before extracting any data, please read carefully the description of the datasets and the different grid size available (eg. 0.25 deg. regular grid, “TG” average temperature). Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a></p>
+<p>Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, “TG” average temperature). Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a></p>
 </blockquote>
 <div class="section level4">
 <h4 id="news">News<a class="anchor" aria-label="anchor" href="#news"></a>
 </h4>
 <ul>
 <li>
-<p>14/04/2024 (“Caostal-Rose”)</p>
+<p>14/04/2024 (“Coastal-Rose”)</p>
 <ul>
 <li>Updated to E-OBS v30.0 (September 2024)
 <ol style="list-style-type: decimal">
@@ -130,7 +130,7 @@
 <li>extending data from January 1950 to June 2023</li>
 <li>fully update to the <code>terra</code> package</li>
 <li>included the <code>geodata</code> package</li>
-<li>removed former dependency to the <code>zoo</code> package</li>
+<li>removed former dependency on the <code>zoo</code> package</li>
 </ol>
 </li>
 </ul>
@@ -186,7 +186,7 @@
 <code class="sourceCode R"><span><span class="va">rbk</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"raster_mean_temp.tiff"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span></code></pre></div>
-<p>Aggregate the data over time; <code>annual</code>, <code>monthly</code>, or by using a rolling <code>window</code>. The function <code>mean</code> could be replaced by <code>sum</code>, <code>sd</code>, or other functions that can be computed along a vector. If you select “daily” for the time_step, the function will return the daily ECAD data without aggregation. Note that when computing rolling</p>
+<p>Aggregate the data over time; <code>annual</code>, <code>monthly</code>, or by using a rolling <code>window</code>. The function <code>mean</code> could be replaced by <code>sum</code>, <code>sd</code>, or other functions that can be computed along a vector. If you select “daily” for the time_step, the function will return the daily ECAD data without aggregation.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># monthly mean</span></span>
 <span><span class="va">monthly_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,</span>
