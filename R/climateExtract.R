@@ -326,8 +326,10 @@ get_nc_online <- function(first_year = first_year, last_year = last_year,
 #'
  
 write_to_brick <- function(x, out = out, outformat = outformat, ...) {
+  res_half <- diff(x$longitude[1:2])*0.5
   a <- x$value_array
-  b <- terra::rast(aperm(a[, ncol(a):1, ], c(2, 1, 3), resize = TRUE), extent = terra::ext(min(x$longitude), max(x$longitude), min(x$latitude), max(x$latitude)), crs = "epsg:4326")
+  b <- terra::rast(aperm(a[, ncol(a):1, ], c(2, 1, 3), resize = TRUE), 
+                extent = terra::ext(min(x$longitude)-res_half, max(x$longitude)+res_half, min(x$latitude)-res_half, max(x$latitude)+res_half), crs = "epsg:4326")
   names(b) <- as.character(x$date_extract)
   if(isTRUE(x$raw_datavals)){
     b <- (b * x$scale_factorvalue) + x$offsetvalue

@@ -1,10 +1,13 @@
-### climateExtract <img src="man/figures/logo.png" align="right" alt="" width="120" />
+### climateExtract `<img src="man/figures/logo.png" align="right" alt="" width="120" />`
 
 <!-- badges: start -->
+
 [![Build Status](https://app.travis-ci.com/RetoSchmucki/climateExtract.svg?branch=master)](https://app.travis-ci.com/RetoSchmucki/climateExtract)
+
 <!-- badges: end -->
 
 ### R functions to extract and manipulate ECAD climate data
+
 * ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 * Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
@@ -12,26 +15,24 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 
 #### News
+
+* 14/04/2024 ("Caostal-Rose")
+
+  - Updated to E-OBS v30.0 (September 2024)
+    1. extending data from January 1950 to June 2024
+    2. fixed spatial misalignment in output raster
 * 24/04/2024 ("Roman-Rose")
+
   - Updated to E-OBS v29.0 (March 2024)
     1. extending data from January 1950 to December 2023
-    2. fixed bug small negative values in ggd "be" method 
+    2. fixed bug small negative values in ggd "be" method
 * 07/11/2023 ("Mountain-Rose")
+
   - Updated to E-OBS v28.0 (Oct 2023)
     1. extending data from January 1950 to June 2023
     2. fully update to the `terra` package
     3. included the `geodata` package
     4. removed former dependency to the `zoo` package
-
-* 30/04/2023 ("Witty-Rose")
-  - Updated to E-OBS v27.0 (April 2023)
-    1. extending data from January 1950 to December 2022
-   
-* 16/06/2022 ("Curious-Rose")
-  - Updated to E-OBS v25.0 (June 2022)
-    1. extending data from January 1950 to December 2021
-    2. Fixed a bug in GDD producing NA when minimum and maximum temperatures were the same. 
-
 
 #### Installation
 
@@ -63,11 +64,12 @@ sf_point = sf::st_sf(sf::st_sample(x = fr_border, size = 25, type = "random"))
 ```
 
 Extract data
+
 - Retrieve climate data from E-OBS server or a local file if available.
 - Crop to the extent of the spatial object provided.
-- Specify years and data of interest; see details help(extract_nc_value). 
-- Write output to local disk with `write_raster=TRUE` 
-- If `return_data = TRUE`, an R object (a list) with the climate values is created.  
+- Specify years and data of interest; see details help(extract_nc_value).
+- Write output to local disk with `write_raster=TRUE`
+- If `return_data = TRUE`, an R object (a list) with the climate values is created.
 
 ```R
 climate_data = extract_nc_value(first_year = 2012, 
@@ -93,7 +95,7 @@ format(object.size(climate_data), "MB")
 format(object.size(rbk), "MB")
 ```
 
-Aggregate the data over time; `annual`, `monthly`, or by using a rolling `window`. The function `mean` could be replaced by `sum`, `sd`, or other functions that can be computed along a vector. If you select "daily" for the time_step, the function will return the daily ECAD data without aggregation. Note that when computing rolling  
+Aggregate the data over time; `annual`, `monthly`, or by using a rolling `window`. The function `mean` could be replaced by `sum`, `sd`, or other functions that can be computed along a vector. If you select "daily" for the time_step, the function will return the daily ECAD data without aggregation. Note that when computing rolling
 
 ```R
 # monthly mean
@@ -114,9 +116,10 @@ window_7d_avg_temp_R = temporal_aggregate(x = rbk,
                                           win_length = 7)
 ```
 
->Note: Argument in `x` could also be the climate_data object that resulted from the `extract_nc_value()` function.
+> Note: Argument in `x` could also be the climate_data object that resulted from the `extract_nc_value()` function.
 
 ## Extract location-specific value
+
 You can provide a set of spatial locations (e.g., points) in the `y` argument to extract the values for these locations. By providing geographic locations in `y`, the function return the results, the temporal aggregates, specific to these points.
 
 ```R
@@ -127,7 +130,8 @@ annual_avg_temp_pnts = temporal_aggregate(x = rbk,
                                           variable_name = "average temp",
                                           time_step = "annual")
 ```
->Note: If a site is located along the coast and falls outside the terrestrial part of the raster grid cell with a value, the function return the value of the nearest cell with a value. This will also return the Distance_from_pnt to inform the distance between the location and the centroid of the cell from which the value was collected. For points located on grid cell with value, the Distance_from_pnt is NA.
+
+> Note: If a site is located along the coast and falls outside the terrestrial part of the raster grid cell with a value, the function return the value of the nearest cell with a value. This will also return the Distance_from_pnt to inform the distance between the location and the centroid of the cell from which the value was collected. For points located on grid cell with value, the Distance_from_pnt is NA.
 
 Map of the aggregated layer. For a map of the average temperature for Sept 2012, use layer `"2012-09"`.
 
@@ -143,6 +147,7 @@ plot(sf_point, col = 'magenta', pch = 17, add = TRUE)
 ```
 
 #### Growing Degree Day (GDD)
+
 ClimateExtract enables users to calculate growing degree day values with specific base and maximum temperatures. You can calculate the GDD from the daily average temperature or use the Baskerville-Emin method (method = 'be'), which fits a sine function to the minimum and maximum daily temperature to account for daily fluctuations. With these methods, you can calculate daily GDD values and compute the total or the cumulative sum (accumulated) GDD over a specific period (e.g., year, month, week, or a moving window).
 
 ```R
@@ -194,7 +199,6 @@ terra::plot(be_gdd_france[["2012-06-16"]])
 
 The output is a multilayer raster that you can use with the function `temporal_aggregate()` to calculate the sum, mean, or rolling window mean. In general, however, we will be most interested in the cumulative sum (i.e., the accumulation of GDD over a specific period). You can use the function `cumsum_rb()` (cumulative sum on multilayer raster). This function uses the GDD Raster and a vector that indexes the layers to inform the specific period (e.g., monthly, yearly, weekly, or X-day windows). The indices are returned with the function `get_layer_indice()` (see below). You can also provide a vector of index that will be used to aggregate the layers.
 
-
 ```R
 tp_index <- get_layer_indice(x = be_gdd_france,
                              date_format = "%Y-%m-%d",
@@ -226,11 +230,10 @@ plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
 #### Meta
 
 * See citation and ECA&D/E-OBS data policy [https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php\#datafiles](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php\#datafiles)
-* Register as an E-OBS user at <https://surfobs.climate.copernicus.eu/dataaccess/registration.php>
+* Register as an E-OBS user at [https://surfobs.climate.copernicus.eu/dataaccess/registration.php](https://surfobs.climate.copernicus.eu/dataaccess/registration.php)
 * Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 * Raise issues: [https://github.com/RetoSchmucki/climateExtract/issues](https://github.com/RetoSchmucki/climateExtract/issues)
 * Get citation information for `climateExtract` in R doing `citation(package = 'climateExtract')`
-
 * Suggested citation:
+
   * Schmucki R. (2024) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.29. https://github.com/RetoSchmucki/climateExtract
- 
