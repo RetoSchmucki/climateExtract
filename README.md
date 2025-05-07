@@ -1,11 +1,12 @@
-### climateExtract 
+### climateExtract
 
 <!-- badges: start -->
+
 [![R-CMD-check](https://github.com/RetoSchmucki/climateExtract/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/RetoSchmucki/climateExtract/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
-<img style="float: right;" src="man/figures/logo.png" hspace="20" width="120" />
-
+`<img style="float: right;" src="man/figures/logo.png" hspace="20" width="120" />`
 
 ### R functions to extract and manipulate ECAD climate data
 
@@ -17,23 +18,30 @@
 
 #### News
 
-* 14/04/2024 ("Coastal-Rose")
+07/05/2025 ("Pacific-Rose")
 
-  - Updated to E-OBS v30.0 (September 2024)
-    1. extending data from January 1950 to June 2024
-    2. fixed spatial misalignment in output raster
-* 24/04/2024 ("Roman-Rose")
+* Updated to E-OBS v31.0 (March 2025)
+  1. extending data from January 1950 to December 2024
 
-  - Updated to E-OBS v29.0 (March 2024)
-    1. extending data from January 1950 to December 2023
-    2. fixed bug small negative values in ggd "be" method
-* 07/11/2023 ("Mountain-Rose")
+14/04/2024 ("Coastal-Rose")
 
-  - Updated to E-OBS v28.0 (Oct 2023)
-    1. extending data from January 1950 to June 2023
-    2. fully update to the `terra` package
-    3. included the `geodata` package
-    4. removed former dependency on the `zoo` package
+- Updated to E-OBS v30.0 (September 2024)
+  1. extending data from January 1950 to June 2024
+  2. fixed spatial misalignment in output raster
+
+24/04/2024 ("Roman-Rose")
+
+- Updated to E-OBS v29.0 (March 2024)
+  1. extending data from January 1950 to December 2023
+  2. fixed bug small negative values in ggd "be" method
+
+07/11/2023 ("Mountain-Rose")
+
+- Updated to E-OBS v28.0 (Oct 2023)
+  1. extending data from January 1950 to June 2023
+  2. fully update to the `terra` package
+  3. included the `geodata` package
+  4. removed former dependency on the `zoo` package
 
 #### Installation
 
