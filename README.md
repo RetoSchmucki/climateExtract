@@ -6,7 +6,7 @@
 
 <!-- badges: end -->
 
-`<img style="float: right;" src="logo.png" hspace="20" width="120">`
+<img style="float: right;" src="logo.png" hspace="20" width="120">
 
 ### R functions to extract and manipulate ECAD climate data
 
