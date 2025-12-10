@@ -18,6 +18,10 @@
 
 #### News
 
+10/12/2025 ("Dancing Rose")
+* Updated to E-OBS v32.0 (November 2025)
+  1. extending data from January 1950 to June 2025
+     
 07/05/2025 ("Pacific-Rose")
 
 * Updated to E-OBS v31.0 (March 2025)
@@ -34,14 +38,6 @@
 - Updated to E-OBS v29.0 (March 2024)
   1. extending data from January 1950 to December 2023
   2. fixed bug small negative values in ggd "be" method
-
-07/11/2023 ("Mountain-Rose")
-
-- Updated to E-OBS v28.0 (Oct 2023)
-  1. extending data from January 1950 to June 2023
-  2. fully update to the `terra` package
-  3. included the `geodata` package
-  4. removed former dependency on the `zoo` package
 
 #### Installation
 
@@ -246,3 +242,4 @@ plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
 * Suggested citation:
 
   * Schmucki R. (2024) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.29. https://github.com/RetoSchmucki/climateExtract
+
