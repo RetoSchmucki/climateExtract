@@ -4,8 +4,9 @@ citEntry(
   entry    = "Article",
   title    = "climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D",
   author   = "Reto Schmucki",
-  journal  = "R package version 1.31",
+  journal  = "R package version 1.32",
   year     = "2025",
   url      = "https://github.com/RetoSchmucki/climateExtract",
-  textVersion = paste("Schmucki R. (2025) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.31 https://github.com/RetoSchmucki/climateExtract")
+  textVersion = paste("Schmucki R. (2025) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.32 https://github.com/RetoSchmucki/climateExtract")
+
 )
