@@ -1,3 +1,4 @@
+ecad_version = "32.0"
 ecad_version = "31.0"
 #ecad_version = "30.0"
 #ecad_version = "29.0"
@@ -8,3 +9,4 @@ ecad_version = "31.0"
 #ecad_version = "24.0"
 #ecad_version = "23.1"
 #ecad_version = "22.0"
+
