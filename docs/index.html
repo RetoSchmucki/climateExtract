@@ -93,8 +93,18 @@
 </li>
 </ul>
 <blockquote>
-<p>Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, “TG” average temperature). Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a></p>
+<p>Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, “TG” average temperature).</p>
 </blockquote>
+<blockquote>
+<p>Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a>.</p>
+</blockquote>
+<blockquote>
+<p>For climate data from the running year (e.g, last month), you can have a look at the data available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php" class="external-link">Running year data</a>. These file have the same structure and can be used by adding the path of the specific netcdf folder that you have downloaded.</p>
+</blockquote>
+<pre><code>extract_nc_value(...
+                 local_file = TRUE,
+                 file_path = "YOUR/PATH/TO/DATA.nc",
+                 ...)</code></pre>
 <div class="section level4">
 <h4 id="news">News<a class="anchor" aria-label="anchor" href="#news"></a>
 </h4>
@@ -145,14 +155,14 @@
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h4>
 <p>Check the default ECAD version (can be changed with <code>ecad_v = xx.x</code>)</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract" class="external-link">climateExtract</a></span><span class="op">)</span></span>
 <span><span class="va">ecad_version</span></span></code></pre></div>
 <p>Define specific regions and points. If not provided, the function will extract the data for the entire extent of ECAD. Note that we need to install the package <code>geodata</code> to retrieve the border of France.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use set.seed() for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span> </span>
-<span><span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu">geodata</span><span class="fu">::</span><span class="fu">gadm</span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu">geodata</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geodata/man/gadm.html" class="external-link">gadm</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sf_point</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_sample.html" class="external-link">st_sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fr_border</span>, size <span class="op">=</span> <span class="fl">25</span>, type <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Extract data</p>
 <ul>
@@ -163,12 +173,12 @@
 </li>
 <li>If <code>return_data = TRUE</code>, an R object (a list) with the climate values is created.</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">climate_data</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, </span>
 <span>                                last_year <span class="op">=</span> <span class="fl">2015</span>,</span>
 <span>                                local_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                                file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                                sml_chunk <span class="op">=</span> <span class="st">"2011-2024"</span>,</span>
+<span>                                sml_chunk <span class="op">=</span> <span class="st">"2011-2025"</span>,</span>
 <span>                                spatial_extent <span class="op">=</span> <span class="va">fr_border</span>,</span>
 <span>                                clim_variable <span class="op">=</span> <span class="st">"mean temp"</span>,</span>
 <span>                                statistic <span class="op">=</span> <span class="st">"mean"</span>,</span>
@@ -178,12 +188,12 @@
 <span>                                out <span class="op">=</span> <span class="st">"raster_mean_temp.tiff"</span>,</span>
 <span>                                return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Connect to the raster brick created on the local disk. If it is too big to be stored in Memory, the terra package will set a pointer to the file.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rbk</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"raster_mean_temp.tiff"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span></code></pre></div>
 <p>Aggregate the data over time; <code>annual</code>, <code>monthly</code>, or by using a rolling <code>window</code>. The function <code>mean</code> could be replaced by <code>sum</code>, <code>sd</code>, or other functions that can be computed along a vector. If you select “daily” for the time_step, the function will return the daily ECAD data without aggregation.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># monthly mean</span></span>
 <span><span class="va">monthly_avg_temp_R</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,</span>
 <span>                                        agg_function <span class="op">=</span> <span class="st">"mean"</span>,</span>
@@ -209,7 +219,7 @@
 <h2 id="extract-location-specific-value">Extract location-specific value<a class="anchor" aria-label="anchor" href="#extract-location-specific-value"></a>
 </h2>
 <p>You can provide a set of spatial locations (e.g., points) in the <code>y</code> argument to extract the values for these locations. By providing geographic locations in <code>y</code>, the function return the results, the temporal aggregates, specific to these points.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># annual mean per point</span></span>
 <span><span class="va">annual_avg_temp_pnts</span> <span class="op">=</span> <span class="fu"><a href="reference/temporal_aggregate.html">temporal_aggregate</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rbk</span>,</span>
 <span>                                          y <span class="op">=</span> <span class="va">sf_point</span>,</span>
@@ -220,24 +230,24 @@
 <p>Note: If a site is located along the coast and falls outside the terrestrial part of the raster grid cell with a value, the function return the value of the nearest cell with a value. This will also return the Distance_from_pnt to inform the distance between the location and the centroid of the cell from which the value was collected. For points located on grid cell with value, the Distance_from_pnt is NA.</p>
 </blockquote>
 <p>Map of the aggregated layer. For a map of the average temperature for Sept 2012, use layer <code>"2012-09"</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012-09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>Add points to the map.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">monthly_avg_temp_R</span><span class="op">[[</span><span class="st">"2012-09"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sf_point</span>, col <span class="op">=</span> <span class="st">'magenta'</span>, pch <span class="op">=</span> <span class="fl">17</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="growing-degree-day-gdd">Growing Degree Day (GDD)<a class="anchor" aria-label="anchor" href="#growing-degree-day-gdd"></a>
 </h4>
 <p>ClimateExtract enables users to calculate growing degree day values with specific base and maximum temperatures. You can calculate the GDD from the daily average temperature or use the Baskerville-Emin method (method = ‘be’), which fits a sine function to the minimum and maximum daily temperature to account for daily fluctuations. With these methods, you can calculate daily GDD values and compute the total or the cumulative sum (accumulated) GDD over a specific period (e.g., year, month, week, or a moving window).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get minimum temperature </span></span>
 <span></span>
 <span><span class="va">climate_data_min</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, </span>
 <span>                                    last_year <span class="op">=</span> <span class="fl">2015</span>,</span>
 <span>                                    local_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                                    file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                                    sml_chunk <span class="op">=</span> <span class="st">"2011-2024"</span>,</span>
+<span>                                    sml_chunk <span class="op">=</span> <span class="st">"2011-2025"</span>,</span>
 <span>                                    spatial_extent <span class="op">=</span> <span class="va">fr_border</span>,</span>
 <span>                                    clim_variable <span class="op">=</span> <span class="st">"min temp"</span>,</span>
 <span>                                    statistic <span class="op">=</span> <span class="st">"mean"</span>,</span>
@@ -251,7 +261,7 @@
 <span>                                    last_year <span class="op">=</span> <span class="fl">2015</span>,</span>
 <span>                                    local_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                                    file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                                    sml_chunk <span class="op">=</span> <span class="st">"2011-2024"</span>,</span>
+<span>                                    sml_chunk <span class="op">=</span> <span class="st">"2011-2025"</span>,</span>
 <span>                                    spatial_extent <span class="op">=</span> <span class="va">fr_border</span>,</span>
 <span>                                    clim_variable <span class="op">=</span> <span class="st">"max temp"</span>,</span>
 <span>                                    statistic <span class="op">=</span> <span class="st">"mean"</span>,</span>
@@ -264,7 +274,7 @@
 <span><span class="va">rbk_min</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"raster_min_temp.tiff"</span><span class="op">)</span></span>
 <span><span class="va">rbk_max</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"raster_max_temp.tiff"</span><span class="op">)</span></span></code></pre></div>
 <p>With the <code><a href="reference/gdd_extract.html">gdd_extract()</a></code> function, we can calculate the GDD with a specific base temperature (7 degrees C) and a preferred method. Here, we used the Baskerville-Emin method (method = ‘be’), which requires the minimum and maximum daily temperatures. You can also use the average daily temperature by using the method to <code>avg</code> instead of <code>be</code>. Note that for the average method, you can specify the mean_temp or provide the min_temp and max_temp from which the function calculates the mean temperature. When using the <code>be</code> method, you must provide the minimum and maximum temperature to enable the fit of a daily sine function.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">be_gdd_france</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdd_extract.html">gdd_extract</a></span><span class="op">(</span>base_temp <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>                            min_temp <span class="op">=</span> <span class="va">rbk_min</span>,</span>
 <span>                            max_temp <span class="op">=</span> <span class="va">rbk_max</span>,</span>
@@ -272,8 +282,8 @@
 <span></span>
 <span><span class="co"># visualise the GDD-base7, for June 16th 2012</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">be_gdd_france</span><span class="op">[[</span><span class="st">"2012-06-16"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p>The output is a multilayer raster that you can use with the function <code><a href="reference/temporal_aggregate.html">temporal_aggregate()</a></code> to calculate the sum, mean, or rolling window mean. In general, however, we will be most interested in the cumulative sum (i.e., the accumulation of GDD over a specific period). You can use the function <code><a href="reference/cumsum_rb.html">cumsum_rb()</a></code> (cumulative sum on multilayer raster). This function uses the GDD Raster and a vector that indexes the layers to inform the specific period (e.g., monthly, yearly, weekly, or X-day windows). The indices are returned with the function <code><a href="reference/get_layer_indice.html">get_layer_indice()</a></code> (see below). You can also provide a vector of index that will be used to aggregate the layers.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>The output is a multilayer raster that you can use with the function <code><a href="reference/temporal_aggregate.html">temporal_aggregate()</a></code> to calculate the sum, mean, or rolling window mean. In general, however, we will be most interested in the cumulative sum (i.e., the accumulation of GDD over a specific period). You can use the function <code><a href="reference/cumsum_rb.html">cumsum_rb()</a></code> (cumulative sum on multilayer raster). This function uses the GDD Raster and a vector that indexes the layers to inform the specific period (e.g., monthly, yearly, weekly, or X-day windows). The indices are returned with the function <code><a href="reference/get_layer_indice.html">get_layer_indice()</a></code> (see below). You can also provide your own vector of index that will be used to aggregate the layers.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tp_index</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_layer_indice.html">get_layer_indice</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">be_gdd_france</span>,</span>
 <span>                             date_format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span>,</span>
 <span>                             indice_level <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
@@ -283,7 +293,7 @@
 <span><span class="co"># visualise the GDD base7 accumulated between January 1st until June 16th 2012.</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">year_cumsum_gdd_france</span><span class="op">[[</span><span class="st">"2012-06-16"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>To get the cumulative GDD at the end of each month, you can calculate the cumulative total monthly and extract the last day of each month. The following script generates a RasterBrick of the total GDD accumulated at the end of each month.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tp_index</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_layer_indice.html">get_layer_indice</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">be_gdd_france</span>,</span>
 <span>                             date_format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span>,</span>
 <span>                             indice_level <span class="op">=</span> <span class="st">"month"</span><span class="op">)</span></span>
@@ -295,7 +305,7 @@
 <span></span>
 <span><span class="va">month_cumsum_gdd_france</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">last_day_index</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co"># plot the accumulated gdd on January 31 and Feburary 29, 2012</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">month_cumsum_gdd_france</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">last_day_index</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">month_cumsum_gdd_france</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">last_day_index</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="meta">Meta<a class="anchor" aria-label="anchor" href="#meta"></a>
