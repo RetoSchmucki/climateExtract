@@ -14,7 +14,10 @@
 * Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
 > Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, "TG" average temperature).
-> Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
+
+> Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles).
+
+> For climate data from the running year (e.g, last month), you can have a look at the data available [Running year data](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php).
 
 #### News
 
@@ -82,7 +85,7 @@ climate_data = extract_nc_value(first_year = 2012,
                                 last_year = 2015,
                                 local_file = FALSE,
                                 file_path = NULL,
-                                sml_chunk = "2011-2024",
+                                sml_chunk = "2011-2025",
                                 spatial_extent = fr_border,
                                 clim_variable = "mean temp",
                                 statistic = "mean",
@@ -163,7 +166,7 @@ climate_data_min = extract_nc_value(first_year = 2012,
                                     last_year = 2015,
                                     local_file = FALSE,
                                     file_path = NULL,
-                                    sml_chunk = "2011-2024",
+                                    sml_chunk = "2011-2025",
                                     spatial_extent = fr_border,
                                     clim_variable = "min temp",
                                     statistic = "mean",
@@ -177,7 +180,7 @@ climate_data_max = extract_nc_value(first_year = 2012,
                                     last_year = 2015,
                                     local_file = FALSE,
                                     file_path = NULL,
-                                    sml_chunk = "2011-2024",
+                                    sml_chunk = "2011-2025",
                                     spatial_extent = fr_border,
                                     clim_variable = "max temp",
                                     statistic = "mean",
@@ -203,7 +206,7 @@ be_gdd_france <- gdd_extract(base_temp = 7,
 terra::plot(be_gdd_france[["2012-06-16"]])
 ```
 
-The output is a multilayer raster that you can use with the function `temporal_aggregate()` to calculate the sum, mean, or rolling window mean. In general, however, we will be most interested in the cumulative sum (i.e., the accumulation of GDD over a specific period). You can use the function `cumsum_rb()` (cumulative sum on multilayer raster). This function uses the GDD Raster and a vector that indexes the layers to inform the specific period (e.g., monthly, yearly, weekly, or X-day windows). The indices are returned with the function `get_layer_indice()` (see below). You can also provide a vector of index that will be used to aggregate the layers.
+The output is a multilayer raster that you can use with the function `temporal_aggregate()` to calculate the sum, mean, or rolling window mean. In general, however, we will be most interested in the cumulative sum (i.e., the accumulation of GDD over a specific period). You can use the function `cumsum_rb()` (cumulative sum on multilayer raster). This function uses the GDD Raster and a vector that indexes the layers to inform the specific period (e.g., monthly, yearly, weekly, or X-day windows). The indices are returned with the function `get_layer_indice()` (see below). You can also provide your own vector of index that will be used to aggregate the layers.
 
 ```R
 tp_index <- get_layer_indice(x = be_gdd_france,
@@ -230,7 +233,7 @@ last_day_index <- as.numeric(table(as.numeric(factor(lubridate::floor_date(as.Da
 
 month_cumsum_gdd_france[[cumsum(last_day_index)]]
 # plot the accumulated gdd on January 31 and Feburary 29, 2012
-plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
+terra::plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
 ```
 
 #### Meta
