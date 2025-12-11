@@ -11,3 +11,5 @@
 temp/*
 dev/*
 GADM/*
+/.quarto/
+**/*.quarto_ipynb

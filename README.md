@@ -18,6 +18,13 @@
 > Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles).
 
 > For climate data from the running year (e.g, last month), you can have a look at the data available [Running year data](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php).
+> These file have the same structure and can be used by adding the path of the specific netcdf folder that you have downloaded. 
+```
+extract_nc_value(...
+                 local_file = TRUE,
+                 file_path = "YOUR/PATH/TO/DATA.nc",
+                 ...)
+```
 
 #### News
 
