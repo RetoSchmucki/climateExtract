@@ -18,7 +18,8 @@
 
 #### News
 
-10/12/2025 ("Dancing Rose")
+10/12/2025 ("Dancing-Rose")
+
 * Updated to E-OBS v32.0 (November 2025)
   1. extending data from January 1950 to June 2025
      
@@ -241,5 +242,5 @@ plot(month_cumsum_gdd_france[[cumsum(last_day_index)]][[1:2]])
 * Get citation information for `climateExtract` in R doing `citation(package = 'climateExtract')`
 * Suggested citation:
 
-  * Schmucki R. (2024) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.29. https://github.com/RetoSchmucki/climateExtract
+  * Schmucki R. (2025) climateExtract: Extract and manipulate daily gridded observational dataset of European climate (E-OBS) provided by ECA&D. R package version 1.32. https://github.com/RetoSchmucki/climateExtract
 

@@ -22,7 +22,7 @@ to extract, 1950 if NULL, default=NULL}
 extract, 2014 if NULL, default=NULL}
 
 \item{sml_chunk}{a character string for specific time period to be downloaded. 
-Chunk available are "2011-2024", "1995-2010", "1980-1994", "1965-1979",
+Chunk available are "2011-2025", "1995-2010", "1980-1994", "1965-1979",
 and "1950-1964"}
 
 \item{clim_variable}{a character string defining the daily climate variable to 
@@ -57,7 +57,7 @@ If first_year and last_year are not provided, the function
  extract the full data set. Smaller chunks of about 15 years of the most
  recent version of the E-OBS dataset can be specified for download 
 can be specified directly with the argument "sm_chunk" (period available are
- 2011-2022, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
+ 2011-2025, 1995-2010, 1980-1994, 1965-1979, 1950-1964). For more details 
 about the mean and the spread metric see Cornes et al. (2018) and the 
 guidance on how to use ensemble datasets available from 
 \url{http://surfobs.climate.copernicus.eu/userguidance/use_ensembles.php}
