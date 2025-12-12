@@ -18,7 +18,7 @@
 1. Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, "TG" average temperature).
 2. Shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles).
 3. If you need recent climate data from the running year (e.g, last 6 months), have a look at [Running year data](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php).
-4. MacOS and Linux users, ensure that you correctly installed terra and the sf packages as climateExtract is dependent on them working seamlessly (see instruction for [terra](https://github.com/rspatial/terra) and [sf](https://github.com/r-spatial/sf)).
+4. MacOS and Linux users, ensure that you correctly installed terra and the sf packages as climateExtract is dependent on them working seamlessly (see instruction for [terra](https://github.com/rspatial/terra?tab=readme-ov-file#installation) and [sf](https://github.com/r-spatial/sf?tab=readme-ov-file#installing)).
 
 
 #### News

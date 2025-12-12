@@ -92,19 +92,16 @@
 <li>Package URL: <a href="https://retoschmucki.github.io/climateExtract" class="external-link">https://retoschmucki.github.io/climateExtract/</a>
 </li>
 </ul>
-<blockquote>
-<p>Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, “TG” average temperature).</p>
-</blockquote>
-<blockquote>
-<p>Note shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a>.</p>
-</blockquote>
-<blockquote>
-<p>For climate data from the running year (e.g, last month), you can have a look at the data available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php" class="external-link">Running year data</a>. These file have the same structure and can be used by adding the path of the specific netcdf folder that you have downloaded.</p>
-</blockquote>
-<pre><code>extract_nc_value(...
-                 local_file = TRUE,
-                 file_path = "YOUR/PATH/TO/DATA.nc",
-                 ...)</code></pre>
+<div class="section level4">
+<h4 id="notice">NOTICE<a class="anchor" aria-label="anchor" href="#notice"></a>
+</h4>
+<ol style="list-style-type: decimal">
+<li>Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, “TG” average temperature).</li>
+<li>Shorter time-series are also available <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles" class="external-link">Copernicus Climate</a>.</li>
+<li>If you need recent climate data from the running year (e.g, last 6 months), have a look at <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php" class="external-link">Running year data</a>.</li>
+<li>MacOS and Linux users, ensure that you correctly installed terra and the sf packages as climateExtract is dependent on them working seamlessly (see instruction for <a href="https://github.com/rspatial/terra" class="external-link">terra</a> and <a href="https://github.com/r-spatial/sf" class="external-link">sf</a>).</li>
+</ol>
+</div>
 <div class="section level4">
 <h4 id="news">News<a class="anchor" aria-label="anchor" href="#news"></a>
 </h4>
@@ -113,32 +110,6 @@
 <li>Updated to E-OBS v32.0 (November 2025)
 <ol style="list-style-type: decimal">
 <li>extending data from January 1950 to June 2025</li>
-</ol>
-</li>
-</ul>
-<p>07/05/2025 (“Pacific-Rose”)</p>
-<ul>
-<li>Updated to E-OBS v31.0 (March 2025)
-<ol style="list-style-type: decimal">
-<li>extending data from January 1950 to December 2024</li>
-</ol>
-</li>
-</ul>
-<p>14/04/2024 (“Coastal-Rose”)</p>
-<ul>
-<li>Updated to E-OBS v30.0 (September 2024)
-<ol style="list-style-type: decimal">
-<li>extending data from January 1950 to June 2024</li>
-<li>fixed spatial misalignment in output raster</li>
-</ol>
-</li>
-</ul>
-<p>24/04/2024 (“Roman-Rose”)</p>
-<ul>
-<li>Updated to E-OBS v29.0 (March 2024)
-<ol style="list-style-type: decimal">
-<li>extending data from January 1950 to December 2023</li>
-<li>fixed bug small negative values in ggd “be” method</li>
 </ol>
 </li>
 </ul>
@@ -155,11 +126,11 @@
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h4>
 <p>Check the default ECAD version (can be changed with <code>ecad_v = xx.x</code>)</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://retoschmucki.github.io/climateExtract" class="external-link">climateExtract</a></span><span class="op">)</span></span>
 <span><span class="va">ecad_version</span></span></code></pre></div>
 <p>Define specific regions and points. If not provided, the function will extract the data for the entire extent of ECAD. Note that we need to install the package <code>geodata</code> to retrieve the border of France.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use set.seed() for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span> </span>
 <span><span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu">geodata</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geodata/man/gadm.html" class="external-link">gadm</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
@@ -173,7 +144,7 @@
 </li>
 <li>If <code>return_data = TRUE</code>, an R object (a list) with the climate values is created.</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">climate_data</span> <span class="op">=</span> <span class="fu"><a href="reference/extract_nc_value.html">extract_nc_value</a></span><span class="op">(</span>first_year <span class="op">=</span> <span class="fl">2012</span>, </span>
 <span>                                last_year <span class="op">=</span> <span class="fl">2015</span>,</span>
 <span>                                local_file <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -188,10 +159,19 @@
 <span>                                out <span class="op">=</span> <span class="st">"raster_mean_temp.tiff"</span>,</span>
 <span>                                return_data <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Connect to the raster brick created on the local disk. If it is too big to be stored in Memory, the terra package will set a pointer to the file.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rbk</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="st">"raster_mean_temp.tiff"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">climate_data</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">rbk</span><span class="op">)</span>, <span class="st">"MB"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level5">
+<h5 id="note-most-recent-data">Note (most recent data)<a class="anchor" aria-label="anchor" href="#note-most-recent-data"></a>
+</h5>
+<p>If you recent climate data that are not included in the current release (e.g., last 6 months), you can download recent data from the <a href="https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php" class="external-link">Running year data</a>. These files follow the same structure and you can use them by adding the path of the specific netcdf file downloaded. I will explore how I can include this seamlessly in the function, but for now, “this it the way”.</p>
+<pre><code>## example with local file path
+extract_nc_value(...
+                 local_file = TRUE,
+                 file_path = "YOUR/PATH/TO/DATA.nc",
+                 ...)</code></pre>
 <p>Aggregate the data over time; <code>annual</code>, <code>monthly</code>, or by using a rolling <code>window</code>. The function <code>mean</code> could be replaced by <code>sum</code>, <code>sd</code>, or other functions that can be computed along a vector. If you select “daily” for the time_step, the function will return the daily ECAD data without aggregation.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># monthly mean</span></span>
@@ -213,6 +193,7 @@
 <blockquote>
 <p>Note: Argument in <code>x</code> could also be the climate_data object that resulted from the <code><a href="reference/extract_nc_value.html">extract_nc_value()</a></code> function.</p>
 </blockquote>
+</div>
 </div>
 </div>
 <div class="section level2">
