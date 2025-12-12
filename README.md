@@ -13,42 +13,20 @@
 * ECAD at [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles)
 * Package URL: [https://retoschmucki.github.io/climateExtract/](https://retoschmucki.github.io/climateExtract)
 
-> Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, "TG" average temperature).
 
-> Note shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles).
+#### NOTICE
+1. Before extracting any data, please read carefully the description of the datasets and the different grid sizes available (eg. 0.25 deg. regular grid, "TG" average temperature).
+2. Shorter time-series are also available [Copernicus Climate](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs.php#datafiles).
+3. If you need recent climate data from the running year (e.g, last 6 months), have a look at [Running year data](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php).
+4. MacOS and Linux users, ensure that you correctly installed terra and the sf packages as climateExtract is dependent on them working seamlessly (see instruction for [terra](https://github.com/rspatial/terra) and [sf](https://github.com/r-spatial/sf)).
 
-> For climate data from the running year (e.g, last month), you can have a look at the data available [Running year data](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php).
-> These file have the same structure and can be used by adding the path of the specific netcdf folder that you have downloaded. 
-```
-extract_nc_value(...
-                 local_file = TRUE,
-                 file_path = "YOUR/PATH/TO/DATA.nc",
-                 ...)
-```
 
 #### News
 
 10/12/2025 ("Dancing-Rose")
 
 * Updated to E-OBS v32.0 (November 2025)
-  1. extending data from January 1950 to June 2025
-     
-07/05/2025 ("Pacific-Rose")
-
-* Updated to E-OBS v31.0 (March 2025)
-  1. extending data from January 1950 to December 2024
-
-14/04/2024 ("Coastal-Rose")
-
-- Updated to E-OBS v30.0 (September 2024)
-  1. extending data from January 1950 to June 2024
-  2. fixed spatial misalignment in output raster
-
-24/04/2024 ("Roman-Rose")
-
-- Updated to E-OBS v29.0 (March 2024)
-  1. extending data from January 1950 to December 2023
-  2. fixed bug small negative values in ggd "be" method
+  1. extending data from January 1950 to June 2025  
 
 #### Installation
 
@@ -110,6 +88,19 @@ rbk = terra::rast("raster_mean_temp.tiff")
 format(object.size(climate_data), "MB")
 format(object.size(rbk), "MB")
 ```
+
+##### Note (most recent data)
+
+If you recent climate data that are not included in the current release (e.g., last 6 months), you can download recent data from the [Running year data](https://surfobs.climate.copernicus.eu/dataaccess/access_eobs_months.php). These files follow the same structure and you can use them by adding the path of the specific netcdf file downloaded. I will explore how I can include this seamlessly in the function, but for now, "this it the way". 
+
+```
+## example with local file path
+extract_nc_value(...
+                 local_file = TRUE,
+                 file_path = "YOUR/PATH/TO/DATA.nc",
+                 ...)
+```
+
 
 Aggregate the data over time; `annual`, `monthly`, or by using a rolling `window`. The function `mean` could be replaced by `sum`, `sd`, or other functions that can be computed along a vector. If you select "daily" for the time_step, the function will return the daily ECAD data without aggregation.
 
