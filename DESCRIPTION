@@ -24,5 +24,5 @@ Imports: ncdf4,
          data.table,
          lubridate,
          methods
-RoxygenNote: 7.3.2
 Encoding: UTF-8
+Config/roxygen2/version: 8.0.0

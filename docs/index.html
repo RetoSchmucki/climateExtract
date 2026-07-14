@@ -45,7 +45,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">climateExtract</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.33</span>
       </span>
     </div>
 
@@ -105,11 +105,11 @@
 <div class="section level4">
 <h4 id="news">News<a class="anchor" aria-label="anchor" href="#news"></a>
 </h4>
-<p>10/12/2025 (“Dancing-Rose”)</p>
+<p>14/07/2027 (“Desert-Rose”)</p>
 <ul>
-<li>Updated to E-OBS v32.0 (November 2025)
+<li>Updated to E-OBS v33.0 (May 2026)
 <ol style="list-style-type: decimal">
-<li>extending data from January 1950 to June 2025</li>
+<li>extending data from January 1950 to December 2025</li>
 </ol>
 </li>
 </ul>
@@ -119,7 +119,7 @@
 </h4>
 <p>GitHub installation (CRAN not available)</p>
 <pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"RetoSchmucki/climateExtract"</span><span class="op">)</span></span></code></pre>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"RetoSchmucki/climateExtract"</span><span class="op">)</span></span></code></pre>
 <p>Dependencies: <code>ncdf4</code>, <code>data.table</code>, <code>sf</code>, <code>terra</code>,<code>lubridate</code>, and <code>methods</code></p>
 </div>
 <div class="section level4">
@@ -133,7 +133,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use set.seed() for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42876</span><span class="op">)</span> </span>
-<span><span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu">geodata</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geodata/man/gadm.html" class="external-link">gadm</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">fr_border</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu">geodata</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/geodata/reference/gadm.html" class="external-link">gadm</a></span><span class="op">(</span><span class="st">"GADM"</span>, country <span class="op">=</span> <span class="st">"FRA"</span>, level <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sf_point</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_sample.html" class="external-link">st_sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fr_border</span>, size <span class="op">=</span> <span class="fl">25</span>, type <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Extract data</p>
 <ul>
@@ -362,7 +362,7 @@ extract_nc_value(...
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
