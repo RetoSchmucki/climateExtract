@@ -23,10 +23,10 @@
 
 #### News
 
-10/12/2025 ("Dancing-Rose")
+14/07/2027 ("Desert-Rose")
 
-* Updated to E-OBS v32.0 (November 2025)
-  1. extending data from January 1950 to June 2025  
+* Updated to E-OBS v33.0 (May 2026)
+  1. extending data from January 1950 to December 2025  
 
 #### Installation
 
